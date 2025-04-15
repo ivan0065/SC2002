@@ -1,6 +1,6 @@
 package interfaces;
-import Enquires.Enquiry;
-import Enquires.EnquiryList;
+import Enquiries.Enquiry;
+import Enquiries.EnquiryList;
 public interface EnquiryManager{
     public void ViewEnquiry(EnquiryList enquiryList);
     

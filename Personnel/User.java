@@ -1,56 +1,77 @@
 package Personnel;
 import Enums.UserRole;
+import Enums.MaritalStatus;
 
-public class User{
-    private String userID;
-    private String password="password";
+public abstract class User
+{
+    private String userID; // User ID is NRIC (S/T, 7 digits, ending letter)
+    private String password = "password";
     private int age;
-    private String maritalStatus;
-    public Boolean loginStatus;
-    private String nirc;
-    private UserRole role;
+    private MaritalStatus maritalStatus;
+    private UserRole userRole;
 
-    public User(String userID, String password, int age, String maritalStatus, String nirc) {
+    // Constructor
+    public User(String userID, String password, int age, MaritalStatus maritalStatus, UserRole userRole) 
+    {
         this.userID = userID;
         this.password = password;
         this.age = age;
         this.maritalStatus = maritalStatus;
-        this.nirc = nirc;
-        this.loginStatus = false;
-        this.role = UserRole.Applicant; // Default role
+        this.userRole = userRole; // Default role
     }
 
-    public void setAge(int age){
-        this.age=age;
-    }
-
-    public int getAge(){
-        return age;
-    }
-
-    public String getMaritalStatus(){
-        return maritalStatus;
-    }
-
-    public String getUserID(){
+    // Getter methods
+    public String getUserID()
+    {
         return userID;
     }
 
-    public void setMaritalStatus(String maritalStatus){
-        this.maritalStatus=maritalStatus;
+    public int getAge()
+    {
+        return age;
     }
 
-    public boolean checkPassword(String inputPassword){
-        return this.password.equals(inputPassword);
+    public MaritalStatus getMaritalStatus()
+    {
+        return maritalStatus;
     }
 
-    public void changePassword(Boolean loginStatus, String password){
+    public UserRole getRole()
+    {
+        return userRole;
+    }
+
+    // Setter methods
+    public void setAge(int age)
+    {
+        this.age = age;
+    }
+
+    public void setMaritalStatus(MaritalStatus maritalStatus)
+    {
+        this.maritalStatus = maritalStatus;
+    }
+
+    public void setUserRole(UserRole userRole)
+    {
+        this.userRole = userRole;
+    }
+
+    public void changePassword(Boolean loginStatus, String password)
+    {
         if(loginStatus==true){
             this.password=password;
         }
     }
 
-    public void viewProjects(){
+    // Utility methods
+    public boolean checkPassword(String inputPassword)
+    {
+        return this.password.equals(inputPassword);
+    }
+
+    public void viewProjects()
+    {
         // useBTOProjectDatabase class once created
     }
 }

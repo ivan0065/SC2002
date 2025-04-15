@@ -1,4 +1,4 @@
-package Enquires;
+package Enquiries;
 import interfaces.EnquiryManager;
 import Personnel.User;
 public class OfficerEnquiryManager implements EnquiryManager {
