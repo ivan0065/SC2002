@@ -59,7 +59,8 @@ public abstract class User
 
     public void changePassword(Boolean loginStatus, String password)
     {
-        if(loginStatus==true){
+        if(loginStatus==true)
+        {
             this.password=password;
         }
     }
