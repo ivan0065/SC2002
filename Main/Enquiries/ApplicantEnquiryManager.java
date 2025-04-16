@@ -1,6 +1,6 @@
-package Enquiries;
-import Personnel.User;
-import interfaces.EnquiryManager;
+package Main.Enquiries;
+import Main.Personnel.User;
+import Main.interfaces.EnquiryManager;
 public class ApplicantEnquiryManager implements EnquiryManager{
     private User applicant;
 

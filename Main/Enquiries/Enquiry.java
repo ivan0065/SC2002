@@ -1,7 +1,8 @@
-package Enquiries;
+package Main.Enquiries;
 
-import Personnel.User;
 import java.time.LocalDateTime;
+
+import Main.Personnel.User;
 
 public class Enquiry{
     private String question;

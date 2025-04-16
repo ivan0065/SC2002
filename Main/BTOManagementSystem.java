@@ -1,7 +1,9 @@
+package Main;
 
-import Personnel.User;
-import interfaces.IuserAuth;
 import java.util.List;
+
+import Main.Personnel.User;
+import Main.interfaces.IuserAuth;
 
 public class BTOManagementSystem implements IuserAuth{
     private List<User> userList;

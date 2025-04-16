@@ -1,6 +1,6 @@
-package Enquiries;
-import interfaces.EnquiryManager;
-import Personnel.User;
+package Main.Enquiries;
+import Main.Personnel.User;
+import Main.interfaces.EnquiryManager;
 public class OfficerEnquiryManager implements EnquiryManager {
     //private HDBOfficer officer; officer class not created
     private User officer;

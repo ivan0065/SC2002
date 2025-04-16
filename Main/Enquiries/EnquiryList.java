@@ -1,4 +1,4 @@
-package Enquiries;
+package Main.Enquiries;
 
 import java.util.ArrayList;
 import java.util.List;

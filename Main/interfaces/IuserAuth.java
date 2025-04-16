@@ -1,4 +1,4 @@
-package interfaces;
+package Main.interfaces;
 
 public interface IuserAuth{
     void login(String username, String password);

@@ -1,4 +1,4 @@
-package Enums;
+package Main.Enums;
 
 public enum UserRole{
     Applicant,
