@@ -1,6 +1,6 @@
 package Personnel;
-import Enums.UserRole;
 import Enums.MaritalStatus;
+import Enums.UserRole;
 
 public abstract class User
 {

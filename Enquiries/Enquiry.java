@@ -13,6 +13,7 @@ public class Enquiry{
     private LocalDateTime timestamp;
 
     public Enquiry(String question, int enquiryID, User sender) {
+        // check if timestamp is before proj opendate or after proj enddate
         this.question = question;
         this.enquiryID = enquiryID;
         this.sender = sender;
