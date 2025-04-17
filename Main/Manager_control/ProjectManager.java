@@ -1,4 +1,4 @@
-package Main.Personnel.Manager_classes;
+package Main.Manager_control;
 
 import Main.BTO.BTOProject;
 import java.util.List;

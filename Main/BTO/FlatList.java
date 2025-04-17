@@ -6,8 +6,8 @@ import java.util.Map;
 
 public class FlatList{
     private List<Flat> flatlist;
-    private int numAvailableUnits;
-    private Map<FlatType,Integer> unitCount;
+    static int numAvailableUnits;
+    static Map<FlatType,Integer> unitCount;
 
     public FlatList(List<Flat> flatlist){
         this.flatlist=flatlist;
@@ -24,14 +24,19 @@ public class FlatList{
         }
     }
 
-    public void UpdateAvailUnits(){
-        numAvailableUnits=0;
-        for(Flat flat:flatlist){
-            if(!flat.isbooked()){
-                numAvailableUnits++;
-                FlatType type=flat.getFlatType();
-                unitCount.put(type,unitCount.get(type)+1);
-            }
-        }
+    public int getTavailUnits(){
+        return numAvailableUnits;
+    }
+
+    public int get2roomAvailUnit(){
+        return unitCount.get(FlatType.Two_Room);
+    }
+
+    public int get3roomAvailUnit(){
+        return unitCount.get(FlatType.Three_Room);
+    }
+
+    public Map<FlatType,Integer> getavail_byroom(){
+        return unitCount;
     }
 }

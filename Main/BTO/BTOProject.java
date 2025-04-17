@@ -24,6 +24,8 @@ public class BTOProject {
 
     private List<Applicant> applicatantList;
 
+    private FlatList flatList;
+
     private int availableOfficerSlots;
 
     public BTOProject(){
@@ -38,5 +40,9 @@ public class BTOProject {
 
     public String getProjectName(){
         return this.projectName;
+    }
+
+    public FlatList getflatList(){
+        return flatList;
     }
 }
