@@ -1,7 +1,9 @@
 package Main.Manager_control;
 
 import Main.BTO.*;
+import Main.Enums.FilterCriteria;
 import Main.Enums.FlatType;
+import java.util.List;
 import java.util.Map;
 public class ApplicationManager{
     public boolean approveBTOApplication(BTOApplication application, FlatList flatList,String newStatus){
@@ -17,4 +19,13 @@ public class ApplicationManager{
     public void approveBTOWithdrawal(BTOApplication application, FlatList flatList, String newStatus){
         application.setwithdrawalStatus(newStatus);
     }
+
+    public void generateApplicantReport(FilterCriteria criteria, List<BTOApplication> applications){
+        ReportGenerator reportGen= new ReportGenerator();
+        List<ApplicantReport> report= reportGen.generateReport(applications, criteria);
+
+        for(ApplicantReport r: report){
+            r.toString();
+        }
+        }
 }
