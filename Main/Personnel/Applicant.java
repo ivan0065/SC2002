@@ -2,14 +2,15 @@ package Main.Personnel;
 
 import Main.Enums.MaritalStatus;
 import Main.Enums.UserRole;
+import Main.Manager_control.BTOApplication;
 
 import java.util.List;
 import java.util.ArrayList;
 
 public class Applicant extends User
 {
-    private String currentApplicationId; // ID of current application
-    private List<String> enquiryIds; // List containing ID of all enquiries made by applicant
+    protected String currentApplicationId; // ID of current application
+    protected List<String> enquiryIds; // List containing ID of all enquiries made by applicant
 
     // Constructor
     public Applicant(String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
@@ -35,9 +36,24 @@ public class Applicant extends User
         }
     }
 
+    public void applyBTO()
+    {
+        if (currentApplicationId == null)
+        {
+            // Randomly generated ID from UUID, converted to a string
+            String newApplicationId = java.util.UUID.randomUUID().toString();
+
+            // Create new BTO Application object
+            BTOApplication = new BTOApplication();
+            // will require a setter in BTO Application class to set application ID
+        }
+        else
+            System.out.println("You already have a pre-existing BTO application");
+    }
+
     public String viewApplicationStatus()
     {
-        return; //incomplete
+        return 
     }
 
 
