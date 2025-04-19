@@ -1,0 +1,18 @@
+import java.util.HashMap;
+import java.util.Map;
+
+public class ReceiptGenerator {
+    // Constructor
+    public ReceiptGenerator() {}
+
+    // Method to generate a receipt
+    public Map<String, String> generateReceipt() {
+        Map<String, String> receipt = new HashMap<>();
+        // Placeholder implementation - add actual logic as needed
+        receipt.put("ReceiptID", "REC123");
+        receipt.put("Date", "2025-04-19");
+        receipt.put("Amount", "100.00");
+        receipt.put("Description", "Payment for Project XYZ");
+        return receipt;
+    }
+}

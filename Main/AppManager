@@ -1,0 +1,41 @@
+import java.util.List;
+import java.util.Map;
+
+public class AppManager {
+    private List<Officer> officers;
+    private List<Project> projects;
+    private List<Application> applications;
+    private List<Report> reports;
+
+    // Constructor
+    public AppManager() {}
+
+    // Methods
+    public void createOfficer(Officer officer) {}
+    public void createProject(Project project) {}
+    public void updateProject(String projectId, Project project) {}
+    public void deleteProject(String projectId) {}
+    public void getProject(String projectId) {}
+    public void getProjects() {}
+    public void getOfficer(String officerId) {}
+    public void getOfficers() {}
+    public void updateOfficer(String officerId, Officer officer) {}
+    public void deleteOfficer(String officerId) {}
+    public void getApplication(String applicationId) {}
+    public void getApplications() {}
+    public void updateApplication(String applicationId, Application application) {}
+    public void deleteApplication(String applicationId) {}
+    public void viewReport(String reportId) {}
+    public void getReports() {}
+    public void updateReport(String reportId, Report report) {}
+    public void deleteReport(String reportId) {}
+    public void approveApplication(String applicationId) {}
+    public void rejectApplication(String applicationId) {}
+    public void getPendingApplications() {}
+    public int getPendingApplicationCount() { return 0; }
+    public void assignOfficerToProject(String officerId, String projectId) {}
+    public void removeOfficerFromProject(String officerId, String projectId) {}
+    public void viewOfficerDetails(String officerId) {}
+    public void viewProjectDetails(String projectId) {}
+    public void generateReport(Map<String, String> criteria) {}
+}
