@@ -10,15 +10,15 @@ public class RegistrationManager {
 
 	private List<Registration> allRegistrations;  // List to store all registrations
 
-    // Constructor
-    public RegistrationManager() {
-        this.allRegistrations = new ArrayList<>();
-    }
+	// Constructor
+	public RegistrationManager() {
+	this.allRegistrations = new ArrayList<>();
+	}
 
-    // Method to add a registration 
-    public void addRegistration(Registration registration) {
-        allRegistrations.add(registration);
-    }
+	// Method to add a registration 
+	public void addRegistration(Registration registration) {
+	allRegistrations.add(registration);
+	}
     
 	public List<Registration> getRegistrationList(){
 		return allRegistrations;
@@ -39,19 +39,19 @@ public class RegistrationManager {
 	}
 	
 	public boolean validateOfficerEligibility(String officerUserID, String projectID) {
-        // Get the list of applications tied to the project the officer is trying to register for
-        List<BTOApplication> applications = project.getApplications();  
-        
-        for (BTOApplication application : applications) {
-            // If the officer's userID matches any applicant's userID for the given projectID, they are not eligible
-            if (application.getUserID().equals(officerUserID) && application.getProjectID().equals(projectID)) {
-                return false;  // Officer cannot register as an officer for a project they have applied for
-            }
-        }
-        
-        // If no match was found, the officer is eligible
-        return true;
-    }
+		// Get the list of applications tied to the project the officer is trying to register for
+		List<BTOApplication> applications = project.getApplications();  
+		
+		for (BTOApplication application : applications) {
+		    // If the officer's userID matches any applicant's userID for the given projectID, they are not eligible
+		    if (application.getUserID().equals(officerUserID) && application.getProjectID().equals(projectID)) {
+			return false;  // Officer cannot register as an officer for a project they have applied for
+		    }
+		}
+		
+		// If no match was found, the officer is eligible
+		return true;
+	}
 	
 	public void createRegistration(BTOProject project, HDBOfficer officer) {
 	    if (validateOfficerEligibility(officer)) {
@@ -62,26 +62,26 @@ public class RegistrationManager {
    	}
 	
 	public List<Registration> getRegistrationsForOfficer(String officerUserID) {
-        List<Registration> officerRegistrations = new ArrayList<>();
-
-        for (Registration registration : allRegistrations) {
-            if (registration.getOfficer().getUserID().equals(officerUserID)) {
-                officerRegistrations.add(registration);
-            }
-        }
-
-        return officerRegistrations;  
-    }
+	        List<Registration> officerRegistrations = new ArrayList<>();
+	
+	        for (Registration registration : allRegistrations) {
+	            if (registration.getOfficer().getUserID().equals(officerUserID)) {
+	                officerRegistrations.add(registration);
+	            }
+	        }
+	
+	        return officerRegistrations;  
+	}
 
 	public Registration getRegistrationByRegId(String registrationID) {
-        for (Registration registration : allRegistrations) {
-            if (registration.getRegistrationId().equals(registrationID)) {
-                return registration;  
-            }
-        }
-        
-        return null;  
-    }
+	        for (Registration registration : allRegistrations) {
+	            if (registration.getRegistrationId().equals(registrationID)) {
+	                return registration;  
+	            }
+	        }
+	        
+	        return null;  
+	}
 	
 	// Method to check if the application period of the project the officer is trying to register for clashes
     // with any other project the officer is already handling
