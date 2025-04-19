@@ -9,10 +9,16 @@ public class ApplicationManager{
     public boolean approveBTOApplication(BTOApplication application, FlatList flatList,String newStatus){
         FlatType flatType=application.getFlatType();
         Map<FlatType,Integer> unitCount= flatList.getavail_byroom();
-        if (unitCount.get(flatType) == 0){
+        if (unitCount.get(flatType) == 0 && "Approved".equals(newStatus)){
             throw new IllegalArgumentException("No available units of the selected flat type: " + flatType);
         }
         application.setapplicationStatus(newStatus);
+        if (application.getFlatType()==FlatType.Three_Room){
+            flatList.book_3room();
+        }
+        else{
+            flatList.book_2room();
+        } 
         return true;
     }
 

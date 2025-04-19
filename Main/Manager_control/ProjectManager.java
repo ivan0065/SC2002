@@ -36,7 +36,7 @@ public class ProjectManager{
         return this.managedProjects;
     }
 
-    public void viewBTOProject(){
+    public void viewBTOProjects(){
         for(BTOProject project: managedProjects){
             //not implemented yet
             project.displayProject();
