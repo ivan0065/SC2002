@@ -89,7 +89,7 @@ public class HDBOfficer extends Applicant
                 // Not implemented yet
                 List<Flat> currflats = BTOProject.getFlatTypes();
                 // consider changing getFlatTypes() function to getFlats()
-                for (int j = 0; j < currflat.size(); j++)
+                for (int j = 0; j < currflats.size(); j++)
                 {
                     System.out.printf("Flat type %d: %s%n", j, currflats.get(i));
                     System.out.printf("Number of units for flat type %s: %d", currflats.get(i).getFlatType, currflats.get(i).getNumAvailableUnits());
