@@ -4,27 +4,61 @@ import java.util.List;
 
 import Main.BTO.*;
 import Main.Enums.FilterCriteria;
+import Main.Enums.FlatType;
+import Main.Enums.MaritalStatus;
+import Main.Enums.UserRole;
 import Main.Manager_control.*;
 
-public class HDBManager{
+public class HDBManager extends User{
     private ProjectManager projectManager;
     private RegistrationManager registrationManager;
     private ApplicationManager appManager;
     private BTOProject project;
 
-
+        // Constructor for HDBManager
+    public HDBManager(String username, String password, int age, MaritalStatus maritalStatus, UserRole role) {
+        super(username, password, age, maritalStatus, role); // Call the User constructor
+        this.projectManager = new ProjectManager();
+        this.registrationManager = new RegistrationManager();
+        this.appManager = new ApplicationManager();
+    }
     //AppManager part
-    public boolean approveBTOApplication(BTOApplication application, FlatList flatList, String newStatus){
-        return appManager.approveBTOApplication(application, flatList, newStatus);
+    public boolean approveBTOApplication(String application_id, String newStatus){
+        List<BTOApplication> app_list=project.getApplications();
+        BTOApplication cur_Application=null;
+        FlatList flatList=project.getflatList();
+        for( BTOApplication application: app_list){
+            if(application.getID.equals(application_id)){
+                cur_Application= application;
+                break;
+            }
+        }
+        if (cur_Application == null) {
+            throw new IllegalArgumentException("Application with ID " + application_id + " not found.");
+        }
+        return appManager.approveBTOApplication(cur_Application, flatList, newStatus);
         //change the edits in BTOProject
     }
 
-    public void approveBTOWithdrawal(BTOApplication application, FlatList flatList, String newStatus){
-        appManager.approveBTOWithdrawal(application, flatList, newStatus);
+    public void approveBTOWithdrawal(String application_id, String newStatus){
+        List<BTOApplication> app_list=project.getApplications();
+        FlatList flatList=project.getflatList();
+        BTOApplication cur_Application=null;
+        for( BTOApplication application: app_list){
+            if(application.getID.equals(application_id)){
+                cur_Application= application;
+                break;
+            }
+        }
+        if (cur_Application == null) {
+            throw new IllegalArgumentException("Application with ID " + application_id + " not found.");
+        }
+        appManager.approveBTOWithdrawal(cur_Application, flatList, newStatus);
     }
 
-    public void generateReport(FilterCriteria criteria, List<BTOApplication> applications){
-        appManager.generateApplicantReport(criteria, applications);
+    public void generateReport(FilterCriteria criteria){
+        List<BTOApplication> app_list=project.getApplications();
+        appManager.generateApplicantReport(criteria, app_list);
     }
 
     //ProjectManager part
@@ -46,13 +80,16 @@ public class HDBManager{
     }
 
     public List<BTOProject> getManagedProject(){
-        return projectManager.getManagedProjects();
+        return projectManager.getManagedProject();
     }
 
-    public void viewBTOProjects(){
-        projectManager.viewBTOProject();
+    public void viewManagedProjects(){
+        projectManager.viewBTOProjects();
     }
 
+    public void viewALLprojects(){
+        //use projectdatabase
+    }
     //RegistrationManager part
     
 }

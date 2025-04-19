@@ -39,4 +39,33 @@ public class FlatList{
     public Map<FlatType,Integer> getavail_byroom(){
         return unitCount;
     }
+
+    public void book_3room(){
+        for(Flat flat: flatlist){
+            if(flat.getFlatType()==FlatType.Three_Room && flat.isbooked()==false){
+                flat.Book_flat();
+            }
+        }
+    }
+    public void book_2room(){
+        for(Flat flat: flatlist){
+            if(flat.getFlatType()==FlatType.Two_Room && flat.isbooked()==false){
+                flat.Book_flat();
+            }
+        }
+    }
+    public void unbook_3room(){
+        for(Flat flat: flatlist){
+            if(flat.getFlatType()==FlatType.Three_Room && flat.isbooked()==true){
+                flat.unBook_flat();
+            }
+        }
+    }
+    public void unbook_2room(){
+        for(Flat flat: flatlist){
+            if(flat.getFlatType()==FlatType.Two_Room && flat.isbooked()==true){
+                flat.unBook_flat();
+            }
+        }
+    }
 }
