@@ -1,12 +1,15 @@
 package Main.Manager_control;
 
 import Main.BTO.BTOProject;
+import Main.interfaces.I_projectManager;
+import java.util.Iterator;
 import java.util.List;
-public class ProjectManager{
+public class ProjectManager implements I_projectManager{
     private List<BTOProject> managedProjects;
 
     public void createBTOProject(){
         BTOProject project= new BTOProject();
+        managedProjects.add(project);
     }
 
     public void editBTOProject(int choice){
@@ -15,11 +18,14 @@ public class ProjectManager{
 
     public void deleteBTOProject(String ProjectName){
         boolean deleted=false;
-        for(BTOProject project: managedProjects){
-            if(project.getProjectName()==ProjectName){
-                managedProjects.remove(project);
-                deleted=true;
-                System.out.println(ProjectName+"is deleted Successfully");
+        Iterator<BTOProject> iterator = managedProjects.iterator();
+        while (iterator.hasNext()) {
+            BTOProject project = iterator.next();
+            if (project.getProjectName().equals(ProjectName)) {
+                iterator.remove();
+                deleted = true;
+                System.out.println(ProjectName + " is deleted successfully");
+                break;
             }
         }
         if(deleted==false){
@@ -32,15 +38,14 @@ public class ProjectManager{
 
     }
 
-    public List<BTOProject> getManagedProjects(){
+    public List<BTOProject> getManagedProject(){
         return this.managedProjects;
     }
 
     public void viewBTOProjects(){
         for(BTOProject project: managedProjects){
             //not implemented yet
-            project.displayProject();
+            //project.displayProject();
         }
     }
-
 }
