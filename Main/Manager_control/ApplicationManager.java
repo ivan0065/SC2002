@@ -3,9 +3,10 @@ package Main.Manager_control;
 import Main.BTO.*;
 import Main.Enums.FilterCriteria;
 import Main.Enums.FlatType;
+import Main.interfaces.I_applicationManager;
 import java.util.List;
 import java.util.Map;
-public class ApplicationManager{
+public class ApplicationManager implements I_applicationManager{
     public boolean approveBTOApplication(BTOApplication application, FlatList flatList,String newStatus){
         FlatType flatType=application.getFlatType();
         Map<FlatType,Integer> unitCount= flatList.getavail_byroom();

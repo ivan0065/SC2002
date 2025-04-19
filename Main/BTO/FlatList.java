@@ -6,8 +6,8 @@ import java.util.Map;
 
 public class FlatList{
     private List<Flat> flatlist;
-    static int numAvailableUnits;
-    static Map<FlatType,Integer> unitCount;
+    private int numAvailableUnits;
+    private Map<FlatType,Integer> unitCount;
 
     public FlatList(List<Flat> flatlist){
         this.flatlist=flatlist;
@@ -44,6 +44,9 @@ public class FlatList{
         for(Flat flat: flatlist){
             if(flat.getFlatType()==FlatType.Three_Room && flat.isbooked()==false){
                 flat.Book_flat();
+                this.numAvailableUnits--;
+                this.unitCount.put(FlatType.Three_Room,this.unitCount.get(FlatType.Three_Room)-1);
+                return;
             }
         }
     }
@@ -51,6 +54,9 @@ public class FlatList{
         for(Flat flat: flatlist){
             if(flat.getFlatType()==FlatType.Two_Room && flat.isbooked()==false){
                 flat.Book_flat();
+                this.numAvailableUnits--;
+                this.unitCount.put(FlatType.Two_Room,this.unitCount.get(FlatType.Two_Room)-1);
+                return;
             }
         }
     }
@@ -58,6 +64,9 @@ public class FlatList{
         for(Flat flat: flatlist){
             if(flat.getFlatType()==FlatType.Three_Room && flat.isbooked()==true){
                 flat.unBook_flat();
+                this.numAvailableUnits++;
+                this.unitCount.put(FlatType.Three_Room,this.unitCount.get(FlatType.Three_Room)+1);
+                return;
             }
         }
     }
@@ -65,6 +74,9 @@ public class FlatList{
         for(Flat flat: flatlist){
             if(flat.getFlatType()==FlatType.Two_Room && flat.isbooked()==true){
                 flat.unBook_flat();
+                this.numAvailableUnits++;
+                this.unitCount.put(FlatType.Two_Room,this.unitCount.get(FlatType.Two_Room)+1);
+                return;
             }
         }
     }

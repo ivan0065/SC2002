@@ -14,13 +14,9 @@ public class Flat{
           return taken;
      }
      public void Book_flat(){
-          FlatList.numAvailableUnits--;
-          FlatList.unitCount.put(flatType,FlatList.unitCount.get(flatType)-1);
           this.taken=true;
      }
      public void unBook_flat(){
-          FlatList.numAvailableUnits++;
-          FlatList.unitCount.put(flatType,FlatList.unitCount.get(flatType)+1);
           this.taken=false;
      }
 

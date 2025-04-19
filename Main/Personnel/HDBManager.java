@@ -8,19 +8,24 @@ import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
 import Main.Enums.UserRole;
 import Main.Manager_control.*;
+import Main.interfaces.I_applicationManager;
+import Main.interfaces.I_projectManager;
 
 public class HDBManager extends User{
-    private ProjectManager projectManager;
-    private RegistrationManager registrationManager;
-    private ApplicationManager appManager;
+    private I_projectManager projectManager;
+    private I_RegistrationManager registrationManager;
+    private I_applicationManager appManager;
     private BTOProject project;
 
         // Constructor for HDBManager
-    public HDBManager(String username, String password, int age, MaritalStatus maritalStatus, UserRole role) {
+    public HDBManager(String username, String password, int age, MaritalStatus maritalStatus, UserRole role,
+                    I_projectManager projectManager,
+                    I_RegistrationManager registrationManager,
+                    I_applicationManager appManager){
         super(username, password, age, maritalStatus, role); // Call the User constructor
-        this.projectManager = new ProjectManager();
-        this.registrationManager = new RegistrationManager();
-        this.appManager = new ApplicationManager();
+        this.projectManager = projectManager;
+        this.registrationManager = registrationManager;
+        this.appManager = appManager;
     }
     //AppManager part
     public boolean approveBTOApplication(String application_id, String newStatus){
