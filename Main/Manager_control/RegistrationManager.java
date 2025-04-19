@@ -3,8 +3,9 @@ package Main.Manager_control;
 import java.util.ArrayList;
 import java.util.List;
 
-import Main.BTO.BTOProject
-import Main.Personnel.HDBOfficer
+import Main.BTO.BTOProjectDatabase;
+import Main.BTO.BTOProject;
+import Main.Personnel.HDBOfficer;
 
 public class RegistrationManager {
 
