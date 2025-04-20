@@ -41,13 +41,13 @@ public class RegistrationManager implements I_RegistrationManager{
 	        return availProjects;
 	}
 	
-	public boolean validateOfficerEligibility(String officerUserID, String projectID) {
+	public boolean validateOfficerEligibility(String officerUserID, String projectName) {
 		// Get the list of applications tied to the project the officer is trying to register for
 		List<BTOApplication> applications = project.getApplications();  
 		
 		for (BTOApplication application : applications) {
 		    // If the officer's userID matches any applicant's userID for the given projectID, they are not eligible
-		    if (application.getUserID().equals(officerUserID) && application.getProjectID().equals(projectID)) {
+		    if (application.getUserID().equals(officerUserID) && application.getProjectName().equals(projectName)) {
 			return false;  // Officer cannot register as an officer for a project they have applied for
 		    }
 		}
