@@ -18,7 +18,7 @@ public class RegistrationManager implements I_RegistrationManager{
 	}
 
 	// Method to add a registration 
-        @Override
+    @Override
 	public void addRegistration(Registration registration) {
 	allRegistrations.add(registration);
 	}

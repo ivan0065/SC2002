@@ -17,6 +17,7 @@ public class HDBManager extends User{
     private I_RegistrationManager registrationManager;
     private I_applicationManager appManager;
     private BTOProject project;
+    protected static ProjectDatabase BTOdatabase;
 
         // Constructor for HDBManager
     public HDBManager(String username, String password, int age, MaritalStatus maritalStatus, UserRole role,
@@ -95,6 +96,9 @@ public class HDBManager extends User{
 
     public void viewALLprojects(){
         //use projectdatabase
+        for (BTOProject proj: BTOdatabase.getAllProjects()){
+            proj.displayProject();
+        }
     }
     //RegistrationManager part
     
