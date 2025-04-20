@@ -101,5 +101,48 @@ public class HDBManager extends User{
         }
     }
     //RegistrationManager part
-    
+
+    public void addRegistration(Registration registration){
+        registrationManager.addRegistration(registration);
+    }
+
+    public List<Registration> getRegistrationList(){
+        registrationManager.getRegistrationList();
+    }
+
+    public List<BTOProject> getAvailForRegistration(){
+        registrationManager.getAvailForRegistration();
+    }
+
+    public boolean validateOfficerEligibility(String officerUserID, String projectName){
+        registrationManager.validateOfficerEligibility(String officerUserID, String projectName);
+    }
+
+    public void createRegistration(BTOProject project, HDBOfficer officer){
+        registrationManager.createRegistration(BTOProject project, HDBOfficer officer);
+    }
+
+    public List<Registration> getRegistrationsForOfficer(String officerUserID){
+        registrationManager.getRegistrationsForOfficer(String officerUserID);
+    }
+
+    public Registration getRegistrationByRegId(String registrationID){
+        registrationManager.getRegistrationByRegId(String registrationID);
+    }
+
+    public boolean checkApplicationPeriodClash(HDBOfficer officer, BTOProject newProject){
+        registraionManager.checkApplicationPeriodClash(HDBOfficer officer, BTOProject newProject);
+    }
+
+    public boolean approveOfficerRegistration(String registrationId){
+        registrationManager.approveOfficerRegistration(String registrationId);
+    }
+
+    public boolean updateRegistrationStatus(String registrationId){
+        registrationManager.updateRegistrationStatus(String registrationId);
+    }
+
+    public void updateProjectHDBOfficers(String registrationId){
+        registrationManager.updateProjectHDBOfficers(String registrationId);
+    }
 }
