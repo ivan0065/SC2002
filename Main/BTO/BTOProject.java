@@ -1,8 +1,8 @@
 package Main.BTO;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-
 import Main.Personnel.*;
 import Main.Manager_control.BTOApplication;
 import Main.Enums.FlatType;
@@ -13,7 +13,7 @@ public class BTOProject {
 	
 	private List<HDBOfficer> HDBOfficerList; 
 	
-	private List<Application> applications;
+	private List<BTOApplication> applications;
 	
 	private List<Applicant> applicantList;
 		
@@ -30,10 +30,12 @@ public class BTOProject {
 	private List<FlatType> flatTypes;
 	
 	private String projectNeighbourhood;
+
+	private FlatList flatLists;
 	
 	public BTOProject(HDBManager HDBManagerInCharge,
 					List<HDBOfficer> HDBOfficerList,
-		            List<Application> applications,
+		            List<BTOApplication> applications,
 		            List<Applicant> applicantList,
 		            String projectName,
 		            LocalDate applicationOpeningDate,
@@ -41,7 +43,8 @@ public class BTOProject {
 		            boolean isVisible,
 		            String projectStatus,
 		            List<FlatType> flatTypes,
-		            String projectNeighbourhood) {
+		            String projectNeighbourhood,
+					FlatList flatLists) {
 		this.HDBManagerInCharge = HDBManagerInCharge;
 		this.HDBOfficerList = HDBOfficerList;
 		this.applications = applications;
@@ -53,6 +56,7 @@ public class BTOProject {
 		this.projectStatus = projectStatus;
 		this.flatTypes = flatTypes;
 		this.projectNeighbourhood = projectNeighbourhood;
+		this.flatLists= flatLists;
 		
 		this.HDBOfficerList = new ArrayList<>();
 	    this.applications = new ArrayList<>();
@@ -126,11 +130,11 @@ public class BTOProject {
 	    HDBOfficerList.add(officer);
 	}
 
-	public List<Application> getApplications() {
+	public List<BTOApplication> getApplications() {
 	    return applications;
 	}
 
-	public void addApplication(Application application) {
+	public void addApplication(BTOApplication application) {
 	    applications.add(application);
 	}
 
@@ -158,13 +162,13 @@ public class BTOProject {
 
 	public boolean isApplicableFor(int age, boolean isMarried) {
 	    if (isMarried) {
-]	        if (age >= 21) {
+	        if (age >= 21) {
 	            return true; 
 	        }
 	    } else {
 	        if (age >= 35) {
 	            for (FlatType ft : flatTypes) {
-	                if (ft.getFlatTypeName().equalsIgnoreCase("2-Room")) {
+	                if (ft == FlatType.Two_Room) {
 	                    return true;
 	                }
 	            }
@@ -172,7 +176,7 @@ public class BTOProject {
 	    }
 	    return false; 
 	}
-
+	//IDK if needed cus when when manager approve application, auto updated
 	public boolean updateFlatAvailability(String flatTypeStr, int count) {
 	    // Find the matching FlatType object from this.flatTypes
 	    FlatType targetType = null;
@@ -188,11 +192,11 @@ public class BTOProject {
 	    }
 
 	    // Find the corresponding FlatList and update count
-	    for (FlatList flatList : flatLists) {
+	    for (Flat flatList : flatLists) {
 	        FlatType typeInList = flatList.getFlatType();
 	        if (typeInList == targetType) {
-	            flatList.getUnitCount().put(targetType, count);
-	            flatList.setNumAvailableUnits(count);
+	            flatLists.getUnitCount().put(targetType, count);
+	            flatLists.setNumAvailableUnits(count);
 	            return true;
 	        }
 	    }
@@ -211,18 +215,12 @@ public class BTOProject {
 	    System.out.println();
 
 	    System.out.println("Available Flat Types and Units:");
-	    for (FlatType flatType : flatTypes) {
-	        int unitCount = 0;
-	        for (FlatList flatList : flatLists) {
-	            if (flatList.getFlatType() == flatType) {
-	                unitCount = flatList.getUnitCount().getOrDefault(flatType, 0);
-	                break;
-	            }
-	        }
-	        System.out.printf("  - %s : %d unit(s)%n", flatType.toString(), unitCount);
-	    }
-
+	    flatLists.print_unitCount();
 	    System.out.println("============================\n");
 	}
+
+    public int getRemainingOfficerSlots() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

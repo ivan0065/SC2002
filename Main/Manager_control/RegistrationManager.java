@@ -3,11 +3,12 @@ package Main.Manager_control;
 import java.util.ArrayList;
 import java.util.List;
 
-import Main.BTO.BTOProjectDatabase;
+import Main.BTO.ProjectDatabase;
 import Main.BTO.BTOProject;
 import Main.Personnel.HDBOfficer;
+import Main.interfaces.I_RegistrationManager;
 
-public class RegistrationManager {
+public class RegistrationManager implements I_RegistrationManager{
 
 	private List<Registration> allRegistrations;  // List to store all registrations
 
@@ -17,6 +18,7 @@ public class RegistrationManager {
 	}
 
 	// Method to add a registration 
+        @Override
 	public void addRegistration(Registration registration) {
 	allRegistrations.add(registration);
 	}
@@ -26,7 +28,7 @@ public class RegistrationManager {
 	}
 	
 	public List<BTOProject> getAvailForRegistration() {
-		List<BTOProject> allProjects = BTOProjectDatabase.getBTOProjectsList(); 
+		List<BTOProject> allProjects = ProjectDatabase.getBTOProjectsList(); 
 	    List<BTOProject> availProjects = new ArrayList<>();
 
 	    for (BTOProject project : allProjects) {

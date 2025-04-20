@@ -1,4 +1,4 @@
-package Main.Manager_control;
+package Main.BTO;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -84,15 +84,20 @@ public class ProjectDatabase {
                         officerNRIC = lineScanner.next().trim();
                     }
                     
+                    // create and adding FlatList
+                    List<Flat> flatList = new ArrayList<>();
+                    for( int i=0;i<unitsType1;i++){
+                        flatList.add(new Flat(flatType1, priceType1));
+                    }
+                    for( int i=0;i<unitsType2;i++){
+                        flatList.add(new Flat(flatType2, priceType2));
+                    }
                     // Create and add the project
                     BTOProject project = new BTOProject(
                         projectName, neighborhood, openingDate, closingDate, 
-                        managerNRIC, officerSlot
+                        managerNRIC, officerSlot,flatList
                     );
-                    
-                    // Add flat types
-                    project.addFlatType(flatType1, unitsType1, priceType1);
-                    project.addFlatType(flatType2, unitsType2, priceType2);
+                
                     
                     // Add officer if present
                     if (!officerNRIC.isEmpty() && !officerNRIC.equalsIgnoreCase("null")) {

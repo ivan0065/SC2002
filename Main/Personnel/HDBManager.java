@@ -10,6 +10,7 @@ import Main.Enums.UserRole;
 import Main.Manager_control.*;
 import Main.interfaces.I_applicationManager;
 import Main.interfaces.I_projectManager;
+import Main.interfaces.I_RegistrationManager;
 
 public class HDBManager extends User{
     private I_projectManager projectManager;
