@@ -10,14 +10,17 @@ import Main.Enums.MaritalStatus;
 import Main.Enums.UserRole;
 import Main.Manager_control.BTOApplication;
 import Main.Manager_control.Registration;
+import Main.interfaces.EnquiryManager;
+import Main.interfaces.I_officer_EnquiryM;
 import Main.Enums.FlatType;
-
-public class HDBOfficer extends Applicant
+import Main.Enquiries.*;
+import Main.interfaces.I_applicant_EnquiryM;
+public class HDBOfficer extends Applicant 
 {
     private List<BTOProject> assignedProjects;
     private String HDBManagerRegistrationStatus;
     private List<Registration> registrations;
-
+    private I_officer_EnquiryM enquiryManager;
     public HDBOfficer(String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
     {
         super(nric, password, age, martialStatus, userRole);
@@ -27,6 +30,9 @@ public class HDBOfficer extends Applicant
         this.enquiryIds = new ArrayList<>();
     }
 
+    public void replyEnquiry(Enquiry enquiry,String reply){
+        enquiryManager.replyEnquiry(enquiry, reply);
+    }
     public void joinProject(BTOProject project)
     {
         for (int i = 0; i < assignedProjects.size(); i++)
@@ -103,7 +109,7 @@ public class HDBOfficer extends Applicant
                 System.out.printf("Application closing date: %s%n", closingDate);
                 
                 // Suggestion: add getName() and Name to User
-                System.out.printf("HDB Manager in charge: %s%n", currproj.getHDBManagerInCharge().getName()) //getName not implemented
+                System.out.printf("HDB Manager in charge: %s%n", currproj.getHDBManagerInCharge().getuserID()); 
                 // Not implemented yet
                 System.out.printf("Available HDB officer slots: %d%n", currproj.getRemainingOfficerSlots());
             }
@@ -115,7 +121,10 @@ public class HDBOfficer extends Applicant
         // incomplete
     }
     
-
+    public List<BTOProject> getAssignedProjects()
+    {
+        return assignedProjects;
+    }
 
     
 }
