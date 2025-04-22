@@ -1,6 +1,7 @@
 package Main.BTO;
 
 import Main.Enums.FlatType;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ public class FlatList{
 
     public FlatList(List<Flat> flatlist){
         this.flatlist=flatlist;
+        this.unitCount = new HashMap<>();
         unitCount.put(FlatType.Two_Room,0);
         unitCount.put(FlatType.Three_Room,0);
         numAvailableUnits=0;
@@ -79,5 +81,9 @@ public class FlatList{
                 return;
             }
         }
+    }
+
+    public void print_unitCount(){
+        unitCount.forEach((key, value) -> System.out.println("Flat type- " + key + " : " + value + "units"));
     }
 }

@@ -1,41 +1,249 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AppManager {
-    private List<Officer> officers;
-    private List<Project> projects;
-    private List<Application> applications;
-    private List<Report> reports;
+    private final List<Officer> officers;
+    private final List<Project> projects;
+    private final List<Application> applications;
+    private final List<Report> reports;
 
     // Constructor
-    public AppManager() {}
+    public AppManager() {
+        this.officers = new ArrayList<>();
+        this.projects = new ArrayList<>();
+        this.applications = new ArrayList<>();
+        this.reports = new ArrayList<>();
+    }
 
-    // Methods
-    public void createOfficer(Officer officer) {}
-    public void createProject(Project project) {}
-    public void updateProject(String projectId, Project project) {}
-    public void deleteProject(String projectId) {}
-    public void getProject(String projectId) {}
-    public void getProjects() {}
-    public void getOfficer(String officerId) {}
-    public void getOfficers() {}
-    public void updateOfficer(String officerId, Officer officer) {}
-    public void deleteOfficer(String officerId) {}
-    public void getApplication(String applicationId) {}
-    public void getApplications() {}
-    public void updateApplication(String applicationId, Application application) {}
-    public void deleteApplication(String applicationId) {}
-    public void viewReport(String reportId) {}
-    public void getReports() {}
-    public void updateReport(String reportId, Report report) {}
-    public void deleteReport(String reportId) {}
-    public void approveApplication(String applicationId) {}
-    public void rejectApplication(String applicationId) {}
-    public void getPendingApplications() {}
-    public int getPendingApplicationCount() { return 0; }
-    public void assignOfficerToProject(String officerId, String projectId) {}
-    public void removeOfficerFromProject(String officerId, String projectId) {}
-    public void viewOfficerDetails(String officerId) {}
-    public void viewProjectDetails(String projectId) {}
-    public void generateReport(Map<String, String> criteria) {}
+    // Apply for a project
+    public boolean applyForProject(Application applicant, String projectId) {
+        if (applicant == null || projectId == null || applicant.getUserId() == null) {
+            throw new IllegalArgumentException("Application, user ID, or project ID cannot be null");
+        }
+
+        // Check if project exists
+        Project project = projects.stream()
+                .filter(p -> p.getProjectId().equals(projectId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Project with ID " + projectId + " not found"));
+
+        // Check if user has already applied
+        boolean alreadyApplied = applications.stream()
+                .anyMatch(app -> app.getUserId().equals(applicant.getUserId()) && app.getProjectId().equals(projectId));
+        if (alreadyApplied) {
+            return false; // Application already exists
+        }
+
+        // Set project ID and initial status for the application
+        applicant.setProjectId(projectId);
+        applicant.setStatus("PENDING");
+        applications.add(applicant);
+        return true;
+    }
+
+    // Get applications by user
+    public List<Application> getApplicationsByUser(User user) {
+        if (user == null || user.getUserId() == null) {
+            throw new IllegalArgumentException("User or user ID cannot be null");
+        }
+        return applications.stream()
+                .filter(app -> app.getUserId().equals(user.getUserId()))
+                .collect(Collectors.toList());
+    }
+
+    // Get applications by project
+    public List<Application> getApplicationsByProject(String projectId) {
+        if (projectId == null) {
+            throw new IllegalArgumentException("Project ID cannot be null");
+        }
+        return applications.stream()
+                .filter(app -> app.getProjectId().equals(projectId))
+                .collect(Collectors.toList());
+    }
+
+    // Update application status
+    public boolean updateApplicationStatus(String applicationId, String status) {
+        if (applicationId == null || status == null) {
+            throw new IllegalArgumentException("Application ID or status cannot be null");
+        }
+        if (!List.of("PENDING", "APPROVED", "REJECTED", "WITHDRAWN").contains(status)) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+
+        Application application = applications.stream()
+                .filter(app -> app.getApplicationId().equals(applicationId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Application with ID " + applicationId + " not found"));
+
+        // Prevent updating a withdrawn application
+        if ("WITHDRAWN".equals(application.getStatus())) {
+            return false;
+        }
+
+        application.setStatus(status);
+        return true;
+    }
+
+    // Request withdrawal of an application
+    public boolean requestWithdrawal(String applicationId) {
+        if (applicationId == null) {
+            throw new IllegalArgumentException("Application ID cannot be null");
+        }
+
+        Application application = applications.stream()
+                .filter(app -> app.getApplicationId().equals(applicationId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Application with ID " + applicationId + " not found"));
+
+        // Only allow withdrawal if the application is not already withdrawn or approved
+        if ("WITHDRAWN".equals(application.getStatus()) || "APPROVED".equals(application.getStatus())) {
+            return false;
+        }
+
+        application.setStatus("WITHDRAWN");
+        return true;
+    }
+
+    // Validate eligibility of a user for a project
+    public boolean validateEligibility(User user, String projectId) {
+        if (user == null || user.getUserId() == null || projectId == null) {
+            throw new IllegalArgumentException("User, user ID, or project ID cannot be null");
+        }
+
+        // Check if project exists
+        projects.stream()
+                .filter(p -> p.getProjectId().equals(projectId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Project with ID " + projectId + " not found"));
+
+        // Basic eligibility check: User should not have an approved application for this project
+        boolean hasApprovedApplication = applications.stream()
+                .anyMatch(app -> app.getUserId().equals(user.getUserId()) &&
+                        app.getProjectId().equals(projectId) &&
+                        "APPROVED".equals(app.getStatus()));
+        return !hasApprovedApplication; // Eligible if no approved application exists
+    }
+
+    // Existing methods with improvements
+
+    public void createOfficer(Officer officer) {
+        if (officer == null || officer.getOfficerId() == null) {
+            throw new IllegalArgumentException("Officer or officer ID cannot be null");
+        }
+        if (officers.stream().anyMatch(o -> o.getOfficerId().equals(officer.getOfficerId()))) {
+            throw new IllegalStateException("Officer with ID " + officer.getOfficerId() + " already exists");
+        }
+        officers.add(officer);
+    }
+
+    public void createProject(Project project) {
+        if (project == null || project.getProjectId() == null) {
+            throw new IllegalArgumentException("Project or project ID cannot be null");
+        }
+        if (projects.stream().anyMatch(p -> p.getProjectId().equals(project.getProjectId()))) {
+            throw new IllegalStateException("Project with ID " + project.getProjectId() + " already exists");
+        }
+        projects.add(project);
+    }
+
+    public void updateProject(String projectId, Project updatedProject) {
+        if (projectId == null || updatedProject == null) {
+            throw new IllegalArgumentException("Project ID or updated project cannot be null");
+        }
+        Project existingProject = projects.stream()
+                .filter(p -> p.getProjectId().equals(projectId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Project with ID " + projectId + " not found"));
+        existingProject.setTitle(updatedProject.getTitle());
+    }
+
+    public void deleteProject(String projectId) {
+        if (projectId == null) {
+            throw new IllegalArgumentException("Project ID cannot be null");
+        }
+        boolean removed = projects.removeIf(p -> p.getProjectId().equals(projectId));
+        if (!removed) {
+            throw new IllegalStateException("Project with ID " + projectId + " not found");
+        }
+    }
+
+    public Project getProject(String projectId) {
+        if (projectId == null) {
+            throw new IllegalArgumentException("Project ID cannot be null");
+        }
+        return projects.stream()
+                .filter(p -> p.getProjectId().equals(projectId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Project with ID " + projectId + " not found"));
+    }
+
+    public List<Project> getProjects() {
+        return new ArrayList<>(projects);
+    }
+
+    public void approveApplication(String applicationId) {
+        updateApplicationStatus(applicationId, "APPROVED");
+    }
+
+    public void rejectApplication(String applicationId) {
+        updateApplicationStatus(applicationId, "REJECTED");
+    }
+
+    public List<Application> getPendingApplications() {
+        return applications.stream()
+                .filter(app -> "PENDING".equals(app.getStatus()))
+                .collect(Collectors.toList());
+    }
+
+    public int getPendingApplicationCount() {
+        return (int) applications.stream()
+                .filter(app -> "PENDING".equals(app.getStatus()))
+                .count();
+    }
+
+    public void assignOfficerToProject(String officerId, String projectId) {
+        if (officerId == null || projectId == null) {
+            throw new IllegalArgumentException("Officer ID or project ID cannot be null");
+        }
+        Officer officer = officers.stream()
+                .filter(o -> o.getOfficerId().equals(officerId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Officer with ID " + officerId + " not found"));
+        Project project = projects.stream()
+                .filter(p -> p.getProjectId().equals(projectId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Project with ID " + projectId + " not found"));
+        project.getAssignedOfficerIds().add(officerId);
+    }
+
+    public void generateReport(Map<String, String> criteria) {
+        if (criteria == null) {
+            throw new IllegalArgumentException("Criteria cannot be null");
+        }
+        String projectId = criteria.get("projectId");
+        String status = criteria.get("status");
+        StringBuilder reportContent = new StringBuilder("Report generated with criteria: " + criteria + "\n");
+
+        if (projectId != null) {
+            Project project = getProject(projectId);
+            reportContent.append("Project: ").append(project.getTitle()).append("\n");
+        }
+        if (status != null) {
+            List<Application> filteredApplications = applications.stream()
+                    .filter(app -> status.equals(app.getStatus()))
+                    .collect(Collectors.toList());
+            reportContent.append("Applications with status ").append(status).append(": ").append(filteredApplications.size()).append("\n");
+        }
+
+        Report report = new Report(generateReportId(), reportContent.toString());
+        reports.add(report);
+    }
+
+    private String generateReportId() {
+        return "RPT-" + (reports.size() + 1);
+    }
+
+    // Other existing methods can be implemented similarly
 }

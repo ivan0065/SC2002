@@ -11,11 +11,15 @@ import Main.Manager_control.*;
 import Main.interfaces.I_applicationManager;
 import Main.interfaces.I_projectManager;
 
+import Main.interfaces.I_RegistrationManager;
+
+
 public class HDBManager extends User{
     private I_projectManager projectManager;
     private I_RegistrationManager registrationManager;
     private I_applicationManager appManager;
     private BTOProject project;
+    protected static ProjectDatabase BTOdatabase;
 
         // Constructor for HDBManager
     public HDBManager(String username, String password, int age, MaritalStatus maritalStatus, UserRole role,
@@ -33,7 +37,7 @@ public class HDBManager extends User{
         BTOApplication cur_Application=null;
         FlatList flatList=project.getflatList();
         for( BTOApplication application: app_list){
-            if(application.getID.equals(application_id)){
+            if(application.getApplicationID.equals(application_id)){
                 cur_Application= application;
                 break;
             }
@@ -50,7 +54,7 @@ public class HDBManager extends User{
         FlatList flatList=project.getflatList();
         BTOApplication cur_Application=null;
         for( BTOApplication application: app_list){
-            if(application.getID.equals(application_id)){
+            if(application.getApplicationID.equals(application_id)){
                 cur_Application= application;
                 break;
             }
@@ -94,6 +98,9 @@ public class HDBManager extends User{
 
     public void viewALLprojects(){
         //use projectdatabase
+        for (BTOProject proj: BTOdatabase.getAllProjects()){
+            proj.displayProject();
+        }
     }
     //RegistrationManager part
     

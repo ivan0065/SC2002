@@ -13,7 +13,7 @@ public class ApplicationManager implements I_applicationManager{
         if (unitCount.get(flatType) == 0 && "Approved".equals(newStatus)){
             throw new IllegalArgumentException("No available units of the selected flat type: " + flatType);
         }
-        application.setapplicationStatus(newStatus);
+        application.setApplicationStatus(newStatus);
         if (application.getFlatType()==FlatType.Three_Room){
             flatList.book_3room();
         }
@@ -24,7 +24,7 @@ public class ApplicationManager implements I_applicationManager{
     }
 
     public void approveBTOWithdrawal(BTOApplication application, FlatList flatList, String newStatus){
-        application.setwithdrawalStatus(newStatus);
+        application.setWithdrawalRequestStatus(newStatus);
     }
 
     public void generateApplicantReport(FilterCriteria criteria, List<BTOApplication> applications){

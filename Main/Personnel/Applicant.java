@@ -1,15 +1,20 @@
 package Main.Personnel;
 
+import Main.TimeManager;
+import Main.BTO.BTOProject;
+import Main.BTO.ProjectDatabase;
+import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
 import Main.Enums.UserRole;
+import Main.Manager_control.BTOApplication;
 
 import java.util.List;
 import java.util.ArrayList;
 
 public class Applicant extends User
 {
-    private String currentApplicationId; // ID of current application
-    private List<String> enquiryIds; // List containing ID of all enquiries made by applicant
+    protected String currentApplicationId; // ID of current application
+    protected List<String> enquiryIds; // List containing ID of all enquiries made by applicant
 
     // Constructor
     public Applicant(String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
@@ -35,9 +40,85 @@ public class Applicant extends User
         }
     }
 
+    public void applyBTO(String projectId, FlatType flatType)
+    {
+        if (currentApplicationId != null) 
+        {
+            System.out.println("You already have a pre-existing BTO application");
+            return;
+        }
+
+        // Access the ProjectDatabase through HDBManager's static reference
+        ProjectDatabase projectDatabase = HDBManager.BTOdatabase;
+        
+        // Get all projects and find the one with matching projectId
+        List<BTOProject> allProjects = projectDatabase.getAllProjects();
+        BTOProject targetProject = null;
+        
+        for (BTOProject project : allProjects) 
+        {
+            if (project.getProjectId().equals(projectId)) {
+                targetProject = project;
+                break;
+            }
+        }
+        
+        // Check if project is found
+        if (targetProject == null) 
+        {
+            System.out.println("Project with ID " + projectId + " not found.");
+            return;
+        }
+        // Check visibility
+        if (!targetProject.getVisibilitySetting()) 
+        {
+            System.out.println("This project is not currently open for applications.");
+            return;
+        }
+        // Check eligibility
+        boolean isMarried = getMaritalStatus() == MaritalStatus.MARRIED;
+        if (!targetProject.isApplicableFor(getAge(), isMarried)) 
+        {
+            System.out.println("You are not eligible to apply for this project. Singles must be 35 or older and can only apply for 2-Room flats.");
+            return;
+        }
+        if (!isMarried && flatType == FlatType.Three_Room)
+        {
+            System.out.println("Singles are only eligible to apply for 2-Room flats.");
+            return;
+        }
+
+        // Check if project is accepting applications in current time window
+        try 
+        {
+            boolean isValid = TimeManager.isValid(targetProject.getApplicationOpeningDate(), targetProject.getApplicationClosingDate());
+            if (!isValid)
+            {
+                System.out.println("This project is not currently accepting applications.");
+                return;
+            }
+        } 
+        catch (java.util.concurrent.TimeoutException e) 
+        {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        // Create random application ID
+        String applicationId = java.util.UUID.randomUUID().toString();
+        // Create new BTOApplication object
+        BTOApplication newApp = new BTOApplication(applicationId, this.getUserID(), projectId, flatType);
+
+        currentApplicationId = applicationId;
+        targetProject.addApplication(newApp);
+
+        System.out.printf("Successfully applied for project %s with flat type %s%n", targetProject.getProjectName(), flatType);
+
+    }
+
     public String viewApplicationStatus()
     {
-        return; //incomplete
+        return newApp.getApplicationStatus();
     }
 
 

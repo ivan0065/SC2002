@@ -1,48 +1,234 @@
 package Main.BTO;
 
-
-import java.util.List;
-import Main.Enums.FlatType;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import Main.Personnel.*;
+import Main.Manager_control.BTOApplication;
+import Main.Enums.FlatType;
+
 public class BTOProject {
-    private String projectStatus;
+		
+	private HDBManager HDBManagerInCharge;
+	
+	private List<HDBOfficer> HDBOfficerList; 
+	
+	private List<BTOApplication> applications;
+	
+	private List<Applicant> applicantList;
+		
+	private String projectName;
+	
+	private LocalDate applicationOpeningDate;
+	
+	private LocalDate applicationClosingDate;
+	
+	private boolean isVisible;
+	
+	private String projectStatus;
+	
+	private List<FlatType> flatTypes;
+	
+	private String projectNeighbourhood;
 
-    private String projectName;
+	private FlatList flatLists;
 
-    private String projectNeighbourhood;
+	private String projectId;
+	
+	public BTOProject(HDBManager HDBManagerInCharge,
+					List<HDBOfficer> HDBOfficerList,
+		            List<BTOApplication> applications,
+		            List<Applicant> applicantList,
+		            String projectName,
+		            LocalDate applicationOpeningDate,
+		            LocalDate applicationClosingDate,
+		            boolean isVisible,
+		            String projectStatus,
+		            List<FlatType> flatTypes,
+		            String projectNeighbourhood,
+					FlatList flatLists,
+					String projectId) {
+		this.HDBManagerInCharge = HDBManagerInCharge;
+		this.HDBOfficerList = HDBOfficerList;
+		this.applications = applications;
+		this.applicantList = applicantList;
+		this.projectName = projectName;
+		this.applicationOpeningDate = applicationOpeningDate;
+		this.applicationClosingDate = applicationClosingDate;
+		this.isVisible = isVisible;
+		this.projectStatus = projectStatus;
+		this.flatTypes = flatTypes;
+		this.projectNeighbourhood = projectNeighbourhood;
+		this.flatLists= flatLists;
+		this.projectId = projectId;
+		
+		this.HDBOfficerList = new ArrayList<>();
+	    this.applications = new ArrayList<>();
+	    this.applicantList = new ArrayList<>();
+	    this.flatTypes = new ArrayList<>();
+		}
 
-    private List<FlatType> flatTypes;
+	public String getProjectName() {
+	    return projectName;
+	}
 
-    private LocalDate applicationOpeningDate;
+	public void setProjectName(String projectName) {
+	    this.projectName = projectName;
+	}
 
-    private LocalDate applicationClosingDate;
+	public LocalDate getApplicationOpeningDate() {
+	    return applicationOpeningDate;
+	}
 
-    private String projectID;
+	public void setApplicationOpeningDate(LocalDate applicationOpeningDate) {
+	    this.applicationOpeningDate = applicationOpeningDate;
+	}
 
-    private List<Application> applicationList;
+	public LocalDate getApplicationClosingDate() {
+	    return applicationClosingDate;
+	}
 
-    private List<Applicant> applicatantList;
+	public void setApplicationClosingDate(LocalDate applicationClosingDate) {
+	    this.applicationClosingDate = applicationClosingDate;
+	}
 
-    private FlatList flatList;
+	public boolean getVisibilitySetting() {
+	    return isVisible;
+	}
 
-    private int availableOfficerSlots;
+	public void setVisible(boolean visible) {
+	    this.isVisible = visible;
+	}
 
-    public BTOProject(){
+	public String getProjectStatus() {
+	    return projectStatus;
+	}
 
+	public void setProjectStatus(String projectStatus) {
+	    this.projectStatus = projectStatus;
+	}
+
+	public String getProjectNeighbourhood() {
+	    return projectNeighbourhood;
+	}
+
+	public void setProjectNeighbourhood(String projectNeighbourhood) {
+	    this.projectNeighbourhood = projectNeighbourhood;
+	}
+
+	public HDBManager getHDBManagerInCharge() {
+	    return HDBManagerInCharge;
+	}
+
+	public void setHDBManagerInCharge(HDBManager HDBManagerInCharge) {
+	    this.HDBManagerInCharge = HDBManagerInCharge;
+	}
+
+	public String getProjectId(){
+		return projectId;
+	}
+	
+	// Editing Lists
+	
+	public List<HDBOfficer> getHDBOfficerList() {
+	    return HDBOfficerList;
+	}
+
+	public void addHDBOfficer(HDBOfficer officer) {
+	    HDBOfficerList.add(officer);
+	}
+
+	public List<BTOApplication> getApplications() {
+	    return applications;
+	}
+
+	public void addApplication(BTOApplication application) {
+	    applications.add(application);
+	}
+
+	public List<Applicant> getApplicantList() {
+	    return applicantList;
+	}
+
+	public void addApplicant(Applicant applicant) {
+	    applicantList.add(applicant);
+	}
+
+	public List<FlatType> getFlatTypes() {
+	    return flatTypes;
+	}
+
+	public void addFlatType(FlatType flatType) {
+	    flatTypes.add(flatType);
+	}
+	
+	// methods
+
+	public int getAvailableOfficerSlots() {
+	    return 10 - HDBOfficerList.size();
+	}
+
+	public boolean isApplicableFor(int age, boolean isMarried) {
+	    if (isMarried) {
+	        if (age >= 21) {
+	            return true; 
+	        }
+	    } else {
+	        if (age >= 35) {
+	            for (FlatType ft : flatTypes) {
+	                if (ft == FlatType.Two_Room) {
+	                    return true;
+	                }
+	            }
+	        }
+	    }
+	    return false; 
+	}
+	//IDK if needed cus when when manager approve application, auto updated
+	public boolean updateFlatAvailability(String flatTypeStr, int count) {
+	    // Find the matching FlatType object from this.flatTypes
+	    FlatType targetType = null;
+	    for (FlatType ft : flatTypes) {
+	        if (ft.toString().equalsIgnoreCase(flatTypeStr)) {
+	            targetType = ft;
+	            break;
+	        }
+	    }
+
+	    if (targetType == null) {
+	        return false; // No matching FlatType found in this project
+	    }
+
+	    // Find the corresponding FlatList and update count
+	    for (Flat flatList : flatLists) {
+	        FlatType typeInList = flatList.getFlatType();
+	        if (typeInList == targetType) {
+	            flatLists.getUnitCount().put(targetType, count);
+	            flatLists.setNumAvailableUnits(count);
+	            return true;
+	        }
+	    }
+
+	    return false; // Matching FlatList not found
+	}
+
+	public void displayProject() {
+	    System.out.println("=== BTO Project Details ===");
+	    System.out.println("Project Name        : " + projectName);
+	    System.out.println("Neighbourhood       : " + projectNeighbourhood);
+	    System.out.println("Project Status      : " + projectStatus);
+	    System.out.println("Visible to Public   : " + (isVisible ? "Yes" : "No"));
+	    System.out.println("Application Period  : " + applicationOpeningDate + " to " + applicationClosingDate);
+	    System.out.println("Available Officer Slots : " + getAvailableOfficerSlots());
+	    System.out.println();
+
+	    System.out.println("Available Flat Types and Units:");
+	    flatLists.print_unitCount();
+	    System.out.println("============================\n");
+	}
+
+    public int getRemainingOfficerSlots() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    //isVisible
-
-    //managerincharge
-
-    //officerlist
-
-    public String getProjectName(){
-        return this.projectName;
-    }
-
-    public FlatList getflatList(){
-        return flatList;
-    }
 }
