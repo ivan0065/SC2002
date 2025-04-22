@@ -32,6 +32,8 @@ public class BTOProject {
 	private String projectNeighbourhood;
 
 	private FlatList flatLists;
+
+	private String projectId;
 	
 	public BTOProject(HDBManager HDBManagerInCharge,
 					List<HDBOfficer> HDBOfficerList,
@@ -44,7 +46,8 @@ public class BTOProject {
 		            String projectStatus,
 		            List<FlatType> flatTypes,
 		            String projectNeighbourhood,
-					FlatList flatLists) {
+					FlatList flatLists,
+					String projectId) {
 		this.HDBManagerInCharge = HDBManagerInCharge;
 		this.HDBOfficerList = HDBOfficerList;
 		this.applications = applications;
@@ -57,6 +60,7 @@ public class BTOProject {
 		this.flatTypes = flatTypes;
 		this.projectNeighbourhood = projectNeighbourhood;
 		this.flatLists= flatLists;
+		this.projectId = projectId;
 		
 		this.HDBOfficerList = new ArrayList<>();
 	    this.applications = new ArrayList<>();
@@ -118,6 +122,10 @@ public class BTOProject {
 
 	public void setHDBManagerInCharge(HDBManager HDBManagerInCharge) {
 	    this.HDBManagerInCharge = HDBManagerInCharge;
+	}
+
+	public String getProjectId(){
+		return projectId;
 	}
 	
 	// Editing Lists

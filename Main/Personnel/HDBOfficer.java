@@ -8,6 +8,7 @@ import Main.BTO.BTOProject;
 import Main.BTO.Flat;
 import Main.Enums.MaritalStatus;
 import Main.Enums.UserRole;
+import Main.Manager_control.BTOApplication;
 import Main.Manager_control.Registration;
 import Main.Enums.FlatType;
 
@@ -61,18 +62,18 @@ public class HDBOfficer extends Applicant
         //?
     }
 
-    public void applyBTO(String applyId)
+    public void applyBTO(String projectId)
     {
         for (int i = 0; i < assignedProjects.size(); i++)
         {
-            if (applyId == assignedProjects.get(i).getProjectID())
+            if (projectId == assignedProjects.get(i).getProjectId())
                 {
-                    System.out.printf("You have already applied for the project %s as an officer%n", assignedProjects.get(i).getProjectID());
+                    System.out.printf("You have already applied for the project %s as an officer%n", assignedProjects.get(i).getProjectId());
                     return;
                 }
         }
-        currentApplicationId = applyId;
-        // Missing: register HDBOfficer in BTOApplication, BTOProject
+        currentApplicationId = projectId;
+        BTOApplication newApp = new BTOApplication();
     }
 
     public void viewAssignedProjectDetails(String projectId)
@@ -87,12 +88,11 @@ public class HDBOfficer extends Applicant
                 System.out.printf("Project neighbourhood: %s%n", currproj.getProjectNeighbourhood());
                 System.out.println("Flat types:");
                 // Not implemented yet
-                List<Flat> currflats = BTOProject.getFlatTypes();
-                // consider changing getFlatTypes() function to getFlats()
+                List<FlatType> currflats = currproj.getFlatTypes();
                 for (int j = 0; j < currflats.size(); j++)
                 {
                     System.out.printf("Flat type %d: %s%n", j, currflats.get(i));
-                    System.out.printf("Number of units for flat type %s: %d", currflats.get(i).getFlatType, currflats.get(i).getNumAvailableUnits());
+                    System.out.printf("Number of units for flat type %s: %d", currflats.get(i).toString(), currflats.get(i).getNumAvailableUnits());
                 }
                 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
