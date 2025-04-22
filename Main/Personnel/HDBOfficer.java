@@ -62,19 +62,19 @@ public class HDBOfficer extends Applicant
         //?
     }
 
-    public void applyBTO(String projectId)
+    @Override
+    public void applyBTO(String projectName, FlatType flatType) 
     {
-        for (int i = 0; i < assignedProjects.size(); i++)
-        {
-            if (projectId == assignedProjects.get(i).getProjectId())
-                {
-                    System.out.printf("You have already applied for the project %s as an officer%n", assignedProjects.get(i).getProjectId());
-                    return;
-                }
+        // Check if the officer is handling this project
+        for (BTOProject project : assignedProjects) {
+            if (projectName.equals(project.getProjectName())) {
+                System.out.printf("You cannot apply for project %s as you are an officer handling this project.%n", project.getProjectName());
+                return;
+            }
         }
-        currentApplicationId = projectId;
-        BTOApplication newApp = new BTOApplication();
+        super.applyBTO(projectName, flatType);
     }
+
 
     public void viewAssignedProjectDetails(String projectId)
     {
