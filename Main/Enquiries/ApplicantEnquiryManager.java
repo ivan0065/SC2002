@@ -1,14 +1,15 @@
 package Main.Enquiries;
+import Main.BTO.BTOProject;
 import Main.Personnel.User;
-import Main.interfaces.EnquiryManager;
-public class ApplicantEnquiryManager implements EnquiryManager{
+import Main.interfaces.I_applicant_EnquiryM;
+public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
     private User applicant;
 
     public ApplicantEnquiryManager(User applicant) {
         this.applicant = applicant;
     }
-    @Override
-    public void ViewEnquiry(EnquiryList enquiryList) {
+
+    public void viewEnquiry(EnquiryList enquiryList) {
         Boolean status=false;
         if(enquiryList.isEmpty()){
             System.out.println("No enquiries available.");
@@ -24,11 +25,12 @@ public class ApplicantEnquiryManager implements EnquiryManager{
             System.out.println("No enquiries available for this applicant.");
         }
     }
-    public void addEnquiry(EnquiryList enquiryList, String question,Project project){ //project not created yet
+    public void addEnquiry(EnquiryList enquiryList, String question,BTOProject project){ 
         int enquiryID = enquiryList.getEnquiries().size() + 1; 
         Enquiry newEnquiry = new Enquiry(question, enquiryID, applicant);
         enquiryList.addEnquiry(newEnquiry);
         System.out.println("Enquiry added successfully.");
+
     }
 
     public void removeEnquiry(EnquiryList enquiryList, int enquiryID){
@@ -48,5 +50,11 @@ public class ApplicantEnquiryManager implements EnquiryManager{
         } else {
             System.out.println("Enquiry not found or you do not have permission to edit it.");
         }
+    }
+
+    @Override
+    public void ViewEnquiry(EnquiryList enquiryList) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'ViewEnquiry'");
     }
 }

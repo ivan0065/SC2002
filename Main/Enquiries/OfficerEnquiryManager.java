@@ -1,11 +1,12 @@
 package Main.Enquiries;
-import Main.Personnel.User;
-import Main.interfaces.EnquiryManager;
-public class OfficerEnquiryManager implements EnquiryManager {
-    //private HDBOfficer officer; officer class not created
-    private User officer;
+import Main.BTO.BTOProject;
+import Main.Personnel.HDBOfficer;
+import Main.interfaces.I_officer_EnquiryM;
+import java.util.List;
+public class OfficerEnquiryManager implements I_officer_EnquiryM {
+    private HDBOfficer officer;
 
-    public OfficerEnquiryManager(User officer) {
+    public OfficerEnquiryManager(HDBOfficer officer) {
         this.officer = officer;
     }
     @Override
@@ -16,14 +17,22 @@ public class OfficerEnquiryManager implements EnquiryManager {
             return;
         }
         for(Enquiry enquiry: enquiryList.getEnquiries()){
-            if(enquiry.getProject().equals(officer.getProject())){
-                enquiry.printEnquiry();
-                status=true;
+            List<BTOProject> assigned_projects = officer.getAssignedProjects();
+            for (BTOProject project : assigned_projects) {
+                if (enquiry.getProject().equals(project.getProjectId()) ) {
+                    enquiry.printEnquiry();
+                    status = true;
+                }
             }
+            
         }
         if(status==false){
             System.out.println("No enquiries available for this applicant.");
         }
+    }
+    public void replyEnquiry(Enquiry enquiry, String reply) {
+        enquiry.addReply(reply);
+        System.out.println("Reply sent successfully.");
     }
 
 }

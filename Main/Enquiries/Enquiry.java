@@ -1,8 +1,8 @@
 package Main.Enquiries;
 
-import java.time.LocalDateTime;
-
+import Main.BTO.BTOProject;
 import Main.Personnel.User;
+import java.time.LocalDateTime;
 
 public class Enquiry{
     private String question;
@@ -10,8 +10,8 @@ public class Enquiry{
     private int enquiryID;
     private Boolean status=false;
     private User sender;
-    //private Project project;
     private LocalDateTime timestamp;
+    private BTOProject project;
 
     public Enquiry(String question, int enquiryID, User sender) {
         // check if timestamp is before proj opendate or after proj enddate
@@ -50,8 +50,8 @@ public class Enquiry{
     public int getEnquiryID(){
         return enquiryID;
     }
-    public String getProject(){ //project not made yet
-        return null;
+    public String getProject(){
+        return project.getProjectName();
     }
 
 }

@@ -102,6 +102,9 @@ public class HDBManager extends User{
             proj.displayProject();
         }
     }
+    public String getuserID(){
+        return super.getUserID();
+    }
     //RegistrationManager part
     
 }
