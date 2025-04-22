@@ -132,14 +132,14 @@ public class ProjectDatabase {
      * Helper method to parse flat type string to enum
      */
     private FlatType parseFlatType(String typeStr) {
-        if (typeStr.contains("2-Room")) {
-            return FlatType.TWO_ROOM;
-        } else if (typeStr.contains("3-Room")) {
-            return FlatType.THREE_ROOM;
-        } else {
-            throw new IllegalArgumentException("Unknown flat type: " + typeStr);
-        }
+    if (typeStr.contains("2-Room")) {
+        return FlatType.Two_Room;  // Changed from TWO_ROOM to Two_Room
+    } else if (typeStr.contains("3-Room")) {
+        return FlatType.Three_Room;  // Changed from THREE_ROOM to Three_Room
+    } else {
+        throw new IllegalArgumentException("Unknown flat type: " + typeStr);
     }
+}
     
     /**
      * Helper method to parse date string to LocalDate
@@ -154,8 +154,18 @@ public class ProjectDatabase {
      * 
      * @param sortFilter The enum specifying how to sort or filter the projects
      */
-    public void getBTOProjectsList(SortType sortFilter) {
-        List<BTOProject> filteredProjects = new ArrayList<>(projects);
+    public List<BTOProject> getBTOProjectsList() {
+    return new ArrayList<>(projects);
+}
+
+// Update the existing getBTOProjectsList method to properly handle VISIBLE_ONLY filter
+public void getBTOProjectsList(SortType sortFilter) {
+    List<BTOProject> filteredProjects = new ArrayList<>(projects);
+    
+    // Apply visibility filter first if needed
+    if (sortFilter == SortType.VISIBLE_ONLY) {
+        filteredProjects.removeIf(p -> !p.isVisible());
+    }
         
         // Apply sorting/filtering based on the provided enum
         switch(sortFilter) {
