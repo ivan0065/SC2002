@@ -31,7 +31,7 @@ public class HDBOfficer extends Applicant
     {
         for (int i = 0; i < assignedProjects.size(); i++)
         {
-            if (currentApplicationId == assignedProjects.get(i).getProjectID())
+            if (currentApplicationId == assignedProjects.get(i).getProjectId())
                 {
                     System.out.printf("You have already applied for the project %s as an applicant%n", assignedProjects.get(i).getProjectID());
                     return;
@@ -80,7 +80,7 @@ public class HDBOfficer extends Applicant
     {
         for (int i = 0; i < assignedProjects.size(); i++)
         {
-            if (assignedProjects.get(i).getProjectID() == projectId)
+            if (assignedProjects.get(i).getProjectId() == projectId)
             {
                 BTOProject currproj = assignedProjects.get(i);
                 System.out.printf("Project name: %s%n", currproj.getProjectName());
