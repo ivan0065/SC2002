@@ -133,9 +133,9 @@ public class ProjectDatabase {
      */
     private FlatType parseFlatType(String typeStr) {
     if (typeStr.contains("2-Room")) {
-        return FlatType.Two_Room;  // Changed from TWO_ROOM to Two_Room
+        return FlatType.Two_Room; 
     } else if (typeStr.contains("3-Room")) {
-        return FlatType.Three_Room;  // Changed from THREE_ROOM to Three_Room
+        return FlatType.Three_Room; 
     } else {
         throw new IllegalArgumentException("Unknown flat type: " + typeStr);
     }
@@ -281,13 +281,17 @@ public void getBTOProjectsList(SortType sortFilter) {
      * @return The project with the specified name, or null if not found
      */
     public BTOProject getProjectByName(String projectName) {
-        for (BTOProject project : projects) {
-            if (project.getProjectName().equalsIgnoreCase(projectName)) {
-                return project;
-            }
-        }
+    if (projectName == null) {
         return null;
     }
+    
+    for (BTOProject project : projects) {
+        if (project.getProjectName().equalsIgnoreCase(projectName.trim())) {
+            return project;
+        }
+    }
+    return null;
+}
     
     /**
      * Get the list of all projects
