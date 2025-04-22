@@ -2,17 +2,63 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ReceiptGenerator {
-    // Constructor
-    public ReceiptGenerator() {}
 
-    // Method to generate a receipt
-    public Map<String, String> generateReceipt() {
-        Map<String, String> receipt = new HashMap<>();
-        // Placeholder implementation - add actual logic as needed
-        receipt.put("ReceiptID", "REC123");
-        receipt.put("Date", "2025-04-19");
-        receipt.put("Amount", "100.00");
-        receipt.put("Description", "Payment for Project XYZ");
-        return receipt;
+    // Generate a receipt for a given application
+    public void generateReceipt(Application application) {
+        if (application == null) {
+            throw new IllegalArgumentException("Application cannot be null");
+        }
+
+        // Basic receipt generation logic
+        StringBuilder receipt = new StringBuilder();
+        receipt.append("=== Receipt ===\n");
+        receipt.append("Application ID: ").append(application.getApplicationId()).append("\n");
+        receipt.append("User ID: ").append(application.getUserId()).append("\n");
+        receipt.append("Project ID: ").append(application.getProjectId()).append("\n");
+        receipt.append("Status: ").append(application.getStatus()).append("\n");
+        receipt.append("=============\n");
+
+        // For simplicity, print the receipt to the console
+        // In a real system, this could be saved to a file, database, or sent via email
+        System.out.println(receipt.toString());
+    }
+
+    // Generate a receipt specifically for approved applications
+    public void generateReceiptForApproved(Application application) {
+        if (application == null) {
+            throw new IllegalArgumentException("Application cannot be null");
+        }
+        if (!"APPROVED".equals(application.getStatus())) {
+            throw new IllegalStateException("Cannot generate receipt: Application is not approved. Current status: " + application.getStatus());
+        }
+
+        // Receipt generation logic for approved applications
+        StringBuilder receipt = new StringBuilder();
+        receipt.append("=== Approved Application Receipt ===\n");
+        receipt.append("Application ID: ").append(application.getApplicationId()).append("\n");
+        receipt.append("User ID: ").append(application.getUserId()).append("\n");
+        receipt.append("Project ID: ").append(application.getProjectId()).append("\n");
+        receipt.append("Status: APPROVED\n");
+        receipt.append("Message: Congratulations! Your application has been approved.\n");
+        receipt.append("=============================\n");
+
+        // For simplicity, print the receipt to the console
+        System.out.println(receipt.toString());
+    }
+
+    // Get details of a user and project as a Map
+    public Map<String, String> getDetails(User user, Project project) {
+        if (user == null || project == null) {
+            throw new IllegalArgumentException("User or project cannot be null");
+        }
+
+        // Create a map to store user and project details
+        Map<String, String> details = new HashMap<>();
+        details.put("userId", user.getUserId());
+        details.put("userName", user.getName());
+        details.put("projectId", project.getProjectId());
+        details.put("projectTitle", project.getTitle());
+
+        return details;
     }
 }

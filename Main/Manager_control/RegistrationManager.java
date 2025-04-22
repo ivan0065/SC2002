@@ -28,18 +28,21 @@ public class RegistrationManager implements I_RegistrationManager{
 	}
 	
 	public List<BTOProject> getAvailForRegistration() {
-		List<BTOProject> allProjects = ProjectDatabase.getBTOProjectsList(); 
-	    List<BTOProject> availProjects = new ArrayList<>();
+  
+    	ProjectDatabase database = new ProjectDatabase();
+    // Call the instance method instead of a static method
+    	List<BTOProject> allProjects = database.getBTOProjectsList();
+    	List<BTOProject> availProjects = new ArrayList<>();
 
 	    for (BTOProject project : allProjects) {
-	    	int availableSlots = project.getRemainingOfficerSlots(); 
+	        int availableSlots = project.getRemainingOfficerSlots(); 
 	        if (availableSlots > 0) {
-	        	availProjects.add(project);
-	        	}
+	            availProjects.add(project);
 	        }
+	    }
 
-	        return availProjects;
-	}
+    return availProjects;
+}
 	
 	public boolean validateOfficerEligibility(String officerUserID, String projectName) {
 		// Get the list of applications tied to the project the officer is trying to register for
