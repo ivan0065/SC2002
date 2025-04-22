@@ -41,9 +41,6 @@ public class EnquiryList{
         }
         return null;
     }
-    public String getReply() {
-    return reply;
-}
 
     public boolean isEmpty(){
         return enquires.isEmpty();

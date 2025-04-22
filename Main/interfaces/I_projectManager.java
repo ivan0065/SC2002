@@ -1,9 +1,28 @@
 package Main.interfaces;
 
-import java.util.List;
 import Main.BTO.BTOProject;
+import Main.BTO.FlatList;
+import Main.Enums.FlatType;
+import Main.Manager_control.BTOApplication;
+import Main.Personnel.Applicant;
+import Main.Personnel.HDBManager;
+import Main.Personnel.HDBOfficer;
+import java.time.LocalDate;
+import java.util.List;
 public interface I_projectManager {
-    void createBTOProject();
+    public void createBTOProject(HDBManager HDBManagerInCharge,
+					List<HDBOfficer> HDBOfficerList,
+		            List<BTOApplication> applications,
+		            List<Applicant> applicantList,
+		            String projectName,
+		            LocalDate applicationOpeningDate,
+		            LocalDate applicationClosingDate,
+		            boolean isVisible,
+		            String projectStatus,
+		            List<FlatType> flatTypes,
+		            String projectNeighbourhood,
+					FlatList flatLists,
+					String projectId);
     void editBTOProject(int choice);
     void deleteBTOProject(String projectName);
     void toggleProjectVisibility();

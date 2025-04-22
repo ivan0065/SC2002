@@ -1,11 +1,11 @@
 package Main.BTO;
 
+import Main.Enums.FlatType;
+import Main.Manager_control.BTOApplication;
+import Main.Personnel.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import Main.Personnel.*;
-import Main.Manager_control.BTOApplication;
-import Main.Enums.FlatType;
 
 public class BTOProject {
 		
@@ -162,6 +162,9 @@ public class BTOProject {
 	    flatTypes.add(flatType);
 	}
 	
+	public FlatList getFlatLists() {
+	    return flatLists;
+	}
 	// methods
 
 	public int getAvailableOfficerSlots() {
@@ -185,7 +188,7 @@ public class BTOProject {
 	    return false; 
 	}
 	//IDK if needed cus when when manager approve application, auto updated
-	public boolean updateFlatAvailability(String flatTypeStr, int count) {
+	/*public boolean updateFlatAvailability(String flatTypeStr, int count) {
 	    // Find the matching FlatType object from this.flatTypes
 	    FlatType targetType = null;
 	    for (FlatType ft : flatTypes) {
@@ -210,7 +213,8 @@ public class BTOProject {
 	    }
 
 	    return false; // Matching FlatList not found
-	}
+	}*/
+	
 
 	public void displayProject() {
 	    System.out.println("=== BTO Project Details ===");

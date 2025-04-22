@@ -9,7 +9,13 @@ public class FlatList{
     private List<Flat> flatlist;
     private int numAvailableUnits;
     private Map<FlatType,Integer> unitCount;
-
+    public FlatList(){
+        this.flatlist=null;
+        this.unitCount = new HashMap<>();
+        unitCount.put(FlatType.Two_Room,0);
+        unitCount.put(FlatType.Three_Room,0);
+        numAvailableUnits=0;
+    }
     public FlatList(List<Flat> flatlist){
         this.flatlist=flatlist;
         this.unitCount = new HashMap<>();
@@ -44,7 +50,7 @@ public class FlatList{
 
     public void book_3room(){
         for(Flat flat: flatlist){
-            if(flat.getFlatType()==FlatType.Three_Room && flat.isbooked()==false){
+            if(flat.getFlatType()==FlatType.Three_Room && !flat.isbooked()){
                 flat.Book_flat();
                 this.numAvailableUnits--;
                 this.unitCount.put(FlatType.Three_Room,this.unitCount.get(FlatType.Three_Room)-1);
@@ -54,7 +60,7 @@ public class FlatList{
     }
     public void book_2room(){
         for(Flat flat: flatlist){
-            if(flat.getFlatType()==FlatType.Two_Room && flat.isbooked()==false){
+            if(flat.getFlatType()==FlatType.Two_Room && !flat.isbooked()){
                 flat.Book_flat();
                 this.numAvailableUnits--;
                 this.unitCount.put(FlatType.Two_Room,this.unitCount.get(FlatType.Two_Room)-1);

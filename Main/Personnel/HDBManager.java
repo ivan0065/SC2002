@@ -35,9 +35,9 @@ public class HDBManager extends User{
     public boolean approveBTOApplication(String application_id, String newStatus){
         List<BTOApplication> app_list=project.getApplications();
         BTOApplication cur_Application=null;
-        FlatList flatList=project.getflatList();
+        FlatList flatList=project.getFlatLists();
         for( BTOApplication application: app_list){
-            if(application.getApplicationID.equals(application_id)){
+            if(application.getApplicationId().equals(application_id)){
                 cur_Application= application;
                 break;
             }
@@ -51,10 +51,10 @@ public class HDBManager extends User{
 
     public void approveBTOWithdrawal(String application_id, String newStatus){
         List<BTOApplication> app_list=project.getApplications();
-        FlatList flatList=project.getflatList();
+        FlatList flatList=project.getFlatLists();
         BTOApplication cur_Application=null;
         for( BTOApplication application: app_list){
-            if(application.getApplicationID.equals(application_id)){
+            if(application.getApplicationId().equals(application_id)){
                 cur_Application= application;
                 break;
             }
@@ -73,10 +73,10 @@ public class HDBManager extends User{
     //ProjectManager part
 
     public void createBTOProject(){
-        projectManager.createBTOProject();
+        projectManager.createBTOProject(this, project.getHDBOfficerList(), project.getApplications(), project.getApplicantList(), project.getProjectName(), project.getApplicationOpeningDate(), project.getApplicationClosingDate(), project.isVisible(), project.getProjectStatus(), project.getFlatTypes(), project.getProjectNeighbourhood(), project.getFlatLists(), project.getProjectId());
     }
 
-    public void editBTOProject(int choice){
+    public void editBTOProject(int choice,BTOProject project){
         projectManager.editBTOProject(choice);
     }
 

@@ -9,7 +9,7 @@ public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
         this.applicant = applicant;
     }
 
-    public void viewEnquiry(EnquiryList enquiryList) {
+    public void ViewEnquiry(EnquiryList enquiryList) {
         Boolean status=false;
         if(enquiryList.isEmpty()){
             System.out.println("No enquiries available.");
@@ -52,9 +52,5 @@ public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
         }
     }
 
-    @Override
-    public void ViewEnquiry(EnquiryList enquiryList) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'ViewEnquiry'");
-    }
+
 }

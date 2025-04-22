@@ -1,8 +1,11 @@
 package AppInterface;
+import Main.BTO.BTOProject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import Main.Personnel.HDBManager;
+import Main.BTO.FlatList;
 import Main.Enums.*;
 public class I_manager{
     private HDBManager manager;
@@ -110,11 +113,92 @@ public class I_manager{
                     }
                     break;
                 case 4:
-                    manager.createBTOProject();
+                    System.out.println("Creating a new BTO project...");
+                    System.out.println("Enter project name:");
+                    String projectName = scanner.nextLine();
+                    System.out.println("Enter application opening date (YYYY-MM-DD):");
+                    String openingDateStr = scanner.nextLine();
+                    System.out.println("Enter application closing date (YYYY-MM-DD):");
+                    String closingDateStr = scanner.nextLine();
+                    System.out.println("Enter project status:");
+                    String projectStatus = scanner.nextLine();
+                    System.out.println("Enter project neighbourhood:");
+                    String projectNeighbourhood = scanner.nextLine();
+                    System.out.println("Enter flat types (comma-separated):");
+                    String flatTypesStr = scanner.nextLine();
+                    System.out.println("Enter project visibility (true/false):");
+                    boolean isVisible = scanner.nextBoolean();
+                    scanner.nextLine(); // consume the newline character
+                    System.out.println("Enter project ID:");
+                    String projectId = scanner.nextLine();
+                    System.out.println("Enter flat list (comma-separated):");
+                    String flatListStr = scanner.nextLine();
+                    // Parse the flat types and flat list
+                    String[] flatTypesArray = flatTypesStr.split(",");
+                    String[] flatListArray = flatListStr.split(",");
+                    // Convert flat types to FlatType enum
+                    List<FlatType> flatTypes = new ArrayList<>();
+                    for (String flatTypeStr : flatTypesArray) {
+                        FlatType flatType = FlatType.valueOf(flatTypeStr.trim().toUpperCase());
+                        flatTypes.add(flatType);
+                    }
+                    // Create FlatList object
+                    FlatList flatList = new FlatList();
+                    for (String flat : flatListArray) {
+                        FlatType flatType = FlatType.valueOf(flat.trim().toUpperCase());
+                        flatList.addFlat(flatType);
+                    }
+                    // Create the BTO project
+                    manager.createBTOProject(projectName, openingDateStr, closingDateStr, isVisible, projectStatus, flatTypes, projectNeighbourhood, flatList, projectId);
+                    System.out.println("BTO project created successfully!");
                     break;
                 case 5:
+                    BTOProject proj;;
+                    System.out.println("Enter the project name to edit:");
+                    String projectName1 = scanner.nextLine();
+                    // Display the fields that can be edited
+                    // You can replace these with actual field names or enums if you have them defined
                     // by choices
-                    manager.editBTOProject();
+                    if (manager.getManagedProject().isEmpty()) {
+                        System.out.println("No projects available to edit.");
+                        break;
+                    }
+                    else{
+                        if (manager.getManagedProject().stream().anyMatch(project -> project.getProjectName().equals(projectName1))){
+                            System.out.println("Project found: " + projectName1);
+                            proj= manager.getManagedProject().stream().filter(project -> project.getProjectName().equals(projectName1)).findFirst().orElse(null);
+                        }
+                        else{
+                            System.out.println("Project not found: " + projectName1);
+                            break;
+                        }
+                    }
+                    System.out.println("Choose the field you want to edit: ");
+                    System.out.println("1. Project Name");
+                    System.out.println("2. Application Opening Date");
+                    System.out.println("3. Application Closing Date");
+                    System.out.println("4. Project Status");
+                    System.out.println("5. Project Neighbourhood");
+                    System.out.println("6. Flat Types");
+                    System.out.println("7. Project Visibility");
+                    System.out.println("8. Project ID");
+                    System.out.println("9. Flat List");
+                    int edit_choice=0;
+                    try {
+                        edit_choice = scanner.nextInt();
+                        scanner.nextLine(); // consume the newline character
+                        if (edit_choice < 1 || edit_choice > 9) {
+                            System.out.println("Invalid choice. Please try again.");
+                            break;
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Invalid input. Please enter a number between 1 and 9.");
+                        scanner.nextLine(); // consume the invalid input
+                        break;
+                    }
+                    
+                    manager.editBTOProject(edit_choice, proj);
+                    
                     break;
                 case 6:
                     System.out.println("Enter name of Project:");

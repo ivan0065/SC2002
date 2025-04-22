@@ -1,5 +1,7 @@
 package Main.Manager_control;
 
+import Main.BTO.BTOProject;
+import Main.BTO.FlatList;
 import Main.Enums.FlatType;
 import Main.Personnel.Applicant;
 
@@ -125,7 +127,7 @@ public class BTOApplication {
             return false;
         }
     
-        FlatList flatList = project.getflatList();
+        FlatList flatList = project.getFlatLists();
          // Check flat availability
         if (flatType == FlatType.Three_Room && flatList.get3roomAvailUnit() > 0) {
             flatList.book_3room();

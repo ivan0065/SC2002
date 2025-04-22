@@ -39,7 +39,7 @@ public class HDBOfficer extends Applicant
         {
             if (currentApplicationId == assignedProjects.get(i).getProjectId())
                 {
-                    System.out.printf("You have already applied for the project %s as an applicant%n", assignedProjects.get(i).getProjectID());
+                    System.out.printf("You have already applied for the project %s as an applicant%n", assignedProjects.get(i).getProjectName());
                     return;
                 }
             else if (!project.getApplicationOpeningDate().isAfter(assignedProjects.get(i).getApplicationOpeningDate()))
