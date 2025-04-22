@@ -128,6 +128,9 @@ public class BTOProject {
 		return projectId;
 	}
 	
+	public void setProjectId(String projectId){
+		this.projectId = projectId;
+	}
 	// Editing Lists
 	
 	public List<HDBOfficer> getHDBOfficerList() {

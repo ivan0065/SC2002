@@ -179,20 +179,19 @@ public class I_manager{
                     System.out.println("3. Application Closing Date");
                     System.out.println("4. Project Status");
                     System.out.println("5. Project Neighbourhood");
-                    System.out.println("6. Flat Types");
-                    System.out.println("7. Project Visibility");
-                    System.out.println("8. Project ID");
-                    System.out.println("9. Flat List");
+                    System.out.println("6. Project Visibility");
+                    System.out.println("7. Project ID");
+                    
                     int edit_choice=0;
                     try {
                         edit_choice = scanner.nextInt();
                         scanner.nextLine(); // consume the newline character
-                        if (edit_choice < 1 || edit_choice > 9) {
+                        if (edit_choice < 1 || edit_choice > 8) {
                             System.out.println("Invalid choice. Please try again.");
                             break;
                         }
                     } catch (Exception e) {
-                        System.out.println("Invalid input. Please enter a number between 1 and 9.");
+                        System.out.println("Invalid input. Please enter a number between 1 and 8.");
                         scanner.nextLine(); // consume the invalid input
                         break;
                     }

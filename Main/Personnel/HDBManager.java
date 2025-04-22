@@ -1,17 +1,14 @@
 package Main.Personnel;
 
-import java.util.List;
-
 import Main.BTO.*;
 import Main.Enums.FilterCriteria;
-import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
 import Main.Enums.UserRole;
 import Main.Manager_control.*;
+import Main.interfaces.I_RegistrationManager;
 import Main.interfaces.I_applicationManager;
 import Main.interfaces.I_projectManager;
-
-import Main.interfaces.I_RegistrationManager;
+import java.util.List;
 
 
 public class HDBManager extends User{
@@ -73,19 +70,19 @@ public class HDBManager extends User{
     //ProjectManager part
 
     public void createBTOProject(){
-        projectManager.createBTOProject(this, project.getHDBOfficerList(), project.getApplications(), project.getApplicantList(), project.getProjectName(), project.getApplicationOpeningDate(), project.getApplicationClosingDate(), project.isVisible(), project.getProjectStatus(), project.getFlatTypes(), project.getProjectNeighbourhood(), project.getFlatLists(), project.getProjectId());
+        projectManager.createBTOProject(this, project.getHDBOfficerList(), project.getApplications(), project.getApplicantList(), project.getProjectName(), project.getApplicationOpeningDate(), project.getApplicationClosingDate(), project.getVisibilitySetting(), project.getProjectStatus(), project.getFlatTypes(), project.getProjectNeighbourhood(), project.getFlatLists(), project.getProjectId());
     }
 
     public void editBTOProject(int choice,BTOProject project){
-        projectManager.editBTOProject(choice);
+        projectManager.editBTOProject(choice,project);
     }
 
     public void deleteBTOProject(String ProjectName){
         projectManager.deleteBTOProject(ProjectName);
     }
 
-    public void toggleProjectVisibility(){
-        projectManager.toggleProjectVisibility();
+    public void toggleProjectVisibility(BTOProject project,boolean isVisible){
+        projectManager.toggleProjectVisibility(project,isVisible);
     }
 
     public List<BTOProject> getManagedProject(){

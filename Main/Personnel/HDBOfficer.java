@@ -1,20 +1,16 @@
 package Main.Personnel;
 
+import Main.BTO.BTOProject;
+import Main.BTO.FlatList;
+import Main.Enquiries.*;
+import Main.Enums.FlatType;
+import Main.Enums.MaritalStatus;
+import Main.Enums.UserRole;
+import Main.Manager_control.Registration;
+import Main.interfaces.I_officer_EnquiryM;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import Main.BTO.BTOProject;
-import Main.BTO.Flat;
-import Main.Enums.MaritalStatus;
-import Main.Enums.UserRole;
-import Main.Manager_control.BTOApplication;
-import Main.Manager_control.Registration;
-import Main.interfaces.EnquiryManager;
-import Main.interfaces.I_officer_EnquiryM;
-import Main.Enums.FlatType;
-import Main.Enquiries.*;
-import Main.interfaces.I_applicant_EnquiryM;
 public class HDBOfficer extends Applicant 
 {
     private List<BTOProject> assignedProjects;
@@ -95,10 +91,11 @@ public class HDBOfficer extends Applicant
                 System.out.println("Flat types:");
                 // Not implemented yet
                 List<FlatType> currflats = currproj.getFlatTypes();
+                FlatList curflatList= currproj.getFlatLists();
                 for (int j = 0; j < currflats.size(); j++)
                 {
                     System.out.printf("Flat type %d: %s%n", j, currflats.get(i));
-                    System.out.printf("Number of units for flat type %s: %d", currflats.get(i).toString(), currflats.get(i).getNumAvailableUnits());
+                    System.out.printf("Number of units for flat type %s: %d", currflats.get(i).toString(), curflatList.getavail_byroom().get(currflats.get(i)));
                 }
                 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
@@ -115,7 +112,7 @@ public class HDBOfficer extends Applicant
             }
         }
     }
-
+    //if user book flat, auto updated
     public void updateNumofFlats(int num, FlatType flatType)
     {
         // incomplete

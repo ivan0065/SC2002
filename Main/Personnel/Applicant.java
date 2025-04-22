@@ -1,21 +1,21 @@
 package Main.Personnel;
 
-import Main.TimeManager;
 import Main.BTO.BTOProject;
 import Main.BTO.ProjectDatabase;
 import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
 import Main.Enums.UserRole;
 import Main.Manager_control.BTOApplication;
-
-import java.util.List;
+import Main.TimeManager;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Applicant extends User
 {
     protected String currentApplicationId; // ID of current application
     protected List<String> enquiryIds; // List containing ID of all enquiries made by applicant
-
+    protected List<BTOApplication> applications; // List of BTO applications made by the applicant
+    protected BTOApplication newApp; // New application object
     // Constructor
     public Applicant(String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
     {
@@ -107,8 +107,9 @@ public class Applicant extends User
         // Create random application ID
         String applicationId = java.util.UUID.randomUUID().toString();
         // Create new BTOApplication object
-        BTOApplication newApp = new BTOApplication(applicationId, this.getUserID(), projectId, flatType);
-
+        newApp = new BTOApplication(applicationId, this.getUserID(), projectId, flatType);
+        //Add new application to applicaitions list and project
+        applications.add(newApp);
         currentApplicationId = applicationId;
         targetProject.addApplication(newApp);
 

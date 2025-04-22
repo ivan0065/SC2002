@@ -46,6 +46,7 @@ public class RegistrationManager implements I_RegistrationManager{
 	
 	public boolean validateOfficerEligibility(String officerUserID, String projectName) {
 		// Get the list of applications tied to the project the officer is trying to register for
+        
 		List<BTOApplication> applications = project.getApplications();  
 		
 		for (BTOApplication application : applications) {

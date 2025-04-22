@@ -10,6 +10,7 @@ import Main.interfaces.I_projectManager;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 public class ProjectManager implements I_projectManager{
     private List<BTOProject> managedProjects;
 
@@ -40,7 +41,51 @@ public class ProjectManager implements I_projectManager{
         //choice 7: edit project visibility
         //choice 8: edit project id
         //choice 9: edit flat list
-        
+        //choice 10: edit HDBManager in charge
+        //choice 11: edit HDBOfficer list
+        Scanner scanner = new Scanner(System.in);
+        switch (choice) {
+            case 1 -> {
+                System.out.println("Enter new project name: ");
+                String newProjectName = scanner.nextLine();
+                project.setProjectName(newProjectName);
+            }
+            case 2 -> {
+                System.out.println("Enter new application opening date (YYYY-MM-DD): ");
+                LocalDate newOpeningDate = LocalDate.parse(scanner.nextLine());
+                project.setApplicationOpeningDate(newOpeningDate);
+            }
+            case 3 -> {
+                System.out.println("Enter new application closing date (YYYY-MM-DD): ");
+                LocalDate newClosingDate = LocalDate.parse(scanner.nextLine());
+                project.setApplicationClosingDate(newClosingDate);
+            }
+            case 4 -> {
+                System.out.println("Enter new project status: ");
+                String newStatus = scanner.nextLine();
+                project.setProjectStatus(newStatus);
+            }
+            case 5 -> {
+                System.out.println("Enter new project neighbourhood: ");
+                String newNeighbourhood = scanner.nextLine();
+                project.setProjectNeighbourhood(newNeighbourhood);
+            }
+            case 6 -> {
+                System.out.println("Enter visibility (true/false): ");
+                boolean isVisible = Boolean.parseBoolean(scanner.nextLine());
+                toggleProjectVisibility(project, isVisible);
+            }
+            case 7 -> {
+                System.out.println("Enter new project ID: ");
+                String newProjectId = scanner.nextLine();
+                project.setProjectId(newProjectId);
+            }
+            default -> System.out.println("Invalid choice.");
+        }
+        // Implement flat list editing logic here
+        // Implement HDBManager editing logic here
+        // Implement HDBOfficer list editing logic here
+                
     }
 
     public void deleteBTOProject(String ProjectName){
@@ -60,8 +105,12 @@ public class ProjectManager implements I_projectManager{
         }
     }
 
-    //not done
-    public void toggleProjectVisibility(){
+    public void toggleProjectVisibility(BTOProject project,boolean isVisible){
+        if(isVisible==true){
+            project.setVisible(true);
+        }else{
+            project.setVisible(false);
+        }
         
     }
 

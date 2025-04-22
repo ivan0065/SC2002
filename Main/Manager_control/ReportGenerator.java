@@ -13,7 +13,7 @@ public class ReportGenerator{
         for (BTOApplication app : applications) {
             if (matchesCriteria(app, criteria)) {
                 report.add(new ApplicantReport(
-                        app.getApplicantID(),
+                        app.getApplicantId(),
                         app.getAge(),
                         app.getMaritalStatus(),
                         app.getFlatType(),

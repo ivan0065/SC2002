@@ -23,9 +23,9 @@ public interface I_projectManager {
 		            String projectNeighbourhood,
 					FlatList flatLists,
 					String projectId);
-    void editBTOProject(int choice);
+    void editBTOProject(int choice,BTOProject project);
     void deleteBTOProject(String projectName);
-    void toggleProjectVisibility();
+    void toggleProjectVisibility(BTOProject project,boolean isVisible);
     List<BTOProject> getManagedProject();
     void viewBTOProjects();
 }
