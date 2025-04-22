@@ -35,7 +35,7 @@ public class HDBManager extends User{
         BTOApplication cur_Application=null;
         FlatList flatList=project.getflatList();
         for( BTOApplication application: app_list){
-            if(application.getID.equals(application_id)){
+            if(application.getApplicationID.equals(application_id)){
                 cur_Application= application;
                 break;
             }
@@ -52,7 +52,7 @@ public class HDBManager extends User{
         FlatList flatList=project.getflatList();
         BTOApplication cur_Application=null;
         for( BTOApplication application: app_list){
-            if(application.getID.equals(application_id)){
+            if(application.getApplicationID.equals(application_id)){
                 cur_Application= application;
                 break;
             }
