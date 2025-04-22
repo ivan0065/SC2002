@@ -205,7 +205,22 @@ public class I_manager{
                     manager.deleteBTOProject(Proj_name);
                     break;
                 case 7:
-                    manager.toggleProjectVisibility();
+                    System.out.println("Enter project ID to toggle visibility:");
+                    String projectIdToToggle = scanner.nextLine();
+                    BTOProject projectToToggle;
+                    // Check if the project ID exists in the managed projects
+                    if (manager.getManagedProject().stream().anyMatch(project -> project.getProjectId().equals(projectIdToToggle))) {
+                        System.out.println("Project found: " + projectIdToToggle);
+                        projectToToggle = manager.getManagedProject().stream().filter(project -> project.getProjectId().equals(projectIdToToggle)).findFirst().orElse(null);
+                    } else {
+                        System.out.println("Project not found: " + projectIdToToggle);
+                        break;
+                    }
+                    // Toggle the visibility of the project
+                    System.out.println("Toggling visibility for project ID: " + projectIdToToggle);
+                    System.out.println("Enter new visibility (true/false):");
+                    boolean newVisibility = scanner.nextBoolean();
+                    manager.toggleProjectVisibility(projectToToggle,newVisibility);
                     break;
                 case 8:
                     manager.viewManagedProjects();
