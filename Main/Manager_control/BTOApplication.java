@@ -16,6 +16,7 @@ public class BTOApplication {
     // Constructor
     public BTOApplication(String applicantId, String projectId, FlatType flatType) {
         // Note: applicationId is not set in constructor anymore
+        this.applicationId = "APP-" + java.util.UUID.randomUUID().toString().substring(0, 8);
         this.applicantId = applicantId;
         this.projectId = projectId;
         this.flatType = flatType;
@@ -115,6 +116,23 @@ public class BTOApplication {
         // In a real implementation, we would verify if the officer is assigned to this project
         if (!"SUCCESSFUL".equals(applicationStatus)) {
             System.out.println("Cannot book flat. Application status must be SUCCESSFUL.");
+            return false;
+        }
+        //can consider removing this if needed
+            BTOProject project = projectDatabase.getProjectByName(projectId);
+        if (project == null) {
+            System.out.println("Project not found: " + projectId);
+            return false;
+        }
+    
+        FlatList flatList = project.getflatList();
+         // Check flat availability
+        if (flatType == FlatType.Three_Room && flatList.get3roomAvailUnit() > 0) {
+            flatList.book_3room();
+        } else if (flatType == FlatType.Two_Room && flatList.get2roomAvailUnit() > 0) {
+            flatList.book_2room();
+        } else {
+            System.out.println("No available units of the selected flat type: " + flatType);
             return false;
         }
         
