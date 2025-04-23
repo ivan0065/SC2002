@@ -150,7 +150,9 @@ public class Applicant extends User
         return enquiryIds.remove(enquiryId);
     }
 
-    
-
+    @Override
+    public IUserInterface getUserInterface() {
+        return new I_applicant(this);
+    }
 
 }
