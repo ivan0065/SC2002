@@ -17,9 +17,9 @@ public class Applicant extends User
     protected List<BTOApplication> applications; // List of BTO applications made by the applicant
     protected BTOApplication newApp; // New application object
     // Constructor
-    public Applicant(String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
+    public Applicant(String name, String nric, String password, int age, MaritalStatus martialStatus)
     {
-        super(nric, password, age, martialStatus, UserRole.APPLICANT);
+        super(name, nric, password, age, martialStatus, UserRole.APPLICANT);
         this.currentApplicationId = null; // No BTO application by default
         this.enquiryIds = new ArrayList<>();
     }
