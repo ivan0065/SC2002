@@ -2,12 +2,15 @@ package Main.Personnel;
 
 import Main.BTO.*;
 import Main.Enums.FilterCriteria;
+import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
 import Main.Enums.UserRole;
 import Main.Manager_control.*;
 import Main.interfaces.I_RegistrationManager;
 import Main.interfaces.I_applicationManager;
 import Main.interfaces.I_projectManager;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -69,8 +72,11 @@ public class HDBManager extends User{
 
     //ProjectManager part
 
-    public void createBTOProject(){
-        projectManager.createBTOProject(this, project.getHDBOfficerList(), project.getApplications(), project.getApplicantList(), project.getProjectName(), project.getApplicationOpeningDate(), project.getApplicationClosingDate(), project.getVisibilitySetting(), project.getFlatTypes(), project.getProjectNeighbourhood(), project.getFlatLists());
+    public void createBTOProject(String projectName,LocalDate openingDate,LocalDate closingDate,String projectNeighbourhood,List<FlatType> flatTypes, Boolean isVisible,FlatList flatLists){
+        List<HDBOfficer> HDBOfficerlist= new ArrayList<HDBOfficer>();
+        List<BTOApplication> applications= new ArrayList<BTOApplication>();
+        List<Applicant> applicantList= new ArrayList<Applicant>();
+        projectManager.createBTOProject(this,HDBOfficerlist,applications,applicantList,projectName,openingDate,closingDate,isVisible,flatTypes,projectNeighbourhood,flatLists);
     }
 
     public void editBTOProject(int choice,BTOProject project){

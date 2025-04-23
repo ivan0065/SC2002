@@ -31,6 +31,7 @@ public class ProjectDatabase {
         this.projects = new ArrayList<>();
         this.enquiryList = new EnquiryList();
         loadProjectsFromCSV();
+        
     }
     
     /**
@@ -93,10 +94,7 @@ public class ProjectDatabase {
                         flatList.add(new Flat(flatType2, priceType2));
                     }
                     // Create and add the project
-                    BTOProject project = new BTOProject(
-                        projectName, neighborhood, openingDate, closingDate, 
-                        managerNRIC, officerSlot,flatList
-                    );
+                    BTOProject project= new BTOProject(projectName, neighborhood, openingDate, closingDate, flatList, officerSlot, managerNRIC);
                 
                     
                     // Add officer if present
