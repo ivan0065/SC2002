@@ -1,5 +1,7 @@
 package AppInterface;
 
-public class I_UserInterface {
-
+public interface I_UserInterface {
+	
+	void launchInterface();
+	
 }
