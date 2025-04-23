@@ -20,51 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppManager {
-    private List<User> users; // List of all users
-    private ProjectDatabase projectDatabase; // Database of BTO projects
+    private ProjectDatabase projectDatabase; // Database of BTO projects and users
     private EnquiryList enquiryList; // List of all enquiries
     private List<BTOApplication> applications; // List of all BTO applications
+    private ReceiptGenerator receiptGenerator; // To generate receipts
 
     // Constructor
     public AppManager() {
-        this.users = new ArrayList<>();
         this.projectDatabase = new ProjectDatabase();
         this.enquiryList = new EnquiryList();
         this.applications = new ArrayList<>();
-    }
-
-    // Initialize user list from a file
-    public void initializeUserList(List<String> userData) {
-        for (String data : userData) {
-            // Assuming data format: "NRIC,password,age,maritalStatus,role"
-            String[] parts = data.split(",");
-            String nric = parts[0];
-            String password = parts[1];
-            int age = Integer.parseInt(parts[2]);
-            MaritalStatus maritalStatus = MaritalStatus.valueOf(parts[3]);
-            UserRole role = UserRole.valueOf(parts[4]);
-
-            User user;
-            switch (role) {
-                case APPLICANT:
-                    user = new Applicant(nric, password, age, maritalStatus, role);
-                    break;
-                case HDB_OFFICER:
-                    user = new HDBOfficer(nric, password, age, maritalStatus, role);
-                    break;
-                case HDB_MANAGER:
-                    user = new HDBManager(nric, password, age, maritalStatus, role, null, null, null);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid user role: " + role);
-            }
-            users.add(user);
-        }
+        this.receiptGenerator = new ReceiptGenerator();
     }
 
     // Login
     public User login(String userID, String password) {
-        for (User user : users) {
+        for (User user : projectDatabase.getAllUsers()) {
             if (user.getUserID().equals(userID) && user.checkPassword(password)) {
                 System.out.println("Login successful for user: " + userID);
                 return user;
@@ -80,12 +51,12 @@ public class AppManager {
         System.out.println("Password changed successfully for user: " + user.getUserID());
     }
 
-    // Generate all BTO applications (from UML attribute treated as method)
+    // Generate all BTO applications
     public List<BTOApplication> generateBTOApplications() {
         return new ArrayList<>(applications);
     }
 
-    // View all BTO applications (from UML attribute treated as method)
+    // View all BTO applications
     public List<BTOApplication> viewBTOApplications() {
         return new ArrayList<>(applications);
     }
@@ -123,7 +94,6 @@ public class AppManager {
         int difference = numOfUnits - currentUnits;
 
         if (difference > 0) {
-            // Add more units (unbook flats to increase availability)
             for (int i = 0; i < difference; i++) {
                 if (type == FlatType.Two_Room) {
                     flatList.unbook_2room();
@@ -132,7 +102,6 @@ public class AppManager {
                 }
             }
         } else if (difference < 0) {
-            // Reduce units (book flats to decrease availability)
             for (int i = 0; i < -difference; i++) {
                 if (type == FlatType.Two_Room) {
                     flatList.book_2room();
@@ -157,14 +126,12 @@ public class AppManager {
             return;
         }
 
-        // Verify flat type matches the application
         FlatType expectedType = flatType.equalsIgnoreCase("2-Room") ? FlatType.Two_Room : FlatType.Three_Room;
         if (application.getFlatType() != expectedType) {
             System.out.println("Flat type mismatch. Application flat type is " + application.getFlatType());
             return;
         }
 
-        // Update status
         if (newStatus.equals("BOOKED") && application.getApplicationStatus().equals("SUCCESSFUL")) {
             application.setApplicationStatus(newStatus);
             FlatList flatList = project.getFlatLists();
@@ -214,27 +181,21 @@ public class AppManager {
     public List<BTOProject> viewBTOProjects(User user, FilterCriteria criteria) {
         List<BTOProject> filteredProjects = new ArrayList<>();
         for (BTOProject project : projectDatabase.getAllProjects()) {
-            // Applicants can only see visible projects applicable to their group
             if (user.getRole() == UserRole.APPLICANT) {
                 Applicant applicant = (Applicant) user;
                 if (project.getVisibilitySetting() && project.isApplicableFor(applicant.getAge(), applicant.getMaritalStatus() == MaritalStatus.MARRIED)) {
                     filteredProjects.add(project);
                 }
-            }
-            // HDB Officers can see their assigned projects regardless of visibility
-            else if (user.getRole() == UserRole.HDB_OFFICER) {
+            } else if (user.getRole() == UserRole.HDB_OFFICER) {
                 HDBOfficer officer = (HDBOfficer) user;
                 if (officer.getAssignedProjects().contains(project) || (project.getVisibilitySetting() && project.isApplicableFor(officer.getAge(), officer.getMaritalStatus() == MaritalStatus.MARRIED))) {
                     filteredProjects.add(project);
                 }
-            }
-            // HDB Managers can see all projects
-            else if (user.getRole() == UserRole.HDB_MANAGER) {
+            } else if (user.getRole() == UserRole.HDB_MANAGER) {
                 filteredProjects.add(project);
             }
         }
 
-        // Apply FilterCriteria
         List<BTOProject> result = new ArrayList<>();
         for (BTOProject project : filteredProjects) {
             boolean matchesCriteria = true;
@@ -268,7 +229,6 @@ public class AppManager {
             }
         }
 
-        // Sort alphabetically by default
         result.sort((p1, p2) -> p1.getProjectName().compareTo(p2.getProjectName()));
         return result;
     }
@@ -387,6 +347,13 @@ public class AppManager {
         }
         if (application.bookFlat(officer.getUserID())) {
             System.out.println("Flat booked successfully for application: " + applicationId);
+            // Generate receipt after booking
+            Applicant applicant = getApplicantByNRIC(application.getApplicantId());
+            if (applicant != null) {
+                receiptGenerator.generateReceipt(applicant, application, project);
+            } else {
+                System.out.println("Applicant not found for application: " + applicationId);
+            }
         }
     }
 
@@ -459,10 +426,9 @@ public class AppManager {
 
     // Helper method to get applicant by NRIC
     private Applicant getApplicantByNRIC(String nric) {
-        for (User user : users) {
-            if (user.getUserID().equals(nric) && (user.getRole() == UserRole.APPLICANT || user.getRole() == UserRole.HDB_OFFICER)) {
-                return (Applicant) user;
-            }
+        User user = projectDatabase.getUserByNRIC(nric);
+        if (user != null && (user.getRole() == UserRole.APPLICANT || user.getRole() == UserRole.HDB_OFFICER)) {
+            return (Applicant) user;
         }
         return null;
     }
