@@ -48,10 +48,11 @@ public class ProjectDatabase {
         
         // Load all CSV data
         loadProjectsFromCSV();
-    }
-    
-
-    /* Get the singleton instance of ProjectDatabase
+        loadApplicantsFromCSV();
+        loadOfficersFromCSV();
+        loadManagersFromCSV();
+}
+/* Get the singleton instance of ProjectDatabase
      * Creates instance if it doesn't exist
      * @return The singleton instance
      */
