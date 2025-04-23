@@ -30,24 +30,9 @@ public class BTOManagementSystemApp {
             return;
         }
 
-        // Role-based routing using userRole attribute
-        UserRole role = user.getRole();
-        switch (role) {
-            case APPLICANT:
-                I_applicant applicantUI = new I_applicant((Applicant) user);
-                applicantUI.show_menu();
-                break;
-            case OFFICER:
-            	I_officer officerUI = new I_officer((Officer) user);
-            	officerUI.show_menu();
-            case MANAGER:
-                I_manager managerUI = new I_manager((HDBManager) user);
-                managerUI.showMenu();
-                break;
-            default:
-                System.out.println("Unknown user role. Exiting.");
-        }
-    }
+        // Launch role-appropriate interface
+        user.getUserInterface().launchInterface();
+    }    
 
     private static User authenticate(String userId, String password, List<User> users) {
         for (User user : users) {
