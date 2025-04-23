@@ -1,13 +1,17 @@
 package AppInterface;
+
+import AppInterface.I_UserInterface;
 import Main.BTO.BTOProject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.time.LocalDate;
 
 import Main.Personnel.HDBManager;
 import Main.BTO.FlatList;
 import Main.Enums.*;
-public class I_manager{
+
+public class I_manager implements I_UserInterface {
     private HDBManager manager;
     
     public I_manager(HDBManager manager){
@@ -118,8 +122,10 @@ public class I_manager{
                     String projectName = scanner.nextLine();
                     System.out.println("Enter application opening date (YYYY-MM-DD):");
                     String openingDateStr = scanner.nextLine();
+                    LocalDate openingDate = LocalDate.parse(openingDateStr);
                     System.out.println("Enter application closing date (YYYY-MM-DD):");
                     String closingDateStr = scanner.nextLine();
+                    LocalDate closingDate = LocalDate.parse(closingDateStr);
                     System.out.println("Enter project status:");
                     String projectStatus = scanner.nextLine();
                     System.out.println("Enter project neighbourhood:");
@@ -149,7 +155,7 @@ public class I_manager{
                         flatList.addFlat(flatType);
                     }
                     // Create the BTO project
-                    manager.createBTOProject(projectName, openingDateStr, closingDateStr, isVisible, projectStatus, flatTypes, projectNeighbourhood, flatList, projectId);
+                    manager.createBTOProject();
                     System.out.println("BTO project created successfully!");
                     break;
                 case 5:
@@ -236,5 +242,10 @@ public class I_manager{
             }
 
         } while (choice != 0); // Continue until the user chooses to exit
+    }
+    
+    @Override
+    public void launchInterface() {
+    	showMenu();
     }
 }
