@@ -22,7 +22,7 @@ public class HDBManager extends User{
     protected static ProjectDatabase BTOdatabase;
 
         // Constructor for HDBManager
-    public HDBManager(String name, String username, String password, int age, MaritalStatus maritalStatus, UserRole role,
+    public HDBManager(String name, String username, String password, int age, MaritalStatus maritalStatus,
                     I_projectManager projectManager,
                     I_RegistrationManager registrationManager,
                     I_applicationManager appManager){
@@ -30,6 +30,7 @@ public class HDBManager extends User{
         this.projectManager = projectManager;
         this.registrationManager = registrationManager;
         this.appManager = appManager;
+        this.userRole = MANAGER
     }
     //AppManager part
     public boolean approveBTOApplication(String application_id, String newStatus){
