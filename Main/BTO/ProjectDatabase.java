@@ -19,8 +19,8 @@ import Main.Enums.FlatType;
  * Reads project data from CSV file and provides access to project information
  */
 public class ProjectDatabase {
-    private List<BTOProject> projects;
-    private EnquiryList enquiryList;
+    private static List<BTOProject> projects;
+    private static EnquiryList enquiryList;
     private static final String CSV_FILE_PATH = "ProjectList.csv";
     
     /**

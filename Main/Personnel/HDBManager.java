@@ -1,6 +1,9 @@
 package Main.Personnel;
 
 import Main.BTO.*;
+import Main.Enquiries.Enquiry;
+import Main.Enquiries.EnquiryList;
+import Main.Enquiries.OfficerEnquiryManager;
 import Main.Enums.FilterCriteria;
 import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
@@ -8,16 +11,20 @@ import Main.Enums.UserRole;
 import Main.Manager_control.*;
 import Main.interfaces.I_RegistrationManager;
 import Main.interfaces.I_applicationManager;
+import Main.interfaces.I_officer_EnquiryM;
 import Main.interfaces.I_projectManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import AppInterface.I_officer;
 
-public class HDBManager extends User{
+
+public class HDBManager extends User implements I_officer_EnquiryM{
     private I_projectManager projectManager;
     private I_RegistrationManager registrationManager;
     private I_applicationManager appManager;
+    private I_officer_EnquiryM enquiryManager;
     private BTOProject project;
     protected static ProjectDatabase BTOdatabase;
 
@@ -30,6 +37,20 @@ public class HDBManager extends User{
         this.projectManager = projectManager;
         this.registrationManager = registrationManager;
         this.appManager = appManager;
+        this.enquiryManager = new OfficerEnquiryManager(this);
+    }
+    public void setProject(){
+        List<BTOProject> projects = projectManager.getManagedProject();
+        if (projects.isEmpty()) {
+            System.out.println("No assigned projects available.");
+            return;
+        }
+        for(BTOProject project:projects){
+            if(project.getApplicationClosingDate().isAfter(LocalDate.now()) && project.getApplicationOpeningDate().isBefore(LocalDate.now())){
+                this.project=project;
+                break;
+            }
+        }
     }
     //AppManager part
     public boolean approveBTOApplication(String application_id, String newStatus){
@@ -138,5 +159,55 @@ public class HDBManager extends User{
         return registrationManager.checkApplicationPeriodClash(officer, project);
     }
 
+    //EnquiryManager part
+    public void replyEnquiry(Enquiry enquiry,String reply){
+        enquiryManager.replyEnquiry(enquiry, reply);
+    }
+    public void getEnquiries(){
+        if(projectManager.getManagedProject().isEmpty()){
+            System.out.println("No assigned projects available.");
+            return;
+        }
+        for (BTOProject project : projectManager.getManagedProject()) {
+            EnquiryList enquiries = project.getEnquiryList();
+            if (enquiries.isEmpty()) {
+                System.out.println("No enquiries available for project: " + project.getProjectName());
+            } else {
+                System.out.println("Enquiries for project: " + project.getProjectName());
+                enquiries.getEnquiries();
+            }
+        }
+    }
+    public Enquiry getEnquiryByID(int enquiryID){
+        if(projectManager.getManagedProject().isEmpty()){
+            System.out.println("No assigned projects available.");
+            return null;
+        }
+        for (BTOProject project : projectManager.getManagedProject()) {
+            EnquiryList enquiries = project.getEnquiryList();
+            if (enquiries.isEmpty()) {
+                System.out.println("No enquiries available for project: " + project.getProjectName());
+            } else {
+                Enquiry enquiry = enquiries.getEnquiryByID(enquiryID);
+                return enquiry;
+            }
+        }
+        return null;
+    }
 
+    public void ViewEnquiry() {
+        if(projectManager.getManagedProject().isEmpty()){
+            System.out.println("No assigned projects available.");
+            return;
+        }
+        for (BTOProject project : projectManager.getManagedProject()) {
+            EnquiryList enquiries = project.getEnquiryList();
+            if (enquiries.isEmpty()) {
+                System.out.println("No enquiries available for project: " + project.getProjectName());
+            } else {
+                System.out.println("Enquiries for project: " + project.getProjectName());
+                enquiries.ViewEnquiry();
+            }
+        }
+    }
 }

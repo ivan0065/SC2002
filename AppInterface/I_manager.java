@@ -3,6 +3,7 @@ package AppInterface;
 import Main.BTO.BTOProject;
 import Main.BTO.Flat;
 import Main.BTO.FlatList;
+import Main.Enquiries.Enquiry;
 import Main.Enums.*;
 import Main.Personnel.HDBManager;
 import java.time.LocalDate;
@@ -30,7 +31,8 @@ public class I_manager implements I_UserInterface {
             System.out.println("1. ProjectManager Actions");
             System.out.println("2. RegistrationManager Actions");
             System.out.println("3. ApplicationManager Actions");
-            System.out.println("4. Exit");
+            System.out.println("4. EnquiryManager Actions");
+            System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
             Scanner scanner = new Scanner(System.in);
             choice = scanner.nextInt();
@@ -298,13 +300,47 @@ public class I_manager implements I_UserInterface {
                         }
                     }while(appChoice!=4);
                 case 4:
+                    System.out.println("You have selected EnquiryManager Actions.");
+                    System.out.println("1. View All Enquiries");
+                    System.out.println("2. Reply to Enquiry");
+                    System.out.println("3. Back to Main Menu");
+                    System.out.print("Enter your choice: ");
+                    int enquiryChoice = scanner.nextInt();
+                    scanner.nextLine(); // consume the newline character
+                    switch(enquiryChoice){
+                        case 1:
+                            System.out.println("Enquires:");
+                            manager.ViewEnquiry();
+                            break;
+                        case 2:
+                            System.out.print("Enter Enquiry ID to reply: ");
+                            int enquiryId = scanner.nextInt();
+                            scanner.nextLine(); // Consume newline character
+                            Enquiry enquiry=manager.getEnquiryByID(enquiryId);
+                            if (enquiry == null) {
+                                System.out.println("Enquiry not found.");
+                                break;
+                            }
+                            System.out.print("Enter Reply: ");
+                            String reply = scanner.nextLine();
+                            manager.replyEnquiry(enquiry, reply);
+                            break;
+                        case 3:
+                            System.out.println("Returning to Main Menu...");
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                            break;
+                    }
+                    break;
+                case 5:
                     System.out.println("Exiting the program. Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
                     break;
             } // Close switch block
-        } while (choice != 4); // Continue until the user chooses to exit
+        } while (choice != 5); // Continue until the user chooses to exit
     } // Close showMenu method
     
     @Override

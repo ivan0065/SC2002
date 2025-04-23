@@ -1,5 +1,6 @@
 package Main.BTO;
 
+import Main.Enquiries.EnquiryList;
 import Main.Enums.FlatType;
 import Main.Manager_control.BTOApplication;
 import Main.Personnel.*;
@@ -35,6 +36,7 @@ public class BTOProject {
 
 	private String projectId;
 	
+	private EnquiryList enquiryList;
 	public BTOProject(HDBManager HDBManagerInCharge,
 					List<HDBOfficer> HDBOfficerList,
 		            List<BTOApplication> applications,
@@ -45,7 +47,8 @@ public class BTOProject {
 		            boolean isVisible,
 		            List<FlatType> flatTypes,
 		            String projectNeighbourhood,
-					FlatList flatLists) {
+					FlatList flatLists
+					) {
 		this.HDBManagerInCharge = HDBManagerInCharge;
 		this.HDBOfficerList = HDBOfficerList;
 		this.applications = applications;
@@ -63,7 +66,7 @@ public class BTOProject {
 	    this.applications = new ArrayList<>();
 	    this.applicantList = new ArrayList<>();
 	    this.flatTypes = new ArrayList<>();
-		}
+		this.enquiryList =	new EnquiryList();	}
 
 	public String getProjectName() {
 	    return projectName;
@@ -105,6 +108,9 @@ public class BTOProject {
 	    this.projectStatus = projectStatus;
 	}
 
+	public EnquiryList getEnquiryList() {
+	    return enquiryList;
+	}
 	public String getProjectNeighbourhood() {
 	    return projectNeighbourhood;
 	}
@@ -223,13 +229,12 @@ public class BTOProject {
 	    System.out.println("Project Status      : " + projectStatus);
 	    System.out.println("Visible to Public   : " + (isVisible ? "Yes" : "No"));
 	    System.out.println("Application Period  : " + applicationOpeningDate + " to " + applicationClosingDate);
-	    System.out.println("Available Officer Slots : " + getAvailableOfficerSlots());
+	    System.out.println("Available Officer Slots : " + getRemainingOfficerSlots());
 	    System.out.println();
 
 	    System.out.println("Available Flat Types and Units:");
 	    flatLists.print_unitCount();
 	    System.out.println("============================\n");
 	}
-
 
 }

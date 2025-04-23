@@ -1,5 +1,6 @@
 package Main.Enquiries;
 import Main.BTO.BTOProject;
+import Main.Personnel.HDBManager;
 import Main.Personnel.HDBOfficer;
 import Main.interfaces.I_officer_EnquiryM;
 import java.util.List;
@@ -8,6 +9,9 @@ public class OfficerEnquiryManager implements I_officer_EnquiryM {
 
     public OfficerEnquiryManager(HDBOfficer officer) {
         this.officer = officer;
+    }
+    public OfficerEnquiryManager(HDBManager hdbManager) {
+        //TODO Auto-generated constructor stub
     }
     @Override
     public void ViewEnquiry(EnquiryList enquiryList){

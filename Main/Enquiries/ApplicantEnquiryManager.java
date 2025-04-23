@@ -1,29 +1,17 @@
 package Main.Enquiries;
 import Main.BTO.BTOProject;
-import Main.Personnel.User;
+import Main.Personnel.Applicant;
 import Main.interfaces.I_applicant_EnquiryM;
 public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
-    private User applicant;
+    private Applicant applicant;
 
-    public ApplicantEnquiryManager(User applicant) {
+    public ApplicantEnquiryManager(Applicant applicant) {
         this.applicant = applicant;
     }
 
-    public void ViewEnquiry(EnquiryList enquiryList) {
-        Boolean status=false;
-        if(enquiryList.isEmpty()){
-            System.out.println("No enquiries available.");
-            return;
-        }
-        for(Enquiry enquiry: enquiryList.getEnquiries()){
-            if(enquiry.getSender().equals(applicant)){
-                enquiry.printEnquiry();
-                status=true;
-            }
-        }
-        if(status==false){
-            System.out.println("No enquiries available for this applicant.");
-        }
+    public void ViewEnquiry(){
+
+        
     }
     public void addEnquiry(EnquiryList enquiryList, String question,BTOProject project){ 
         int enquiryID = enquiryList.getEnquiries().size() + 1; 

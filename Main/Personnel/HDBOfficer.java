@@ -11,12 +11,13 @@ import Main.interfaces.I_officer_EnquiryM;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-public class HDBOfficer extends Applicant 
+public class HDBOfficer extends Applicant implements I_officer_EnquiryM
 {
     private List<BTOProject> assignedProjects;
     private String HDBManagerRegistrationStatus;
     private List<Registration> registrations;
     private I_officer_EnquiryM enquiryManager;
+    private BTOProject curProject;
     public HDBOfficer(String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
     {
         super(nric, password, age, martialStatus, userRole);
@@ -24,11 +25,61 @@ public class HDBOfficer extends Applicant
         this.registrations = new ArrayList<>();
         this.currentApplicationId = null;
         this.enquiryIds = new ArrayList<>();
+        this.enquiryManager = new OfficerEnquiryManager(this);
+        this.curProject=null;
     }
 
     public void replyEnquiry(Enquiry enquiry,String reply){
         enquiryManager.replyEnquiry(enquiry, reply);
     }
+    public void getEnquiries(){
+        if(assignedProjects.isEmpty()){
+            System.out.println("No assigned projects available.");
+            return;
+        }
+        for (BTOProject project : assignedProjects) {
+            EnquiryList enquiries = project.getEnquiryList();
+            if (enquiries.isEmpty()) {
+                System.out.println("No enquiries available for project: " + project.getProjectName());
+            } else {
+                System.out.println("Enquiries for project: " + project.getProjectName());
+                enquiries.getEnquiries();
+            }
+        }
+    }
+    public Enquiry getEnquiryByID(int enquiryID){
+        if(assignedProjects.isEmpty()){
+            System.out.println("No assigned projects available.");
+            return null;
+        }
+        for (BTOProject project : assignedProjects) {
+            EnquiryList enquiries = project.getEnquiryList();
+            if (enquiries.isEmpty()) {
+                System.out.println("No enquiries available for project: " + project.getProjectName());
+            } else {
+                Enquiry enquiry = enquiries.getEnquiryByID(enquiryID);
+                return enquiry;
+            }
+        }
+        return null;
+    }
+
+    public void ViewEnquiry() {
+        if(assignedProjects.isEmpty()){
+            System.out.println("No assigned projects available.");
+            return;
+        }
+        for (BTOProject project : assignedProjects) {
+            EnquiryList enquiries = project.getEnquiryList();
+            if (enquiries.isEmpty()) {
+                System.out.println("No enquiries available for project: " + project.getProjectName());
+            } else {
+                System.out.println("Enquiries for project: " + project.getProjectName());
+                enquiries.ViewEnquiry();;
+            }
+        }
+    }
+
     public void joinProject(BTOProject project)
     {
         for (int i = 0; i < assignedProjects.size(); i++)
