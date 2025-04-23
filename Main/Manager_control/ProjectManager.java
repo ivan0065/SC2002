@@ -22,12 +22,10 @@ public class ProjectManager implements I_projectManager{
 		            LocalDate applicationOpeningDate,
 		            LocalDate applicationClosingDate,
 		            boolean isVisible,
-		            String projectStatus,
 		            List<FlatType> flatTypes,
 		            String projectNeighbourhood,
-					FlatList flatLists,
-					String projectId){
-        BTOProject newProject = new BTOProject(HDBManagerInCharge,HDBOfficerList,applications,applicantList,projectName,applicationOpeningDate,applicationClosingDate,isVisible,projectStatus,flatTypes,projectNeighbourhood,flatLists,projectId);
+					FlatList flatLists){
+        BTOProject newProject = new BTOProject(HDBManagerInCharge,HDBOfficerList,applications,applicantList,projectName,applicationOpeningDate,applicationClosingDate,isVisible,flatTypes,projectNeighbourhood,flatLists);
         managedProjects.add(newProject);
     }
 
