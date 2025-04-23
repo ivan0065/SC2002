@@ -139,5 +139,10 @@ public class HDBManager extends User{
         return registrationManager.checkApplicationPeriodClash(officer, project);
     }
 
+    @Override
+    public IUserInterface getUserInterface() {
+        return new I_manager(this);
+    }
+
 
 }
