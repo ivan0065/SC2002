@@ -2,6 +2,7 @@ package Main.Manager_control;
 
 import Main.BTO.BTOProject;
 import Main.BTO.FlatList;
+import Main.BTO.ProjectDatabase;
 import Main.Enums.FlatType;
 import Main.Personnel.Applicant;
 
@@ -121,6 +122,7 @@ public class BTOApplication {
             return false;
         }
         //can consider removing this if needed
+            ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
             BTOProject project = projectDatabase.getProjectByName(projectName);
         if (project == null) {
             System.out.println("Project not found: " + projectName);

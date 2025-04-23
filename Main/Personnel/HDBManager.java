@@ -26,7 +26,6 @@ public class HDBManager extends User implements I_officer_EnquiryM{
     private I_applicationManager appManager;
     private I_officer_EnquiryM enquiryManager;
     private BTOProject project;
-    protected static ProjectDatabase BTOdatabase;
 
         // Constructor for HDBManager
     public HDBManager(String name, String username, String password, int age, MaritalStatus maritalStatus,
@@ -122,6 +121,7 @@ public class HDBManager extends User implements I_officer_EnquiryM{
 
     public void viewALLprojects(){
         //use projectdatabase
+        ProjectDatabase BTOdatabase= ProjectDatabase.getInstance();
         for (BTOProject proj: BTOdatabase.getAllProjects()){
             proj.displayProject();
         }

@@ -5,7 +5,6 @@ import Main.BTO.FlatList;
 import Main.Enquiries.*;
 import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
-import Main.Enums.UserRole;
 import Main.Manager_control.Registration;
 import Main.interfaces.I_officer_EnquiryM;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +17,7 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
     private List<Registration> registrations;
     private I_officer_EnquiryM enquiryManager;
     private BTOProject curProject;
-    public HDBOfficer(String name,String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
+    public HDBOfficer(String name,String nric, String password, int age, MaritalStatus martialStatus)
     {
         super(name, nric, password, age, martialStatus);
         this.assignedProjects = new ArrayList<>();

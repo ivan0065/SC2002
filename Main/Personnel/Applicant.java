@@ -49,7 +49,7 @@ public class Applicant extends User
         }
 
         // Access the ProjectDatabase through HDBManager's static reference
-        ProjectDatabase projectDatabase = HDBManager.BTOdatabase;
+        ProjectDatabase projectDatabase=ProjectDatabase.getInstance();
         
         // Get all projects and find the one with matching projectId
         List<BTOProject> allProjects = projectDatabase.getAllProjects();
@@ -129,7 +129,7 @@ public class Applicant extends User
         // Remove the application from the list and reset currentApplicationId
         applications.removeIf(app -> app.getApplicationId().equals(applicationId));
         currentApplicationId = null;
-        ProjectDatabase projectDatabase = HDBManager.BTOdatabase;
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
         // Find the project associated with the application ID and remove it from the project as well
         for (BTOProject project : projectDatabase.getAllProjects()) 
         {

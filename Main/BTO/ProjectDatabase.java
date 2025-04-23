@@ -19,6 +19,7 @@ import Main.Enums.FlatType;
  * Reads project data from CSV file and provides access to project information
  */
 public class ProjectDatabase {
+    private static ProjectDatabase instance;
     private static List<BTOProject> projects;
     private static EnquiryList enquiryList;
     private static final String CSV_FILE_PATH = "ProjectList.csv";
@@ -31,9 +32,19 @@ public class ProjectDatabase {
         this.projects = new ArrayList<>();
         this.enquiryList = new EnquiryList();
         loadProjectsFromCSV();
-        
     }
     
+
+    /* Get the singleton instance of ProjectDatabase
+     * Creates instance if it doesn't exist
+     * @return The singleton instance
+     */
+    public static synchronized ProjectDatabase getInstance() {
+        if (instance == null) {
+            instance = new ProjectDatabase();
+        }
+        return instance;
+    }
     /**
      * Loads project data from the CSV file using Scanner
      */

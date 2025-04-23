@@ -1,15 +1,10 @@
 package AppInterface;
 
 import Main.BTO.BTOProject;
-import Main.BTO.Flat;
-import Main.BTO.FlatList;
+import Main.BTO.ProjectDatabase;
 import Main.Enquiries.Enquiry;
 import Main.Enums.*;
 import Main.Personnel.*;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class I_officer implements I_UserInterface {
@@ -56,8 +51,13 @@ public class I_officer implements I_UserInterface {
                                 System.out.print("Enter Project Name: ");
                                 String projectName = scanner.nextLine();
                                 // should go through DB and find the project
-                                BTOProject project = new BTOProject(projectName, LocalDate.now(), LocalDate.now().plusDays(30), FlatType.Two_Room, 100, 1000);
-                                officer.joinProject(project);
+                                ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+                                BTOProject existingProject = projectDatabase.getProjectByName(projectName);
+                                if (existingProject == null) {
+                                    System.out.println("Project not found.");
+                                    break;
+                                }
+                                officer.joinProject(existingProject);
                                 System.out.println("Joined Project: " + projectName);
                                 break;
                             case 3:
