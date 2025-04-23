@@ -18,7 +18,7 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
     private List<Registration> registrations;
     private I_officer_EnquiryM enquiryManager;
     private BTOProject curProject;
-    public HDBOfficer(String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
+    public HDBOfficer(String name,String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
     {
         super(name, nric, password, age, martialStatus);
         this.assignedProjects = new ArrayList<>();

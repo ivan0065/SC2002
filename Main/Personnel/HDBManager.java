@@ -33,7 +33,7 @@ public class HDBManager extends User implements I_officer_EnquiryM{
                     I_projectManager projectManager,
                     I_RegistrationManager registrationManager,
                     I_applicationManager appManager){
-        super(name, username, password, age, maritalStatus); // Call the User constructor
+        super(name, username, password, age, maritalStatus,UserRole.MANAGER); // Call the User constructor
         this.projectManager = projectManager;
         this.registrationManager = registrationManager;
         this.appManager = appManager;

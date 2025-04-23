@@ -19,10 +19,9 @@ public class Applicant extends User
     // Constructor
     public Applicant(String name, String nric, String password, int age, MaritalStatus martialStatus)
     {
-        super(name, nric, password, age, martialStatus);
+        super(name, nric, password, age, martialStatus, UserRole.APPLICANT); // Call the User constructor
         this.currentApplicationId = null; // No BTO application by default
         this.enquiryIds = new ArrayList<>();
-        this.userRole = APPLICANT;
     }
 
     // incomplete
@@ -118,6 +117,29 @@ public class Applicant extends User
 
     }
 
+    public void withdrawApplication(String applicationId)
+    {
+        // Check if the application ID is valid
+        if (currentApplicationId == null || !currentApplicationId.equals(applicationId)) 
+        {
+            System.out.println("Invalid application ID. Please check and try again.");
+            return;
+        }
+
+        // Remove the application from the list and reset currentApplicationId
+        applications.removeIf(app -> app.getApplicationId().equals(applicationId));
+        currentApplicationId = null;
+        ProjectDatabase projectDatabase = HDBManager.BTOdatabase;
+        // Find the project associated with the application ID and remove it from the project as well
+        for (BTOProject project : projectDatabase.getAllProjects()) 
+        {
+            if (project.getApplications().removeIf(app -> app.getApplicationId().equals(applicationId))) 
+            {
+                System.out.printf("Successfully withdrew application with ID %s from project %s%n", applicationId, project.getProjectName());
+                return;
+            }
+        }
+    }
     public String viewApplicationStatus()
     {
         return newApp.getApplicationStatus();
@@ -150,6 +172,7 @@ public class Applicant extends User
         return enquiryIds.remove(enquiryId);
     }
 
+    
     @Override
     public IUserInterface getUserInterface() {
         return new I_applicant(this);
