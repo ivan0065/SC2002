@@ -12,7 +12,7 @@ public class BTOManagementSystemApp {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        // Simulated user list with hardcoded credentials
+
         List<User> users = new ArrayList<>();
         /**
         create sample users (with at least one of each userRole and load csv file to add users into 'users' list
