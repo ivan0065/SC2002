@@ -17,13 +17,14 @@ public class HDBOfficer extends Applicant
     private String HDBManagerRegistrationStatus;
     private List<Registration> registrations;
     private I_officer_EnquiryM enquiryManager;
-    public HDBOfficer(String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
+    public HDBOfficer(String name, String nric, String password, int age, MaritalStatus martialStatus)
     {
-        super(nric, password, age, martialStatus, userRole);
+        super(name, nric, password, age, martialStatus);
         this.assignedProjects = new ArrayList<>();
         this.registrations = new ArrayList<>();
         this.currentApplicationId = null;
         this.enquiryIds = new ArrayList<>();
+        this.userRole = OFFICER;
     }
 
     public void replyEnquiry(Enquiry enquiry,String reply){
