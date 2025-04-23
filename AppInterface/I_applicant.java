@@ -5,11 +5,13 @@ import java.util.Scanner;
 import Main.Enums.FlatType;
 import Main.Personnel.Applicant;
 
-public class I_applicant {
+public class I_applicant implements I_UserInterface{
     private Applicant applicant;
+    
     public I_applicant(Applicant applicant) {
         this.applicant = applicant;
     }
+    
     public void show_menu(){
         int choice;
         do {
@@ -50,5 +52,10 @@ public class I_applicant {
                     System.out.println("Invalid choice, please try again.");
             }
         } while (choice != 5);
+    }
+    
+    @Override
+    public void launchInterface() {
+    	show_menu(); //delegate to existing method
     }
 }
