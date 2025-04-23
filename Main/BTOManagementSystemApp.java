@@ -13,10 +13,8 @@ public class BTOManagementSystemApp {
 
     public static void main(String[] args) {
 
-        List<User> users = new ArrayList<>();
-        /**
-        create sample users (with at least one of each userRole and load csv file to add users into 'users' list
-        **/
+        //load sample user data from csv file
+        List<User> users = UserFileLoader.loadAllUsers("ApplicantList.csv", "OfficerList.csv", "ManagerList.csv");
 
         BTOManagementSystem system = new BTOManagementSystem(users);
 
