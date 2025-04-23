@@ -46,7 +46,11 @@ public class RegistrationManager implements I_RegistrationManager{
 	
 	public boolean validateOfficerEligibility(String officerUserID, String projectName) {
 		// Get the list of applications tied to the project the officer is trying to register for
-        
+    		ProjectDatabase database = new ProjectDatabase();  
+		BTOProject project = database.getProjectByName(projectName);
+		if (project == null) {
+   			return false;
+		}
 		List<BTOApplication> applications = project.getApplications();  
 		
 		for (BTOApplication application : applications) {
@@ -61,10 +65,10 @@ public class RegistrationManager implements I_RegistrationManager{
 	}
 	
 	public void createRegistration(BTOProject project, HDBOfficer officer) {
-	    if (validateOfficerEligibility(officer)) {
-	        Registration reg = new Registration(project, officer);
-	        allRegistrations.add(reg);              
-	        officer.addRegistration(reg);        
+		if (validateOfficerEligibility(officer.getUserID(), project.getProjectName())) {
+		        Registration reg = new Registration(project, officer);
+		        allRegistrations.add(reg);              
+		        officer.addRegistration(reg);        
 		}
    	}
 	
