@@ -19,9 +19,10 @@ public class Applicant extends User
     // Constructor
     public Applicant(String name, String nric, String password, int age, MaritalStatus martialStatus)
     {
-        super(name, nric, password, age, martialStatus, UserRole.APPLICANT);
+        super(name, nric, password, age, martialStatus);
         this.currentApplicationId = null; // No BTO application by default
         this.enquiryIds = new ArrayList<>();
+        this.userRole = APPLICANT;
     }
 
     // incomplete
