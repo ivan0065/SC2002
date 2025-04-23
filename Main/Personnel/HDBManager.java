@@ -70,7 +70,7 @@ public class HDBManager extends User{
     //ProjectManager part
 
     public void createBTOProject(){
-        projectManager.createBTOProject(this, project.getHDBOfficerList(), project.getApplications(), project.getApplicantList(), project.getProjectName(), project.getApplicationOpeningDate(), project.getApplicationClosingDate(), project.getVisibilitySetting(), project.getProjectStatus(), project.getFlatTypes(), project.getProjectNeighbourhood(), project.getFlatLists(), project.getProjectId());
+        projectManager.createBTOProject(this, project.getHDBOfficerList(), project.getApplications(), project.getApplicantList(), project.getProjectName(), project.getApplicationOpeningDate(), project.getApplicationClosingDate(), project.getVisibilitySetting(), project.getFlatTypes(), project.getProjectNeighbourhood(), project.getFlatLists());
     }
 
     public void editBTOProject(int choice,BTOProject project){
