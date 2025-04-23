@@ -174,5 +174,7 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
         return assignedProjects;
     }
 
-    
+    public void addRegistration(Registration registration) {
+        registrations.add(registration);
+    }
 }

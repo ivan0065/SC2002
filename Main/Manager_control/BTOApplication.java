@@ -9,7 +9,7 @@ import Main.Personnel.Applicant;
 public class BTOApplication {
     private String applicationId;
     private String applicantId; // NRIC of applicant
-    private String projectId;
+    private String projectName;
     private String applicationStatus; // "PENDING", "SUCCESSFUL", "UNSUCCESSFUL", "BOOKED"
     private FlatType flatType;
     private String applicationDate;
@@ -48,7 +48,7 @@ public class BTOApplication {
     }
     
     public String getProjectId() {
-        return projectId;
+        return projectName;
     }
     
     public String getApplicationStatus() {

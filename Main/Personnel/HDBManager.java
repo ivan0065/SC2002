@@ -195,7 +195,8 @@ public class HDBManager extends User implements I_officer_EnquiryM{
         return null;
     }
 
-    public void ViewEnquiry() {
+    @Override
+    public void ViewEnquiry(EnquiryList enquiryList) {
         if(projectManager.getManagedProject().isEmpty()){
             System.out.println("No assigned projects available.");
             return;

@@ -9,10 +9,18 @@ public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
         this.applicant = applicant;
     }
 
-    public void ViewEnquiry(){
-
-        
+    public void ViewEnquiry(EnquiryList enquiryList){
+        if(enquiryList.isEmpty()){
+            System.out.println("No enquiries available.");
+            return;
+        }
+        for(Enquiry enquiry: enquiryList.getEnquiries()){
+            if(enquiry.getSender().equals(applicant)){
+                enquiry.printEnquiry();
+            }
+        }  
     }
+    
     public void addEnquiry(EnquiryList enquiryList, String question,BTOProject project){ 
         int enquiryID = enquiryList.getEnquiries().size() + 1; 
         Enquiry newEnquiry = new Enquiry(question, enquiryID, applicant);

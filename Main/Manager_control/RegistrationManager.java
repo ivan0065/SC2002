@@ -1,12 +1,11 @@
 package Main.Manager_control;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import Main.BTO.ProjectDatabase;
 import Main.BTO.BTOProject;
+import Main.BTO.ProjectDatabase;
 import Main.Personnel.HDBOfficer;
 import Main.interfaces.I_RegistrationManager;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegistrationManager implements I_RegistrationManager{
 
@@ -55,7 +54,7 @@ public class RegistrationManager implements I_RegistrationManager{
 		
 		for (BTOApplication application : applications) {
 		    // If the officer's userID matches any applicant's userID for the given projectID, they are not eligible
-		    if (application.getUserID().equals(officerUserID) && application.getProjectName().equals(projectName)) {
+		    if (application.getApplicationId().equals(officerUserID) && application.getProjectId().equals(projectName)) {
 			return false;  // Officer cannot register as an officer for a project they have applied for
 		    }
 		}
@@ -112,7 +111,7 @@ public class RegistrationManager implements I_RegistrationManager{
     }
 
     // Helper method to check if two projects' application periods overlap
-    private boolean isPeriodClash(BTOProject existingProject, BTOProject newProject) {
+    public boolean isPeriodClash(BTOProject existingProject, BTOProject newProject) {
         return !(newProject.getApplicationClosingDate().isBefore(existingProject.getApplicationOpeningDate()) ||
                  newProject.getApplicationOpeningDate().isAfter(existingProject.getApplicationClosingDate()));
     }
@@ -152,7 +151,7 @@ public class RegistrationManager implements I_RegistrationManager{
         return false;  // No registration found with the given ID, update failed
     }
 	
-    private void updateProjectHDBOfficers(String registrationId) {
+    public void updateProjectHDBOfficers(String registrationId) {
         Registration registration = getRegistrationByRegId(registrationId);
 
         if (registration != null) {
