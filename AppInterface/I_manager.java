@@ -18,6 +18,13 @@ public class I_manager{
         int choice;
         String ID;
         int approved;
+        do { 
+            System.out.println("Welcome to the HDB Manager Interface!");
+            System.out.println("Please select an option from the menu below:");
+            System.out.println("1. ProjectManager Actions");
+            System.out.println("2. RegistrationManager Actions");
+            System.out.println("3. ApplicationManager Actions");
+        } while ();
         do {
             System.out.println("\n--- HDB Manager Interface ---");
             System.out.println("1. Approve BTO Application");
