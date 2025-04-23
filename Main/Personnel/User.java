@@ -1,9 +1,11 @@
 package Main.Personnel;
 import Main.Enums.MaritalStatus;
 import Main.Enums.UserRole;
+import Main.interfaces.IUserInterface; 
 
 public abstract class User
 {
+    private String name
     private String userID; // User ID is NRIC (S/T, 7 digits, ending letter)
     private String password = "password";
     private int age;
@@ -11,8 +13,9 @@ public abstract class User
     private UserRole userRole;
 
     // Constructor
-    public User(String userID, String password, int age, MaritalStatus maritalStatus, UserRole userRole) 
+    public User(String name, String userID, String password, int age, MaritalStatus maritalStatus, UserRole userRole) 
     {
+        this.name = name
         this.userID = userID;
         this.password = password;
         this.age = age;
@@ -75,4 +78,6 @@ public abstract class User
     {
         // useBTOProjectDatabase class once created
     }
+
+    public abstract IUserInterface getUserInterface();
 }

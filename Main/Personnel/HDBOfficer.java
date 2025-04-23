@@ -20,7 +20,7 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
     private BTOProject curProject;
     public HDBOfficer(String nric, String password, int age, MaritalStatus martialStatus, UserRole userRole)
     {
-        super(nric, password, age, martialStatus, userRole);
+        super(name, nric, password, age, martialStatus);
         this.assignedProjects = new ArrayList<>();
         this.registrations = new ArrayList<>();
         this.currentApplicationId = null;
