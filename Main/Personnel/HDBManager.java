@@ -88,9 +88,9 @@ public class HDBManager extends User implements I_officer_EnquiryM{
 
     public void generateReport(FilterCriteria criteria){
         List<BTOApplication> app_list=project.getApplications();
-        appManager.generateApplicantReport(criteria, app_list);
+        appManager.generateApplicantReport(criteria, app_list,project);
     }
-
+    
     //ProjectManager part
 
     public void createBTOProject(String projectName,LocalDate openingDate,LocalDate closingDate,String projectNeighbourhood,List<FlatType> flatTypes, Boolean isVisible,FlatList flatLists){
@@ -158,7 +158,21 @@ public class HDBManager extends User implements I_officer_EnquiryM{
     public boolean checkApplicationPeriodClash(HDBOfficer officer,BTOProject project){
         return registrationManager.checkApplicationPeriodClash(officer, project);
     }
-
+    public void ViewEnquiry() {
+        if(projectManager.getManagedProject().isEmpty()){
+            System.out.println("No assigned projects available.");
+            return;
+        }
+        for (BTOProject project : projectManager.getManagedProject()) {
+            EnquiryList enquiries = project.getEnquiryList();
+            if (enquiries.isEmpty()) {
+                System.out.println("No enquiries available for project: " + project.getProjectName());
+            } else {
+                System.out.println("Enquiries for project: " + project.getProjectName());
+                enquiries.ViewEnquiry();
+            }
+        }
+    }
     //EnquiryManager part
     public void replyEnquiry(Enquiry enquiry,String reply){
         enquiryManager.replyEnquiry(enquiry, reply);
@@ -195,6 +209,7 @@ public class HDBManager extends User implements I_officer_EnquiryM{
         return null;
     }
 
+    
     @Override
     public void ViewEnquiry(EnquiryList enquiryList) {
         if(projectManager.getManagedProject().isEmpty()){
@@ -210,7 +225,9 @@ public class HDBManager extends User implements I_officer_EnquiryM{
                 enquiries.ViewEnquiry();
             }
         }
-    }    @Override
+    }  
+    
+    @Override
     public IUserInterface getUserInterface() {
         return new I_manager(this);
     }

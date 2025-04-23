@@ -27,9 +27,9 @@ public class ApplicationManager implements I_applicationManager{
         application.setWithdrawalRequestStatus(newStatus);
     }
 
-    public void generateApplicantReport(FilterCriteria criteria, List<BTOApplication> applications){
+    public void generateApplicantReport(FilterCriteria criteria, List<BTOApplication> applications, BTOProject project) {
         ReportGenerator reportGen= new ReportGenerator();
-        List<ApplicantReport> report= reportGen.generateReport(applications, criteria);
+        List<ApplicantReport> report= reportGen.generateReport(applications, criteria, project);
 
         for(ApplicantReport r: report){
             r.toString();

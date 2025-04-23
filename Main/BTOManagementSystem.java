@@ -1,9 +1,8 @@
 package Main;
 
-import java.util.List;
-
 import Main.Personnel.User;
 import Main.interfaces.IuserAuth;
+import java.util.List;
 
 public class BTOManagementSystem implements IuserAuth{
     private List<User> userList;
@@ -19,6 +18,7 @@ public class BTOManagementSystem implements IuserAuth{
     @Override
     public void login(String userID, String password){
         boolean loginSuccess= validateCredentials(userID, password);
+    
         if (loginSuccess== true){
             System.out.println("Login successful for user: " + userID);
         }
@@ -31,7 +31,7 @@ public class BTOManagementSystem implements IuserAuth{
     public void logout(String userID){
         for(User user : userList){
             if(user.getUserID().equals(userID)){
-                user.loginStatus = false;
+                user.setLoginStatus(false);
                 System.out.println("Logout successful");
                 return;
             }
@@ -43,7 +43,7 @@ public class BTOManagementSystem implements IuserAuth{
         for(User user : userList){
             if(user.getUserID().equals(userID)){
                 if(user.checkPassword(password)){
-                    user.loginStatus = true;
+                    user.setLoginStatus(true);
                     return true;
                 }  
             }
@@ -55,7 +55,7 @@ public class BTOManagementSystem implements IuserAuth{
     public boolean isLoggedIn(String userID){
         for(User user : userList){
             if(user.getUserID().equals(userID)){
-                return user.loginStatus;
+                return user.getLoginStatus();
             }
         }
         return false;

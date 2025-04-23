@@ -29,6 +29,21 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
         this.curProject=null;
     }
 
+    public void ViewEnquiry() {
+        if(assignedProjects.isEmpty()){
+            System.out.println("No assigned projects available.");
+            return;
+        }
+        for (BTOProject project : assignedProjects) {
+            EnquiryList enquiries = project.getEnquiryList();
+            if (enquiries.isEmpty()) {
+                System.out.println("No enquiries available for project: " + project.getProjectName());
+            } else {
+                System.out.println("Enquiries for project: " + project.getProjectName());
+                enquiries.ViewEnquiry();;
+            }
+        }
+    }
     public void replyEnquiry(Enquiry enquiry,String reply){
         enquiryManager.replyEnquiry(enquiry, reply);
     }
@@ -64,7 +79,7 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
         return null;
     }
 
-    public void ViewEnquiry() {
+    public void ViewEnquiry(EnquiryList enquiryList) {
         if(assignedProjects.isEmpty()){
             System.out.println("No assigned projects available.");
             return;

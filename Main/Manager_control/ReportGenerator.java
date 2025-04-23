@@ -63,6 +63,12 @@ public class ReportGenerator{
                 return applicant.getMaritalStatus() == MaritalStatus.MARRIED;
             case SINGLE:
                 return applicant.getMaritalStatus() == MaritalStatus.SINGLE;
+            case Youths:
+                return applicant.getAge() < 35;
+            case Middle_aged:
+                return applicant.getAge() >= 35 && applicant.getAge() < 55;
+            case Elderly:
+                return applicant.getAge() >= 55;
             case Flat_type_2room:
                 return app.getFlatType() ==FlatType.Two_Room;
             case Flat_type_3room:

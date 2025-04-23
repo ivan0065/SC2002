@@ -5,17 +5,18 @@ import Main.interfaces.IUserInterface;
 
 public abstract class User
 {
-    private String name
+    private String name;
     private String userID; // User ID is NRIC (S/T, 7 digits, ending letter)
     private String password = "password";
     private int age;
+    private boolean loginStatus = false; // Default login status is false
     private MaritalStatus maritalStatus;
     private UserRole userRole;
 
     // Constructor
     public User(String name, String userID, String password, int age, MaritalStatus maritalStatus, UserRole userRole) 
     {
-        this.name = name
+        this.name = name;
         this.userID = userID;
         this.password = password;
         this.age = age;
@@ -68,6 +69,14 @@ public abstract class User
         }
     }
 
+    public void setLoginStatus(boolean loginStatus)
+    {
+        this.loginStatus = loginStatus;
+    }
+    public boolean getLoginStatus()
+    {
+        return loginStatus;
+    }
     // Utility methods
     public boolean checkPassword(String inputPassword)
     {

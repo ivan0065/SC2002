@@ -20,7 +20,7 @@ public class BTOApplication {
         // Note: applicationId is not set in constructor anymore
         this.applicationId = "APP-" + java.util.UUID.randomUUID().toString().substring(0, 8);
         this.applicantId = applicantId;
-        this.projectId = projectId;
+        this.projectName = projectId;
         this.flatType = flatType;
         this.applicationStatus = "PENDING"; // Default status upon creation
         this.applicationDate = java.time.LocalDate.now().toString();
@@ -93,7 +93,7 @@ public class BTOApplication {
         System.out.println("===== APPLICATION DETAILS =====");
         System.out.println("Application ID: " + applicationId);
         System.out.println("Applicant ID: " + applicantId);
-        System.out.println("Project ID: " + projectId);
+        System.out.println("Project Name: " + projectName);
         System.out.println("Flat Type: " + flatType);
         System.out.println("Application Status: " + applicationStatus);
         System.out.println("Application Date: " + applicationDate);
@@ -121,9 +121,9 @@ public class BTOApplication {
             return false;
         }
         //can consider removing this if needed
-            BTOProject project = projectDatabase.getProjectByName(projectId);
+            BTOProject project = projectDatabase.getProjectByName(projectName);
         if (project == null) {
-            System.out.println("Project not found: " + projectId);
+            System.out.println("Project not found: " + projectName);
             return false;
         }
     
@@ -149,7 +149,7 @@ public class BTOApplication {
     public String toString() {
         return "Application ID: " + applicationId +
                "\nApplicant ID: " + applicantId +
-               "\nProject ID: " + projectId +
+               "\nProject ID: " + projectName +
                "\nFlat Type: " + flatType +
                "\nApplication Status: " + applicationStatus +
                "\nApplication Date: " + applicationDate +
