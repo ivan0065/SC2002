@@ -167,7 +167,7 @@ public class BTOProject {
 	}
 	// methods
 
-	public int getAvailableOfficerSlots() {
+	public int getRemainingOfficerSlots() {
 	    return 10 - HDBOfficerList.size();
 	}
 
@@ -231,8 +231,5 @@ public class BTOProject {
 	    System.out.println("============================\n");
 	}
 
-    public int getRemainingOfficerSlots() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
 }
