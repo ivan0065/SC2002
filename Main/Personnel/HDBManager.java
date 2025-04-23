@@ -22,11 +22,11 @@ public class HDBManager extends User{
     protected static ProjectDatabase BTOdatabase;
 
         // Constructor for HDBManager
-    public HDBManager(String username, String password, int age, MaritalStatus maritalStatus, UserRole role,
+    public HDBManager(String name, String username, String password, int age, MaritalStatus maritalStatus, UserRole role,
                     I_projectManager projectManager,
                     I_RegistrationManager registrationManager,
                     I_applicationManager appManager){
-        super(username, password, age, maritalStatus, role); // Call the User constructor
+        super(name, username, password, age, maritalStatus); // Call the User constructor
         this.projectManager = projectManager;
         this.registrationManager = registrationManager;
         this.appManager = appManager;
