@@ -43,11 +43,9 @@ public class BTOProject {
 		            LocalDate applicationOpeningDate,
 		            LocalDate applicationClosingDate,
 		            boolean isVisible,
-		            String projectStatus,
 		            List<FlatType> flatTypes,
 		            String projectNeighbourhood,
-					FlatList flatLists,
-					String projectId) {
+					FlatList flatLists) {
 		this.HDBManagerInCharge = HDBManagerInCharge;
 		this.HDBOfficerList = HDBOfficerList;
 		this.applications = applications;
@@ -56,11 +54,10 @@ public class BTOProject {
 		this.applicationOpeningDate = applicationOpeningDate;
 		this.applicationClosingDate = applicationClosingDate;
 		this.isVisible = isVisible;
-		this.projectStatus = projectStatus;
+		this.projectStatus = "PENDING";
 		this.flatTypes = flatTypes;
 		this.projectNeighbourhood = projectNeighbourhood;
 		this.flatLists= flatLists;
-		this.projectId = projectId;
 		
 		this.HDBOfficerList = new ArrayList<>();
 	    this.applications = new ArrayList<>();
