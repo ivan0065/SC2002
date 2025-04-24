@@ -170,7 +170,7 @@ public class Applicant extends User implements I_applicant_EnquiryM
     }
     public String viewApplicationStatus()
     {
-        return newApp.toString()
+        return newApp.toString();
     }
 
 

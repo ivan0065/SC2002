@@ -16,7 +16,7 @@ public class BTOManagementSystemApp {
             "data/ManagerList.csv", 
             projectDatabase
         );
-
+        projectDatabase.setUsers(users);
         BTOManagementSystem system = new BTOManagementSystem(users);
 
         boolean exitSystem = false;

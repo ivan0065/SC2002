@@ -31,15 +31,28 @@ public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
         }
     }
     public void ViewEnquiry(EnquiryList enquiryList){
-        if(enquiryList.isEmpty()){
-            System.out.println("No enquiries available.");
-            return;
-        }
-        for(Enquiry enquiry: enquiryList.getEnquiries()){
-            if(enquiry.getSender().equals(applicant)){
-                enquiry.printEnquiry();
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+        boolean foundEnquiries = false;
+        
+        for(BTOProject project: projectDatabase.getAllProjects()){
+            EnquiryList enquirylist = project.getEnquiryList();
+            
+            if(!enquirylist.isEmpty()){
+                for(Enquiry enquiry: enquirylist.getEnquiries()){
+                    if(enquiry.getSender().getUserID().equals(applicant.getUserID())){
+                        if (!foundEnquiries) {
+                            System.out.println("Your enquiries:");
+                            foundEnquiries = true;
+                        }
+                        enquiry.printEnquiry();
+                        System.out.println("---------------------------");
+                    }
+                }
             }
-        }  
+        }
+        if(!foundEnquiries){
+            System.out.println("You have no enquiries.");
+        }
     }
     
     public int addEnquiry(String enquiryContent, String project){ 
