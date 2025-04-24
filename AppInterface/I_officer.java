@@ -120,17 +120,6 @@ public class I_officer implements I_UserInterface {
                 " | Remaining Officer Slots: " + project.getRemainingOfficerSlots());
         }
 
-        System.out.print("Enter the number of the project to join (0 to cancel): ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-
-        if (choice > 0 && choice <= joinableProjects.size()) {
-            BTOProject selectedProject = joinableProjects.get(choice - 1);
-            officer.joinProject(selectedProject);
-            System.out.println("Successfully joined project: " + selectedProject.getProjectName());
-        } else {
-            System.out.println("Cancelled or invalid choice.");
-        }
     }
 
 
