@@ -24,25 +24,43 @@ public class Applicant extends User
         super(name, nric, password, age, martialStatus, UserRole.APPLICANT); // Call the User constructor
         this.currentApplicationId = null; // No BTO application by default
         this.enquiryIds = new ArrayList<>();
+        this.applications = new ArrayList<>(); // Initialize the list of applications
+
     }
 
-    // incomplete
+    // can check if project is full etc(havent do this)
     public void viewOpenToUserGroup()
     {
-        MaritalStatus status = getMaritalStatus();
-        if (status == MaritalStatus.SINGLE)
+        System.out.println("BTO Projects available: ");
+        //incomplete
+        // Access the ProjectDatabase through HDBManager's static reference
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+        // Get all projects and filter based on marital status
+        List<BTOProject> allProjects = projectDatabase.getAllProjects();
+        List<BTOProject> filteredProjects = new ArrayList<>();
+        for (BTOProject project : allProjects) 
         {
-            System.out.println("BTO Projects available for Singles: ");
-            //incomplete
+            filteredProjects.add(project);
+            
         }
-        else if (status == MaritalStatus.MARRIED)
+        
+        // Display the filtered projects to the user
+        if (filteredProjects.isEmpty()) 
         {
-            System.out.println("BTO Projects available for Married: ");
-            //incomplete
+            System.out.println("No projects available for your marital status and age.");
+        } 
+        else 
+        {
+            System.out.println("Available projects: ");
+            for (BTOProject project : filteredProjects) 
+            {
+                System.out.println("Project Name: " + project.getProjectName());
+            }
         }
+    
     }
 
-    public void applyBTO(String projectId, FlatType flatType)
+    public void applyBTO(String projectname, FlatType flatType)
     {
         if (currentApplicationId != null) 
         {
@@ -59,16 +77,19 @@ public class Applicant extends User
         
         for (BTOProject project : allProjects) 
         {
-            if (project.getProjectId().equals(projectId)) {
+            System.out.println(project.getProjectName());
+            System.out.println(projectname);
+            System.out.println("- '" + project.getProjectName() + "'");
+            if (project.getProjectName().trim().equalsIgnoreCase(projectname.trim())) {
                 targetProject = project;
-                break;
-            }
+                System.out.println("Match found: " + project.getProjectName());
+        }
         }
         
         // Check if project is found
         if (targetProject == null) 
         {
-            System.out.println("Project with ID " + projectId + " not found.");
+            System.out.println("Project with Name " + projectname + " not found.");
             return;
         }
         // Check visibility
@@ -109,7 +130,7 @@ public class Applicant extends User
         // Create random application ID
         String applicationId = java.util.UUID.randomUUID().toString();
         // Create new BTOApplication object
-        newApp = new BTOApplication(applicationId, this.getUserID(), projectId, flatType);
+        newApp = new BTOApplication(applicationId, this.getUserID(), projectname, flatType);
         //Add new application to applicaitions list and project
         applications.add(newApp);
         currentApplicationId = applicationId;
@@ -142,9 +163,9 @@ public class Applicant extends User
             }
         }
     }
-    public String viewApplicationStatus()
+    public void viewApplicationStatus()
     {
-        return newApp.getApplicationStatus();
+        System.out.println(newApp.toString());
     }
 
 

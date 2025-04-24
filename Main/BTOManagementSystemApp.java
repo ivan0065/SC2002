@@ -1,5 +1,6 @@
 package Main;
 
+import Main.BTO.ProjectDatabase;
 import Main.Personnel.*;
 import java.util.*;
 
@@ -8,9 +9,12 @@ public class BTOManagementSystemApp {
 
     public static void main(String[] args) {
 
+        // First create the ProjectDatabase to load project data
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
         //load sample user data from csv file
-        List<User> users = UserFileLoader.loadAllUsers("data/ApplicantList.csv", "data/OfficerList.csv", "data/ManagerList.csv");
-
+        List<User> users = UserFileLoader.loadAllUsers("data/ApplicantList.csv", "data/OfficerList.csv", "data/ManagerList.csv",projectDatabase);
+        // Set the users in ProjectDatabase
+        projectDatabase.setUsers(users);
         BTOManagementSystem system = new BTOManagementSystem(users);
 
         System.out.println("Welcome to the BTO Management System");

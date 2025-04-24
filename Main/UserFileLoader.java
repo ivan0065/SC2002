@@ -19,7 +19,8 @@ public class UserFileLoader {
     private static Map<String, HDBOfficer> officersByNRIC = new HashMap<>();
     private static Map<String, Applicant> applicantsByNRIC = new HashMap<>();
 
-    public static List<User> loadAllUsers(String applicantPath, String officerPath, String managerPath) {
+    public static List<User> loadAllUsers(String applicantPath, String officerPath, String managerPath,ProjectDatabase db) {
+        projectDatabase = db;
         List<User> users = new ArrayList<>();
         users.addAll(loadApplicants(applicantPath));
         users.addAll(loadOfficers(officerPath));

@@ -27,10 +27,28 @@ public class I_applicant implements I_UserInterface{
             choice = scanner.nextInt();
             switch (choice) {
                 case 1:
-                    System.out.println("Enter project ID and flat type to apply for BTO:");
-                    String projectId = scanner.next(); // Get project ID from user input
-                    String flatType = scanner.next(); // Get flat type from user input
-                    FlatType flatType1 = FlatType.valueOf(flatType.toUpperCase());
+                    System.out.println("Enter project Name to apply for BTO:");
+                    scanner.nextLine(); // Consume any previous newline character
+                    String projectId = scanner.nextLine(); // Get project ID from user input
+                    
+                    System.out.println("Enter flat type(2 or 3)");
+                    int flatType;
+                    try {
+                        flatType = Integer.parseInt(scanner.nextLine()); // Use nextLine and parse to int
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input. Please enter a number.");
+                        continue;
+                    }
+                    FlatType flatType1 = null;
+                    if (flatType == 2) {
+                        flatType1 = FlatType.Two_Room; // Set flat type to TWO_ROOM
+                    } else if (flatType == 3) {
+                        flatType1 = FlatType.Three_Room; // Set flat type to THREE_ROOM
+                    } else {
+                        System.out.println("Invalid flat type. Please enter 2 or 3.");
+                        continue; // Skip to the next iteration of the loop
+                    }
+                    System.out.println(projectId);
                     applicant.applyBTO(projectId, flatType1); // Call applyBTO method with user input
                     break;
                 case 2:
@@ -54,6 +72,9 @@ public class I_applicant implements I_UserInterface{
                 case 6:
                     System.out.println("Viewing open projects for the user group:");
                     applicant.viewOpenToUserGroup(); // Call viewOpenToUserGroup method with user input
+                    break;
+                case 7:
+                    System.out.println("Exiting the Applicant Portal. Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice, please try again.");
