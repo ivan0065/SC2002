@@ -142,7 +142,8 @@ public class HDBManager extends User implements I_officer_EnquiryM{
     }
 
     public List<BTOProject> getAvailForRegistration() {
-        return registrationManager.getAvailForRegistration();
+        HDBOfficer officer = null;
+		return registrationManager.getAvailForRegistration(officer);
     }
 
     public boolean validateOfficerEligibility(String officerUserID, String projectName) {
