@@ -12,11 +12,11 @@ import Main.interfaces.I_officer_EnquiryM;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 public class HDBOfficer extends Applicant implements I_officer_EnquiryM
 {
     private List<BTOProject> assignedProjects;
     private String HDBManagerRegistrationStatus;
+    private String HDBOfficerRegistrationStatus;
     private List<Registration> registrations;
     private I_officer_EnquiryM enquiryManager;
     private BTOProject curProject;
@@ -31,6 +31,10 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
         this.curProject=null;
     }
 
+    public void setOfficerRegistrationStatus(String status){
+        this.HDBOfficerRegistrationStatus = status;
+    }
+    
     public void ViewEnquiry() {
         if(assignedProjects.isEmpty()){
             System.out.println("No assigned projects available.");
@@ -122,6 +126,11 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
         assignedProjects.add(project);
     }
     
+    public String getHDBManagerRegistrationStatus()
+    {
+        return HDBManagerRegistrationStatus;
+    }
+
     public String getHDBOfficerRegistrationStatus()
     {
         return HDBManagerRegistrationStatus;

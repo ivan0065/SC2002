@@ -50,7 +50,8 @@ public class RegistrationManager implements I_RegistrationManager{
 		if (validateOfficerEligibility(officer.getUserID(), project.getProjectName())) {
 		        Registration reg = new Registration(project, officer);
 		        allRegistrations.add(reg);              
-		        officer.addRegistration(reg);        
+		        officer.addRegistration(reg);  
+                officer.setOfficerRegistrationStatus("PENDING");    
 		}
    	}
 	
