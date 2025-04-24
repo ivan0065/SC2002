@@ -27,7 +27,7 @@ public class ProjectManager implements I_projectManager{
                     String projectNeighbourhood,
                     FlatList flatLists,
                     String projectId) {
-        BTOProject newProject = new BTOProject(HDBManagerInCharge,HDBOfficerList,applications,applicantList,projectName,applicationOpeningDate,applicationClosingDate,isVisible,flatTypes,projectNeighbourhood,flatLists, projectId);
+        BTOProject newProject = new BTOProject(HDBManagerInCharge,HDBOfficerList,applications,applicantList,projectName,applicationOpeningDate,applicationClosingDate,isVisible,flatTypes,projectNeighbourhood,flatLists);
         managedProjects.add(newProject);
     }
 
@@ -75,11 +75,7 @@ public class ProjectManager implements I_projectManager{
                 boolean isVisible = Boolean.parseBoolean(scanner.nextLine());
                 toggleProjectVisibility(project, isVisible);
             }
-            case 7 -> {
-                System.out.println("Enter new project ID: ");
-                String newProjectId = scanner.nextLine();
-                project.setProjectId(newProjectId);
-            }
+            
             default -> System.out.println("Invalid choice.");
         }
         // Implement flat list editing logic here

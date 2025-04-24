@@ -627,18 +627,7 @@ public class ProjectDatabase {
      * @param projectId The ID of the project to retrieve
      * @return The project with the specified ID, or null if not found
      */
-    public BTOProject getProjectById(String projectId) {
-        if (projectId == null) {
-            return null;
-        }
-        
-        for (BTOProject project : projects) {
-            if (project.getProjectId().equals(projectId)) {
-                return project;
-            }
-        }
-        return null;
-    }
+    
     
     /**
      * Get the list of all projects
