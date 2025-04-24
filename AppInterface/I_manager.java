@@ -58,39 +58,80 @@ public class I_manager implements I_UserInterface {
                                 String projectName = scanner.nextLine();
                                 System.out.println("Enter application opening date (YYYY-MM-DD):");
                                 String openingDateStr = scanner.nextLine();
-                                LocalDate openingDate = LocalDate.parse(openingDateStr);
+                                LocalDate openingDate = null;
+                                try {
+                                    openingDate = LocalDate.parse(openingDateStr);
+                                } catch (Exception e) {
+                                    System.out.println("Invalid date format. Please use YYYY-MM-DD format.");
+                                    continue;
+                                }
+                                
                                 System.out.println("Enter application closing date (YYYY-MM-DD):");
                                 String closingDateStr = scanner.nextLine();
-                                LocalDate closingDate = LocalDate.parse(closingDateStr);
+                                LocalDate closingDate = null;
+                                try {
+                                    closingDate = LocalDate.parse(closingDateStr);
+                                    if (closingDate.isBefore(openingDate)) {
+                                        System.out.println("Closing date cannot be before opening date.");
+                                        continue;
+                                    }
+                                } catch (Exception e) {
+                                    System.out.println("Invalid date format. Please use YYYY-MM-DD format.");
+                                    continue; 
+                                }
                                 System.out.println("Enter project neighbourhood:");
                                 String projectNeighbourhood = scanner.nextLine();
                                 System.out.println("Enter flat types (comma-separated):");
                                 String flatTypesStr = scanner.nextLine();
                                 System.out.println("Enter project visibility (true/false):");
-                                boolean isVisible = scanner.nextBoolean();
+                                boolean isVisible = false;
+                                try {
+                                    isVisible = scanner.nextBoolean();
+                                } catch (Exception e) {
+                                    System.out.println("Invalid input. Please enter 'true' or 'false'.");
+                                    scanner.nextLine(); // clear the invalid input
+                                    continue; // go back to the project menu
+                                }
                                 scanner.nextLine(); // consume the newline character
                                 System.out.println("Enter flat list (comma-separated):");
                                 String flatListStr = scanner.nextLine();
-                                // Parse the flat types and flat list
+                                
                                 String[] flatTypesArray = flatTypesStr.split(",");
                                 String[] flatListArray = flatListStr.split(",");
                                 // Convert flat types to FlatType enum
                                 List<FlatType> flatTypes = new ArrayList<>();
                                 for (String flatTypeStr : flatTypesArray) {
-                                    FlatType flatType = FlatType.valueOf(flatTypeStr.trim().toUpperCase());
-                                    flatTypes.add(flatType);
+                                    try {
+                                        FlatType flatType = FlatType.valueOf(flatTypeStr.trim().toUpperCase());
+                                        flatTypes.add(flatType);
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println("Invalid flat type: " + flatTypeStr + ". Skipping this entry.");
+                                        System.out.println("Valid flat types are: " + java.util.Arrays.toString(FlatType.values()));
+                                    }
                                 }
                                 // Create FlatList object
-                                List<Flat> flatlist= new ArrayList<>();
+                                List<Flat> flatlist = new ArrayList<>();
                                 for (String flat : flatListArray) {
-                                    FlatType flatType = FlatType.valueOf(flat.trim().toUpperCase());
-                                    Flat flatObj = new Flat(flatType, 0); // Assuming price is 0 for simplicity
-                                    flatlist.add(flatObj);// Add flat to the FlatList
+                                    try {
+                                        FlatType flatType = FlatType.valueOf(flat.trim().toUpperCase());
+                                        Flat flatObj = new Flat(flatType, 0); // Assuming price is 0 for simplicity
+                                        flatlist.add(flatObj);
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println("Invalid flat type: " + flat + ". Skipping this entry.");
+                                        System.out.println("Valid flat types are: " + java.util.Arrays.toString(FlatType.values()));
+                                    }
                                 }
                                 FlatList flatList = new FlatList(flatlist);
                                 // Create the BTO project
+                                if (flatlist.isEmpty()) {
+                                    System.out.println("Flat list cannot be empty. Project creation failed.");
+                                    break;
+                                }
+                                if (projectName.isEmpty() || projectNeighbourhood.isEmpty()) {
+                                    System.out.println("Project name and neighbourhood cannot be empty. Project creation failed.");
+                                    break;
+                                }
                                 manager.createBTOProject(projectName, openingDate, closingDate, projectNeighbourhood, flatTypes, isVisible, flatList);
-                                System.out.println("BTO project created successfully!");
                                 break;
                             case 2:
                                 BTOProject proj;;
