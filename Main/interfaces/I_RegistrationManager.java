@@ -10,7 +10,7 @@ public interface I_RegistrationManager{
 
     List<Registration> getRegistrationList();
 
-    List<BTOProject> getAvailForRegistration();
+    List<BTOProject> getAvailForRegistration(HDBOfficer officer);
 
     boolean validateOfficerEligibility(String officerUserID, String projectID);
 
