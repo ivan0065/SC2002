@@ -46,7 +46,8 @@ public class I_manager implements I_UserInterface {
                         System.out.println("4. Toggle Project Visibility");
                         System.out.println("5. View All Managed Projects");
                         System.out.println("6. View All Projects");
-                        System.out.println("7. Back to Main Menu");
+                        System.out.println("7. Change Password");
+                        System.out.println("8. Back to Main Menu");
                         System.out.print("Enter your choice: ");
                         projectChoice = scanner.nextInt();
                         scanner.nextLine(); // consume the newline character
@@ -80,7 +81,7 @@ public class I_manager implements I_UserInterface {
                                 }
                                 System.out.println("Enter project neighbourhood:");
                                 String projectNeighbourhood = scanner.nextLine();
-                                System.out.println("Enter flat types (comma-separated, e.g., Two_Room,Three_Room):");
+                                System.out.println("Enter flat types (comma-separated):");
                                 String flatTypesStr = scanner.nextLine();
                                 System.out.println("Enter project visibility (true/false):");
                                 boolean isVisible = false;
@@ -92,35 +93,23 @@ public class I_manager implements I_UserInterface {
                                     continue; // go back to the project menu
                                 }
                                 scanner.nextLine(); // consume the newline character
-
-                                // Display available flat types to help the user
-                                System.out.println("Available flat types: " + java.util.Arrays.toString(FlatType.values()));
-                                System.out.println("Enter flat list with quantities and price (e.g., Two_Room:50,500000,Three_Room:30,700000):");
+                                System.out.println("Enter flat list (comma-separated):");
                                 String flatListStr = scanner.nextLine();
                                 // Process flat types
                                 String[] flatTypesArray = flatTypesStr.split(",");
+                                String[] flatListArray = flatListStr.split(",");
+                                // Convert flat types to FlatType enum
                                 List<FlatType> flatTypes = new ArrayList<>();
                                 for (String flatTypeStr : flatTypesArray) {
                                     try {
-                                        String trimmed = flatTypeStr.trim();
-                                        FlatType flatType = null;
-                                        
-                                        if (trimmed.equalsIgnoreCase("Two_Room") || trimmed.equalsIgnoreCase("2") || trimmed.equalsIgnoreCase("2_Room")) {
-                                            flatType = FlatType.Two_Room;
-                                        } else if (trimmed.equalsIgnoreCase("Three_Room") || trimmed.equalsIgnoreCase("3") || trimmed.equalsIgnoreCase("3_Room")) {
-                                            flatType = FlatType.Three_Room;
-                                        } else {
-                                            throw new IllegalArgumentException("Unknown flat type: " + trimmed);
-                                        }
-                                        
+                                        FlatType flatType = FlatType.valueOf(flatTypeStr.trim());
                                         flatTypes.add(flatType);
                                     } catch (IllegalArgumentException e) {
                                         System.out.println("Invalid flat type: " + flatTypeStr + ". Skipping this entry.");
                                         System.out.println("Valid flat types are: " + java.util.Arrays.toString(FlatType.values()));
                                     }
                                 }
-
-                                // Process flat list with quantities
+                                // Create FlatList object
                                 List<Flat> flatlist = new ArrayList<>();
                                 String[] flatEntries = flatListStr.split(",");
                                 for (int i = 0; i < flatEntries.length - 1; i += 2) {
@@ -175,7 +164,7 @@ public class I_manager implements I_UserInterface {
                                 manager.createBTOProject(projectName, openingDate, closingDate, projectNeighbourhood, flatTypes, isVisible, flatList);
                                 break;
                             case 2:
-                                BTOProject proj;
+                                BTOProject proj;;
                                 System.out.println("Enter the project name to edit:");
                                 String projectName1 = scanner.nextLine();
                                 // Display the fields that can be edited
@@ -228,18 +217,18 @@ public class I_manager implements I_UserInterface {
                                 break;
                             case 4:
                                 System.out.println("Enter project name to toggle visibility:");
-                                String projectIdToToggle = scanner.nextLine();
+                                String projectNameToToggle = scanner.nextLine();
                                 BTOProject projectToToggle;
-                                // Check if the project ID exists in the managed projects
-                                if (manager.getManagedProject().stream().anyMatch(project -> project.getProjectName().equals(projectIdToToggle))) {
-                                    System.out.println("Project found: " + projectIdToToggle);
-                                    projectToToggle = manager.getManagedProject().stream().filter(project -> project.getProjectName().equals(projectIdToToggle)).findFirst().orElse(null);
+                                // Check if the project name exists in the managed projects
+                                if (manager.getManagedProject().stream().anyMatch(project -> project.getProjectName().equals(projectNameToToggle))) {
+                                    System.out.println("Project found: " + projectNameToToggle);
+                                    projectToToggle = manager.getManagedProject().stream().filter(project -> project.getProjectName().equals(projectNameToToggle)).findFirst().orElse(null);
                                 } else {
-                                    System.out.println("Project not found: " + projectIdToToggle);
+                                    System.out.println("Project not found: " + projectNameToToggle);
                                     break;
                                 }
                                 // Toggle the visibility of the project
-                                System.out.println("Toggling visibility for project ID: " + projectIdToToggle);
+                                System.out.println("Toggling visibility for project name: " + projectNameToToggle);
                                 System.out.println("Enter new visibility (true/false):");
                                 boolean newVisibility = scanner.nextBoolean();
                                 manager.toggleProjectVisibility(projectToToggle,newVisibility);
@@ -263,13 +252,36 @@ public class I_manager implements I_UserInterface {
                                 manager.viewALLprojects();
                                 break;
                             case 7:
+                                System.out.println("Change Password");
+                                System.out.print("Enter your current password: ");
+                                String currentPassword = scanner.nextLine();
+                                
+                                // Verify current password
+                                if (manager.checkPassword(currentPassword)) {
+                                    System.out.print("Enter new password: ");
+                                    String newPassword = scanner.nextLine();
+                                    System.out.print("Confirm new password: ");
+                                    String confirmPassword = scanner.nextLine();
+                                    
+                                    if (newPassword.equals(confirmPassword)) {
+                                        // Call the changePassword method from User superclass
+                                        manager.changePassword(true, newPassword);
+                                        System.out.println("Password successfully changed.");
+                                    } else {
+                                        System.out.println("Passwords do not match. Password change failed.");
+                                    }
+                                } else {
+                                    System.out.println("Incorrect current password. Password change failed.");
+                                }
+                                break;
+                            case 8:
                                 System.out.println("Returning to Main Menu...");
                                 break;
                             default:
                                 System.out.println("Invalid choice. Please try again.");
                                 break;
                         }
-                    } while (projectChoice != 7); // Continue until the user chooses to exit
+                    } while (projectChoice != 8); // Continue until the user chooses to exit
                     break;
                 case 2:
                     do {
