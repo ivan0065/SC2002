@@ -1,13 +1,10 @@
 package AppInterface;
 
 import Main.BTO.BTOProject;
-
 import Main.BTO.ProjectDatabase;
 import Main.Enquiries.Enquiry;
-import Main.Enums.*;
 import Main.Manager_control.RegistrationManager;
 import Main.Personnel.*;
-
 import java.util.List;
 import java.util.Scanner;
 
