@@ -427,7 +427,7 @@ public class AppManager {
     // Helper method to get applicant by NRIC
     private Applicant getApplicantByNRIC(String nric) {
         User user = projectDatabase.getUserByNRIC(nric);
-        if (user != null && (user.getRole() == UserRole.APPLICANT || user.getRole() == UserRole.HDB_OFFICER)) {
+        if (user != null && (user.getRole() == UserRole.APPLICANT || user.getRole() == UserRole.OFFICER)) {
             return (Applicant) user;
         }
         return null;
