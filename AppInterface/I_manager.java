@@ -261,7 +261,7 @@ public class I_manager implements I_UserInterface {
                             
                             // Get list of managed projects
                             List<BTOProject> managedProjects = manager.getManagedProject();
-                            if (managedProjects.isEmpty()) {
+                            if (managedProjects == null) {
                                 System.out.println("You don't have any managed projects.");
                                 break;
                             }
@@ -525,7 +525,6 @@ public class I_manager implements I_UserInterface {
                     System.out.println("Invalid choice. Please try again.");
                     break;
             } // Close switch block
-            scanner.close();
         } while (choice != 5); // Continue until the user chooses to exit
     } // Close showMenu method
     
