@@ -101,7 +101,7 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
     {
         for (int i = 0; i < assignedProjects.size(); i++)
         {
-            if (currentApplicationId == assignedProjects.get(i).getProjectId())
+            if (currentApplicationId == null ? assignedProjects.get(i).getProjectId() == null : currentApplicationId.equals(assignedProjects.get(i).getProjectId()))
                 {
                     System.out.printf("You have already applied for the project %s as an applicant%n", assignedProjects.get(i).getProjectName());
                     return;

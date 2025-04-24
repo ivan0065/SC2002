@@ -28,9 +28,9 @@ public class ProjectDatabase {
     
     // CSV file paths
     private static final String PROJECT_CSV_PATH = "data/ProjectList.csv";
-    /*private static final String APPLICANT_CSV_PATH = "data/ApplicantList.csv";
+    private static final String APPLICANT_CSV_PATH = "data/ApplicantList.csv";
     private static final String OFFICER_CSV_PATH = "data/OfficerList.csv";
-    private static final String MANAGER_CSV_PATH = "data/ManagerList.csv";*/
+    private static final String MANAGER_CSV_PATH = "data/ManagerList.csv";
     
     /**
      * Constructor for ProjectDatabase
@@ -396,26 +396,8 @@ public class ProjectDatabase {
      * Helper method to parse date string to LocalDate
      */
     private LocalDate parseDate(String dateStr) {
-        // Try multiple date formats to handle different possible formats
-        String[] dateFormats = {
-            "dd/MM/yyyy",  // Standard format
-            "d/M/yyyy",    // Single digit day/month
-            "dd/M/yyyy",   // Double digit day, single digit month
-            "d/MM/yyyy"    // Single digit day, double digit month
-        };
-        
-        for (String format : dateFormats) {
-            try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
-                return LocalDate.parse(dateStr, formatter);
-            } catch (Exception e) {
-                // Try next format
-            }
-        }
-        
-        // If we get here, none of the formats matched
-        throw new IllegalArgumentException("Could not parse date: " + dateStr + 
-                                           ". Expected format: day/month/year");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+        return LocalDate.parse(dateStr, formatter);
     }
     
     /**
@@ -427,13 +409,6 @@ public class ProjectDatabase {
         return new ArrayList<>(projects);
     }
 
-    /**
-     * Set the users list after loading from UserFileLoader
-     */
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-    
     // Update the existing getBTOProjectsList method to properly handle VISIBLE_ONLY filter
     public void getBTOProjectsList(SortType sortFilter) {
         List<BTOProject> filteredProjects = new ArrayList<>(projects);

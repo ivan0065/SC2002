@@ -20,8 +20,9 @@ public class I_applicant implements I_UserInterface{
             System.out.println("3.View Application Status");
             System.out.println("4.Make Enquiry");
             System.out.println("5.Delete Enquiry");
-            System.out.println("6.View Open Projects");
-            System.out.println("7.Exit");
+            System.out.println("6.Edit Enquiry");
+            System.out.println("7.View Open Projects");
+            System.out.println("8.Exit");
             System.out.print("Please select an option: ");
             Scanner scanner = new Scanner(System.in);
             choice = scanner.nextInt();
@@ -60,26 +61,46 @@ public class I_applicant implements I_UserInterface{
                     applicant.viewApplicationStatus(); // Call viewApplicationStatus method with user input
                     break;
                 case 4:
-                    System.out.println("Enter enquiry ID to make an enquiry:");
-                    String enquiryId = scanner.next(); // Get enquiry ID from user input
-                    applicant.createEnquiry(enquiryId); // Call makeEnquiry method with user input
+                    System.out.println("Enter project to make an enquiry:");
+                    String project = scanner.next(); // Get enquiry ID from user input
+                    System.out.println("Enter your question:");
+                    scanner.nextLine(); // Consume any previous newline character
+                    String question = scanner.nextLine(); // Get question from user input
+                    applicant.addEnquiry(question,project); // Call makeEnquiry method with user input
                     break;
                 case 5:
+                    System.out.println("Enter project to make an enquiry:");
+                    String project1 = scanner.next(); // Get enquiry ID from user input
                     System.out.println("Enter enquiry ID to delete an enquiry:");
-                    String enquiryIdToDelete = scanner.next(); // Get enquiry ID from user input
-                    applicant.deleteEnquiry(enquiryIdToDelete); // Call deleteEnquiry method with user input
+                    Integer enquiryIdToDelete = scanner.nextInt(); // Get enquiry ID from user input
+                    boolean deleted=applicant.removeEnquiry(enquiryIdToDelete,project1); // Call deleteEnquiry method with user input
+                    if(deleted){
+                        System.out.println("Enquiry deleted successfully.");
+                    }else{
+                        System.out.println("Failed to delete enquiry. Please check the ID and try again.");
+                    }
                     break;
                 case 6:
+                    System.out.println("Enter project to edit an enquiry:");
+                    String project2 = scanner.next(); // Get enquiry ID from user input
+                    System.out.println("Enter enquiry ID to edit an enquiry:");
+                    Integer enquiryIdToEdit = scanner.nextInt(); // Get enquiry ID from user input
+                    System.out.println("Enter new question:");
+                    scanner.nextLine(); // Consume any previous newline character
+                    String newQuestion = scanner.nextLine(); // Get new question from user input
+                    applicant.editEnquiry(enquiryIdToEdit, newQuestion,project2); // Call editEnquiry method with user input
+                    break;
+                case 7:
                     System.out.println("Viewing open projects for the user group:");
                     applicant.viewOpenToUserGroup(); // Call viewOpenToUserGroup method with user input
                     break;
-                case 7:
+                case 8:
                     System.out.println("Exiting the Applicant Portal. Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice, please try again.");
             }
-        } while (choice != 7);
+        } while (choice != 8);
     }
     
     @Override
