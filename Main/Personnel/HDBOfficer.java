@@ -129,7 +129,15 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
 
     public String getRegistrationStatusForProject(BTOProject project) {
         HDBManager manager = project.getHDBManagerInCharge();
+        if (manager == null) {
+            System.out.println("No HDB Manager assigned to this project.");
+            return "NO_REGISTRATION";
+        }
         List<Registration> myRegs = manager.getRegistrationList();
+        if (myRegs == null) {
+            System.out.println("No registrations found for this project.");
+            return "NO_REGISTRATION";
+        }
         for (Registration reg : myRegs) {
             if(reg.getOfficer().getUserID().equals(this.getUserID()) && reg.getProject().getProjectName().equals(project.getProjectName())) {
                 return reg.getRegistrationStatus();
