@@ -135,6 +135,7 @@ public class HDBManager extends User implements I_officer_EnquiryM{
         List<HDBOfficer> HDBOfficerlist= new ArrayList<HDBOfficer>();
         List<BTOApplication> applications= new ArrayList<BTOApplication>();
         List<Applicant> applicantList= new ArrayList<Applicant>();
+        // Generate a random project ID
         projectManager.createBTOProject(this,HDBOfficerlist,applications,applicantList,projectName,openingDate,closingDate,isVisible,flatTypes,projectNeighbourhood,flatLists);
     }
 
