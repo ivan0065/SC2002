@@ -20,7 +20,8 @@ public interface I_projectManager {
 		            boolean isVisible,
 		            List<FlatType> flatTypes,
 		            String projectNeighbourhood,
-					FlatList flatLists);
+					FlatList flatLists,
+					String projectId);
     void editBTOProject(int choice,BTOProject project);
     void deleteBTOProject(String projectName);
     void toggleProjectVisibility(BTOProject project,boolean isVisible);

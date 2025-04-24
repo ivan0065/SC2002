@@ -14,18 +14,19 @@ import java.util.Scanner;
 public class ProjectManager implements I_projectManager{
     private List<BTOProject> managedProjects;
 
+    @Override
     public void createBTOProject(HDBManager HDBManagerInCharge,
-					List<HDBOfficer> HDBOfficerList,
-		            List<BTOApplication> applications,
-		            List<Applicant> applicantList,
-		            String projectName,
-		            LocalDate applicationOpeningDate,
-		            LocalDate applicationClosingDate,
-		            boolean isVisible,
-		            List<FlatType> flatTypes,
-		            String projectNeighbourhood,
-					FlatList flatLists,
-                    String projectId){
+                    List<HDBOfficer> HDBOfficerList,
+                    List<BTOApplication> applications,
+                    List<Applicant> applicantList,
+                    String projectName,
+                    LocalDate applicationOpeningDate,
+                    LocalDate applicationClosingDate,
+                    boolean isVisible,
+                    List<FlatType> flatTypes,
+                    String projectNeighbourhood,
+                    FlatList flatLists,
+                    String projectId) {
         BTOProject newProject = new BTOProject(HDBManagerInCharge,HDBOfficerList,applications,applicantList,projectName,applicationOpeningDate,applicationClosingDate,isVisible,flatTypes,projectNeighbourhood,flatLists, projectId);
         managedProjects.add(newProject);
     }
@@ -84,7 +85,7 @@ public class ProjectManager implements I_projectManager{
         // Implement flat list editing logic here
         // Implement HDBManager editing logic here
         // Implement HDBOfficer list editing logic here
-                
+        scanner.close();       
     }
 
     public void deleteBTOProject(String ProjectName){
