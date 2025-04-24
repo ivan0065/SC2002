@@ -70,9 +70,7 @@ public class BTOProject {
 		this.enquiryList =	new EnquiryList();
 	}
 
-	public String getProjectId() {
-		return projectId;
-	}
+
 	public String getProjectName() {
 	    return projectName;
 	}

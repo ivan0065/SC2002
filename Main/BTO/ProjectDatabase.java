@@ -136,7 +136,7 @@ public class ProjectDatabase {
                         );
                     }
 
-                    // Create and add the project
+                    
                     // Create and add the project
                     BTOProject project = new BTOProject(
                         placeholderManager, 
@@ -149,8 +149,7 @@ public class ProjectDatabase {
                         true,
                         new ArrayList<>(), 
                         neighborhood, 
-                        new FlatList(flatList),
-                        projectId
+                        new FlatList(flatList)
                     );
                     // Add flat types
                     project.addFlatType(flatType1);

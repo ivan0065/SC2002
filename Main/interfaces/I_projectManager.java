@@ -26,4 +26,5 @@ public interface I_projectManager {
     void toggleProjectVisibility(BTOProject project,boolean isVisible);
     List<BTOProject> getManagedProject();
     void viewBTOProjects();
+	public void addManagedProject(BTOProject project);
 }

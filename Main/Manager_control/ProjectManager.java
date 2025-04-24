@@ -8,11 +8,12 @@ import Main.Personnel.HDBManager;
 import Main.Personnel.HDBOfficer;
 import Main.interfaces.I_projectManager;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 public class ProjectManager implements I_projectManager{
-    private List<BTOProject> managedProjects;
+    private List<BTOProject> managedProjects= new ArrayList<>();
 
     @Override
     public void createBTOProject(HDBManager HDBManagerInCharge,
@@ -25,8 +26,8 @@ public class ProjectManager implements I_projectManager{
                     boolean isVisible,
                     List<FlatType> flatTypes,
                     String projectNeighbourhood,
-                    FlatList flatLists,
-                    String projectId) {
+                    FlatList flatLists
+                    ) {
         BTOProject newProject = new BTOProject(HDBManagerInCharge,HDBOfficerList,applications,applicantList,projectName,applicationOpeningDate,applicationClosingDate,isVisible,flatTypes,projectNeighbourhood,flatLists);
         managedProjects.add(newProject);
     }
@@ -112,6 +113,9 @@ public class ProjectManager implements I_projectManager{
 
     public List<BTOProject> getManagedProject(){
         return this.managedProjects;
+    }
+    public void addManagedProject(BTOProject project){
+        this.managedProjects.add(project);
     }
 
     public void viewBTOProjects(){
