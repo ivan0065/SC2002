@@ -21,8 +21,6 @@ public class I_manager implements I_UserInterface {
 
     public void showMenu() {
         int choice;
-        String ID;
-        int approved;
         int projectChoice;
         int regChoice;
         int appChoice;
@@ -252,7 +250,7 @@ public class I_manager implements I_UserInterface {
                                 break;
                         }
                     } while (projectChoice != 7); // Continue until the user chooses to exit
-                    
+                    break;
                 case 2:
                     do {
                         System.out.println("You have selected RegistrationManager Actions.");
@@ -293,13 +291,138 @@ public class I_manager implements I_UserInterface {
                                 break;
             
                             case 4:
-                                System.out.println("Returning to Main Menu...");
+                            System.out.println("Which project would you like to generate a report for?");
+                            
+                            // Get list of managed projects
+                            List<BTOProject> managedProjects = manager.getManagedProject();
+                            if (managedProjects == null) {
+                                System.out.println("You don't have any managed projects.");
+                                break;
+                            }
+                            
+                            // Display managed projects
+                            for (int i = 0; i < managedProjects.size(); i++) {
+                                System.out.println((i + 1) + ". " + managedProjects.get(i).getProjectName());
+                            }
+                            
+                            System.out.print("Enter project number: ");
+                            int projectNumber;
+                            try {
+                                projectNumber = scanner.nextInt();
+                                scanner.nextLine();
+                                
+                                if (projectNumber < 1 || projectNumber > managedProjects.size()) {
+                                    System.out.println("Invalid project number.");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                System.out.println("Invalid input. Please enter a number.");
+                                scanner.nextLine();
+                                break;
+                            }
+                            
+                            BTOProject selectedProject = managedProjects.get(projectNumber - 1);
+                            
+                            // Get registrations for the selected project
+                            List<Registration> projectRegistrations = new ArrayList<>();
+                            for (Registration reg : manager.getRegistrationList()) {
+                                if (reg.getProject().getProjectName().equals(selectedProject.getProjectName())) {
+                                    projectRegistrations.add(reg);
+                                }
+                            }
+                            
+                            if (projectRegistrations.isEmpty()) {
+                                System.out.println("No registrations found for project: " + selectedProject.getProjectName());
+                                break;
+                            }
+                            
+                            System.out.println("Select report type:");
+                            System.out.println("1. All Registrations");
+                            System.out.println("2. Pending Registrations");
+                            System.out.println("3. Approved Registrations");
+                            System.out.println("4. Rejected Registrations");
+                            System.out.print("Enter your choice: ");
+                            
+                            int reportType;
+                            try {
+                                reportType = scanner.nextInt();
+                                scanner.nextLine();
+                            } catch (Exception e) {
+                                System.out.println("Invalid input. Please enter a number.");
+                                scanner.nextLine();
+                                break;
+                            }
+                            
+                            // Filter registrations based on status
+                            List<Registration> filteredRegistrations = new ArrayList<>();
+                            String statusFilter;
+                            
+                            switch (reportType) {
+                                case 1: // All
+                                    filteredRegistrations = projectRegistrations;
+                                    statusFilter = "All";
+                                    break;
+                                case 2: // Pending
+                                    for (Registration reg : projectRegistrations) {
+                                        if (reg.getRegistrationStatus().equals("PENDING")) {
+                                            filteredRegistrations.add(reg);
+                                        }
+                                    }
+                                    statusFilter = "Pending";
+                                    break;
+                                case 3: // Approved
+                                    for (Registration reg : projectRegistrations) {
+                                        if (reg.getRegistrationStatus().equals("APPROVED")) {
+                                            filteredRegistrations.add(reg);
+                                        }
+                                    }
+                                    statusFilter = "Approved";
+                                    break;
+                                case 4: // Rejected
+                                    for (Registration reg : projectRegistrations) {
+                                        if (reg.getRegistrationStatus().equals("REJECTED")) {
+                                            filteredRegistrations.add(reg);
+                                        }
+                                    }
+                                    statusFilter = "Rejected";
+                                    break;
+                                default:
+                                    filteredRegistrations = projectRegistrations;
+                                    statusFilter = "All";
+                                    break;
+                            }
+                            
+                            // Display report
+                            System.out.println("\n=============== Registration Report ===============");
+                            System.out.println("Project: " + selectedProject.getProjectName());
+                            System.out.println("Status Filter: " + statusFilter);
+                            System.out.println("Total Registrations: " + filteredRegistrations.size());
+                            System.out.println("=================================================");
+                            
+                            if (filteredRegistrations.isEmpty()) {
+                                System.out.println("No registrations match the selected criteria.");
+                            } else {
+                                System.out.printf("%-15s | %-15s | %-12s | %-10s\n",
+                                        "Registration ID", "Officer NRIC", "Date", "Status");
+                                System.out.println("-------------------------------------------------");
+                                
+                                for (Registration reg : filteredRegistrations) {
+                                    System.out.printf("%-15s | %-15s | %-12s | %-10s\n",
+                                            reg.getRegistrationId(),
+                                            reg.getOfficer().getUserID(),
+                                            reg.getRegistrationDate(),
+                                            reg.getRegistrationStatus());
+                                }
+                            }
+                            
+                            System.out.println("=================================================");
                                 break;
                             default:
                                 System.out.println("Invalid choice. Please try again.");
                                 break;
                         }
                     }while(regChoice!=4);
+                break;
                 case 3:
                     do {
                         System.out.println("You have selected ApplicationManager Actions.");
@@ -394,6 +517,7 @@ public class I_manager implements I_UserInterface {
                                 break;
                         }
                     }while(appChoice!=4);
+                break;
                 case 4:
                     System.out.println("You have selected EnquiryManager Actions.");
                     System.out.println("1. View All Enquiries");
@@ -435,6 +559,7 @@ public class I_manager implements I_UserInterface {
                     System.out.println("Invalid choice. Please try again.");
                     break;
             } // Close switch block
+            scanner.close();
         } while (choice != 5); // Continue until the user chooses to exit
     } // Close showMenu method
     
