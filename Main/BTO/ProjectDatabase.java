@@ -149,7 +149,8 @@ public class ProjectDatabase {
                         true,
                         new ArrayList<>(), 
                         neighborhood, 
-                        new FlatList(flatList)
+                        new FlatList(flatList),
+                        projectId
                     );
                     // Add flat types
                     project.addFlatType(flatType1);
