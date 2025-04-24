@@ -21,8 +21,6 @@ public class I_manager implements I_UserInterface {
 
     public void showMenu() {
         int choice;
-        String ID;
-        int approved;
         int projectChoice;
         int regChoice;
         int appChoice;
@@ -401,6 +399,7 @@ public class I_manager implements I_UserInterface {
                     System.out.println("Invalid choice. Please try again.");
                     break;
             } // Close switch block
+            scanner.close();
         } while (choice != 5); // Continue until the user chooses to exit
     } // Close showMenu method
     
