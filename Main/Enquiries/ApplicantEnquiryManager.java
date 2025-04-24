@@ -10,6 +10,26 @@ public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
         this.applicant = applicant;
     }
 
+    @Override
+    public void viewEnquiry(){
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+        // Get the project by name
+        for(BTOProject project: projectDatabase.getAllProjects()){
+            // Get the enquiry list from the project
+            EnquiryList enquirylist=project.getEnquiryList();
+            
+            // Print the enquiries in the list
+            if(enquirylist.isEmpty()){
+                System.out.println("No enquiries available.");
+                return;
+            }
+            for(Enquiry enquiry: enquirylist.getEnquiries()){
+                if(enquiry.getSender().equals(applicant)){
+                    enquiry.printEnquiry();
+                }
+            }
+        }
+    }
     public void ViewEnquiry(EnquiryList enquiryList){
         if(enquiryList.isEmpty()){
             System.out.println("No enquiries available.");
