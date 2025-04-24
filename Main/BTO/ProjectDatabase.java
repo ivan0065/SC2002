@@ -606,6 +606,9 @@ public class ProjectDatabase {
         return new ArrayList<>(users);
     }
     
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
     /**
      * Get user by NRIC
      * 

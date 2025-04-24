@@ -179,6 +179,11 @@ public class Applicant extends User implements I_applicant_EnquiryM
         return currentApplicationId;
     }
 
+    public void viewEnquiry()
+    {
+        // View all enquiries made by the applicant
+        enquiryManager.viewEnquiry();
+    }
     public List<Integer> getEnquiryIds()
     {
         // Returns list of enquiry IDs
