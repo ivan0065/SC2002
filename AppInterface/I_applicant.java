@@ -23,7 +23,7 @@ public class I_applicant implements I_UserInterface{
             System.out.println("6.Edit Enquiry");
             System.out.println("7.View Enquirys");
             System.out.println("8.View Open Projects");
-            System.out.println("9.Exit");
+            System.out.println("10.Exit");
             System.out.print("Please select an option: ");
             Scanner scanner = new Scanner(System.in);
             try {
@@ -105,12 +105,34 @@ public class I_applicant implements I_UserInterface{
                     applicant.viewOpenToUserGroup(); // Call viewOpenToUserGroup method with user input
                     break;
                 case 9:
+                    System.out.println("Change Password");
+                    System.out.print("Enter your current password: ");
+                    String currentPassword = scanner.nextLine();
+                    
+                    // Verify current password
+                    if (applicant.checkPassword(currentPassword)) {
+                        System.out.print("Enter new password: ");
+                        String newPassword = scanner.nextLine();
+                        System.out.print("Confirm new password: ");
+                        String confirmPassword = scanner.nextLine();
+                        
+                        if (newPassword.equals(confirmPassword)) {
+                            // Call the changePassword method from User superclass
+                            applicant.changePassword(true, newPassword);
+                            System.out.println("Password successfully changed.");
+                        } else {
+                            System.out.println("Passwords do not match. Password change failed.");
+                        }
+                    } else {
+                        System.out.println("Incorrect current password. Password change failed.");
+                    }
+                case 10:
                     System.out.println("Exiting the Applicant Portal. Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice, please try again.");
             }
-        } while (choice != 9);
+        } while (choice != 10);
     }
     
     @Override
