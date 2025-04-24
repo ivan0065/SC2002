@@ -13,14 +13,29 @@ public class Enquiry{
     private LocalDateTime timestamp;
     private BTOProject project;
 
-    public Enquiry(String question, int enquiryID, User sender) {
+    public Enquiry(String question, int enquiryID, User sender,BTOProject project) {
         // check if timestamp is before proj opendate or after proj enddate
+        this.project=project;
         this.question = question;
         this.enquiryID = enquiryID;
         this.sender = sender;
         this.timestamp = LocalDateTime.now();
     }
-    
+    // Constructor with project reference and timestamp
+    public Enquiry(String question, int enquiryID, User sender, BTOProject project, LocalDateTime timestamp) {
+        this.question = question;
+        this.enquiryID = enquiryID;
+        this.sender = sender;
+        this.project = project;
+        this.timestamp = timestamp;
+    }
+    // Default constructor that uses current time
+    public Enquiry(String question, int enquiryID, User sender) {
+        this.question = question;
+        this.enquiryID = enquiryID;
+        this.sender = sender;
+        this.timestamp = LocalDateTime.now();
+    }
     public void printEnquiry(){
         System.out.println("Enquiry ID: " + enquiryID);
         System.out.println("Sender: " + sender.getUserID());

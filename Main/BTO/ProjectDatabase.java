@@ -11,9 +11,12 @@ import Main.Personnel.User;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -25,12 +28,11 @@ public class ProjectDatabase {
     private static List<BTOProject> projects;
     private static EnquiryList enquiryList;
     private static List<User> users;
-    
+    private static Map<String, User> usersByNRIC;
     // CSV file paths
     private static final String PROJECT_CSV_PATH = "data/ProjectList.csv";
-    private static final String APPLICANT_CSV_PATH = "data/ApplicantList.csv";
-    private static final String OFFICER_CSV_PATH = "data/OfficerList.csv";
-    private static final String MANAGER_CSV_PATH = "data/ManagerList.csv";
+    private static final String ENQUIRY_CSV_PATH = "data/EnquiryList.csv";
+    
     
     /**
      * Constructor for ProjectDatabase
@@ -40,7 +42,7 @@ public class ProjectDatabase {
         this.projects = new ArrayList<>();
         this.enquiryList = new EnquiryList();
         this.users = new ArrayList<>();
-        
+        this.usersByNRIC = new HashMap<>();
         // Load all CSV data
         loadProjectsFromCSV();
         // not needed for now
@@ -379,6 +381,83 @@ public class ProjectDatabase {
         }
     }*/
     
+    
+    /**
+     * Loads enquiry data from the CSV file
+     * This method should be called after users are loaded through UserFileLoader
+     */
+    public void loadEnquiriesFromCSV() {
+        try {
+            File file = new File(ENQUIRY_CSV_PATH);
+            Scanner scanner = new Scanner(file);
+            
+            // Skip header line
+            if (scanner.hasNextLine()) {
+                scanner.nextLine();
+            }
+            
+            int enquiryCount = 0;
+            
+            // Process each line of data
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                Scanner lineScanner = new Scanner(line);
+                lineScanner.useDelimiter(",");
+                
+                try {
+                    // Parse enquiry data
+                    int enquiryID = Integer.parseInt(lineScanner.next().trim());
+                    String question = lineScanner.next().trim();
+                    String reply = lineScanner.next().trim();
+                    String userNRIC = lineScanner.next().trim();
+                    String timestampStr = lineScanner.next().trim();
+                    String projectName = lineScanner.next().trim();
+                    boolean status = Boolean.parseBoolean(lineScanner.next().trim());
+                    
+                    // Find user and project
+                    User user = usersByNRIC.get(userNRIC);
+                    BTOProject project = getProjectByName(projectName);
+                    
+                    if (user == null) {
+                        System.err.println("User with NRIC " + userNRIC + " not found for enquiry " + enquiryID);
+                        continue;
+                    }
+                    
+                    if (project == null) {
+                        System.err.println("Project with name " + projectName + " not found for enquiry " + enquiryID);
+                        continue;
+                    }
+                    
+                    // Parse timestamp
+                    LocalDateTime timestamp = LocalDateTime.parse(timestampStr);
+                    
+                    // Create enquiry and add to project's enquiry list
+                    Enquiry enquiry = new Enquiry(question, enquiryID, user, project, timestamp);
+                    if (!reply.isEmpty()) {
+                        enquiry.addReply(reply);
+                    }
+                    
+                    project.getEnquiryList().addEnquiry(enquiry);
+                    enquiryCount++;
+                    
+                } catch (Exception e) {
+                    System.err.println("Error processing enquiry line: " + line);
+                    System.err.println("Error details: " + e.getMessage());
+                }
+                
+                lineScanner.close();
+            }
+            
+            scanner.close();
+            System.out.println("Successfully loaded " + enquiryCount + " enquiries from CSV.");
+            
+        } catch (FileNotFoundException e) {
+            System.err.println("Enquiry CSV file not found: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error processing enquiry data: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
     /**
      * Helper method to parse flat type string to enum
      */
@@ -548,18 +627,7 @@ public class ProjectDatabase {
      * @param projectId The ID of the project to retrieve
      * @return The project with the specified ID, or null if not found
      */
-    public BTOProject getProjectById(String projectId) {
-        if (projectId == null) {
-            return null;
-        }
-        
-        for (BTOProject project : projects) {
-            if (project.getProjectId().equals(projectId)) {
-                return project;
-            }
-        }
-        return null;
-    }
+    
     
     /**
      * Get the list of all projects
@@ -608,6 +676,13 @@ public class ProjectDatabase {
     
     public void setUsers(List<User> users) {
         this.users = users;
+        // Populate the usersByNRIC map for easy lookup
+        for (User user : users) {
+            usersByNRIC.put(user.getUserID(), user);
+        }
+        
+        // Now that we have users, we can load enquiries
+        loadEnquiriesFromCSV();
     }
     /**
      * Get user by NRIC
@@ -634,6 +709,7 @@ public class ProjectDatabase {
         enquiryList = new EnquiryList();
         
         loadProjectsFromCSV();
+        loadEnquiriesFromCSV();
         /*loadApplicantsFromCSV();
         loadOfficersFromCSV();
         loadManagersFromCSV();*/
