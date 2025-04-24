@@ -114,23 +114,28 @@ public class UserFileLoader {
                 return MaritalStatus.SINGLE;
         }
     }
-        private static void linkManagersToProjects() {
-        if (projectDatabase == null) return;
-        
-        for (BTOProject project : projectDatabase.getAllProjects()) {
-            // Check if the project has a manager assigned by NRIC
-            String managerNRIC = project.getHDBManagerInCharge() != null ? 
-                                 project.getHDBManagerInCharge().getUserID() : null;
+    private static void linkManagersToProjects() {
+    if (projectDatabase == null) return;
+    
+    for (BTOProject project : projectDatabase.getAllProjects()) {
+        // Check if the project has a manager assigned by NRIC
+        if (project.getHDBManagerInCharge() != null) {
+            String managerNRIC = project.getHDBManagerInCharge().getUserID();
             
             if (managerNRIC != null && managersByNRIC.containsKey(managerNRIC)) {
                 HDBManager manager = managersByNRIC.get(managerNRIC);
                 project.setHDBManagerInCharge(manager);
                 
-                // Important: Also add this project to the manager's list of managed projects
-                manager.addManagedProject(project);
+                // Also add this project to the manager's list of managed projects
+                if (manager != null) {
+                    manager.addManagedProject(project);
+                    System.out.println("Linked project " + project.getProjectName() + 
+                                      " to manager " + managerNRIC);
+                }
             }
         }
     }
+}
     
     private static void linkOfficersToProjects() {
         if (projectDatabase == null) return;
