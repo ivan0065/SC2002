@@ -12,7 +12,7 @@ public class I_applicant implements I_UserInterface{
     }
     
     public void show_menu(){
-        int choice;
+        int choice=9;
         System.out.println("Welcome to the Applicant Portal!");
         do {
             System.out.println("1.Apply for BTO");
@@ -26,7 +26,12 @@ public class I_applicant implements I_UserInterface{
             System.out.println("9.Exit");
             System.out.print("Please select an option: ");
             Scanner scanner = new Scanner(System.in);
-            choice = scanner.nextInt();
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
             switch (choice) {
                 case 1:
                     System.out.println("Enter project Name to apply for BTO:");
