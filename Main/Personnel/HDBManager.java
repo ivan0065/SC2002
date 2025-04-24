@@ -22,10 +22,10 @@ import AppInterface.I_manager;
 
 
 public class HDBManager extends User implements I_officer_EnquiryM{
-    private I_projectManager projectManager;
-    private I_RegistrationManager registrationManager;
-    private I_applicationManager appManager;
-    private I_officer_EnquiryM enquiryManager;
+    private I_projectManager projectManager= new ProjectManager();
+    private I_RegistrationManager registrationManager=new RegistrationManager();
+    private I_applicationManager appManager= new ApplicationManager();
+    private OfficerEnquiryManager enquiryManager;
     private BTOProject project;
 
     // Constructor for HDBManager
@@ -34,9 +34,6 @@ public class HDBManager extends User implements I_officer_EnquiryM{
             I_RegistrationManager registrationManager,
             I_applicationManager appManager){
     super(name, username, password, age, maritalStatus,UserRole.MANAGER); // Call the User constructor
-    this.projectManager = projectManager;
-    this.registrationManager = registrationManager;
-    this.appManager = appManager;
     this.project = null;
     this.enquiryManager = new OfficerEnquiryManager(this);
     }

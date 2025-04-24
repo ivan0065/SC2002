@@ -200,7 +200,8 @@ public class I_manager implements I_UserInterface {
                                 System.out.println("5. Project Neighbourhood");
                                 System.out.println("6. Project Visibility");
                                 System.out.println("7. Project ID");
-                                
+                                System.out.println("8. Return to Main Menu");
+                                System.out.print("Enter your choice: ");
                                 int edit_choice=0;
                                 try {
                                     edit_choice = scanner.nextInt();
@@ -240,6 +241,7 @@ public class I_manager implements I_UserInterface {
                                 System.out.println("Enter new visibility (true/false):");
                                 boolean newVisibility = scanner.nextBoolean();
                                 manager.toggleProjectVisibility(projectToToggle,newVisibility);
+                                System.out.println("Project visibility toggled successfully.");
                                 break;
                             case 5:
                                 System.out.println("Managed Projects:");

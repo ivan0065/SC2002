@@ -72,8 +72,9 @@ public class ProjectManager implements I_projectManager{
                 project.setProjectNeighbourhood(newNeighbourhood);
             }
             case 6 -> {
-                System.out.println("Enter visibility (true/false): ");
-                boolean isVisible = Boolean.parseBoolean(scanner.nextLine());
+                System.out.println("Enter visibility (1=true/2=false): ");
+                int visibilityChoice = scanner.nextInt();
+                boolean isVisible = visibilityChoice == 1;
                 toggleProjectVisibility(project, isVisible);
             }
             

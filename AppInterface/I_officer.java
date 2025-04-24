@@ -75,6 +75,10 @@ public class I_officer implements I_UserInterface {
                                 String projectName2 = scanner.nextLine();
                                 ProjectDatabase projectDatabase1 = ProjectDatabase.getInstance();
                                 BTOProject existingProject1 = projectDatabase1.getProjectByName(projectName2);
+                                if (existingProject1 == null) {
+                                    System.out.println("Project not found.");
+                                    break;
+                                }
                                 System.out.println("Registration Status: " + officer.getRegistrationStatusForProject(existingProject1));
                                 break;
                             case 6:
