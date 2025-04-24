@@ -2,6 +2,7 @@ package AppInterface;
 
 import Main.Enums.FlatType;
 import Main.Personnel.Applicant;
+import Main.Personnel.HDBOfficer;
 import java.util.Scanner;
 
 public class I_applicant implements I_UserInterface{
@@ -11,6 +12,9 @@ public class I_applicant implements I_UserInterface{
         this.applicant = applicant;
     }
     
+    public I_applicant(HDBOfficer officer) {
+        this.applicant = officer;
+    }
     public void show_menu(){
         int choice=9;
         System.out.println("Welcome to the Applicant Portal!");
@@ -36,17 +40,11 @@ public class I_applicant implements I_UserInterface{
             switch (choice) {
                 case 1:
                     System.out.println("Enter project Name to apply for BTO:");
-                    scanner.nextLine(); // Consume any previous newline character
                     String projectId = scanner.nextLine(); // Get project ID from user input
-                    
+
                     System.out.println("Enter flat type(2 or 3)");
-                    int flatType;
-                    try {
-                        flatType = Integer.parseInt(scanner.nextLine()); // Use nextLine and parse to int
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid input. Please enter a number.");
-                        continue;
-                    }
+                    int flatType = scanner.nextInt(); // Get flat type from user input
+                    scanner.nextLine(); // Consume the leftover newline
                     FlatType flatType1 = null;
                     if (flatType == 2) {
                         flatType1 = FlatType.Two_Room; // Set flat type to TWO_ROOM
