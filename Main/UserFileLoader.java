@@ -84,11 +84,13 @@ public class UserFileLoader {
                 MaritalStatus maritalStatus = parseMaritalStatus(parts[3]); // Optional
                 String password = parts[4];
                 I_projectManager projectManager = new Main.Manager_control.ProjectManager();
-                        I_RegistrationManager registrationManager = new Main.Manager_control.RegistrationManager();
-                        I_applicationManager applicationManager = new Main.Manager_control.ApplicationManager();
-                        
-                        managers.add(new HDBManager(name, nric, password, age, maritalStatus, 
-                                     projectManager, registrationManager, applicationManager));
+                I_RegistrationManager registrationManager = new Main.Manager_control.RegistrationManager();
+                I_applicationManager applicationManager = new Main.Manager_control.ApplicationManager();
+                
+                HDBManager manager = new HDBManager(name, nric, password, age, maritalStatus, 
+                     projectManager, registrationManager, applicationManager);
+                managers.add(manager);
+                managersByNRIC.put(nric, manager); 
             }
         } catch (IOException e) {
             System.err.println("Error loading managers: " + e.getMessage());
@@ -121,7 +123,11 @@ public class UserFileLoader {
                                  project.getHDBManagerInCharge().getUserID() : null;
             
             if (managerNRIC != null && managersByNRIC.containsKey(managerNRIC)) {
-                project.setHDBManagerInCharge(managersByNRIC.get(managerNRIC));
+                HDBManager manager = managersByNRIC.get(managerNRIC);
+                project.setHDBManagerInCharge(manager);
+                
+                // Important: Also add this project to the manager's list of managed projects
+                manager.addManagedProject(project);
             }
         }
     }
