@@ -9,7 +9,7 @@ public class BTOManagementSystemApp {
     public static void main(String[] args) {
 
         //load sample user data from csv file
-        List<User> users = UserFileLoader.loadAllUsers("ApplicantList.csv", "OfficerList.csv", "ManagerList.csv");
+        List<User> users = UserFileLoader.loadAllUsers("data/ApplicantList.csv", "data/OfficerList.csv", "data/ManagerList.csv");
 
         BTOManagementSystem system = new BTOManagementSystem(users);
 

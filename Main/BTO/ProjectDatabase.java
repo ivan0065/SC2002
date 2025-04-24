@@ -1,25 +1,20 @@
 package Main.BTO;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
-import Main.Enquiries.EnquiryList;
 import Main.Enquiries.Enquiry;
+import Main.Enquiries.EnquiryList;
 import Main.Enums.FilterType;
 import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
 import Main.Enums.SortType;
-import Main.Enums.UserRole;
-import Main.Manager_control.BTOApplication;
-import Main.Personnel.Applicant;
 import Main.Personnel.HDBManager;
-import Main.Personnel.HDBOfficer;
 import Main.Personnel.User;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * ProjectDatabase class that manages all BTO projects and their enquiries
@@ -48,9 +43,10 @@ public class ProjectDatabase {
         
         // Load all CSV data
         loadProjectsFromCSV();
-        loadApplicantsFromCSV();
+        // not needed for now
+        /*loadApplicantsFromCSV();
         loadOfficersFromCSV();
-        loadManagersFromCSV();
+        loadManagersFromCSV();*/
 }
 /* Get the singleton instance of ProjectDatabase
      * Creates instance if it doesn't exist
@@ -62,9 +58,12 @@ public class ProjectDatabase {
         }
         return instance;
     }
+
+
     /**
      * Loads project data from the CSV file using Scanner
      */
+
     private void loadProjectsFromCSV() {
         try {
             File file = new File(PROJECT_CSV_PATH);
@@ -125,11 +124,31 @@ public class ProjectDatabase {
                     // Create project ID
                     String projectId = java.util.UUID.randomUUID().toString();
                     
+                    // Create a simple placeholder manager that will be replaced later
+                    HDBManager placeholderManager = null;
+                    if (!managerNRIC.isEmpty() && !managerNRIC.equalsIgnoreCase("null")) {
+                        // Just store the NRIC - we'll replace with actual manager later
+                        placeholderManager = new HDBManager(
+                            "Placeholder", managerNRIC, "password", 
+                            30, MaritalStatus.SINGLE, null, null, null
+                        );
+                    }
+
                     // Create and add the project
-                    BTOProject project = new BTOProject(null, new ArrayList<>(), new ArrayList<>(), 
-                            new ArrayList<>(), projectName, openingDate, closingDate, true,
-                            "OPEN", new ArrayList<>(), neighborhood, new FlatList(flatList), projectId);
-                    
+                    // Create and add the project
+                    BTOProject project = new BTOProject(
+                        placeholderManager, 
+                        new ArrayList<>(), 
+                        new ArrayList<>(), 
+                        new ArrayList<>(), 
+                        projectName, 
+                        openingDate, 
+                        closingDate, 
+                        true,
+                        new ArrayList<>(), 
+                        neighborhood, 
+                        new FlatList(flatList)
+                    );
                     // Add flat types
                     project.addFlatType(flatType1);
                     project.addFlatType(flatType2);
@@ -166,7 +185,7 @@ public class ProjectDatabase {
     /**
      * Loads applicant data from the CSV file using Scanner
      */
-    private void loadApplicantsFromCSV() {
+    /*private void loadApplicantsFromCSV() {
         try {
             File file = new File(APPLICANT_CSV_PATH);
             Scanner scanner = new Scanner(file);
@@ -225,7 +244,7 @@ public class ProjectDatabase {
     /**
      * Loads HDB officer data from the CSV file using Scanner
      */
-    private void loadOfficersFromCSV() {
+    /*private void loadOfficersFromCSV() {
         try {
             File file = new File(OFFICER_CSV_PATH);
             Scanner scanner = new Scanner(file);
@@ -290,12 +309,12 @@ public class ProjectDatabase {
             System.err.println("Error processing officer data: " + e.getMessage());
             e.printStackTrace();
         }
-    }
+    }*/
     
     /**
      * Loads HDB manager data from the CSV file using Scanner
      */
-    private void loadManagersFromCSV() {
+    /*private void loadManagersFromCSV() {
         try {
             File file = new File(MANAGER_CSV_PATH);
             Scanner scanner = new Scanner(file);
@@ -358,7 +377,7 @@ public class ProjectDatabase {
             System.err.println("Error processing manager data: " + e.getMessage());
             e.printStackTrace();
         }
-    }
+    }*/
     
     /**
      * Helper method to parse flat type string to enum
@@ -612,8 +631,8 @@ public class ProjectDatabase {
         enquiryList = new EnquiryList();
         
         loadProjectsFromCSV();
-        loadApplicantsFromCSV();
+        /*loadApplicantsFromCSV();
         loadOfficersFromCSV();
-        loadManagersFromCSV();
+        loadManagersFromCSV();*/
     }
 }
