@@ -31,43 +31,81 @@ public class HDBManager extends User implements I_officer_EnquiryM{
 
         // Constructor for HDBManager
     public HDBManager(String name, String username, String password, int age, MaritalStatus maritalStatus,
-                    I_projectManager projectManager,
-                    I_RegistrationManager registrationManager,
-                    I_applicationManager appManager){
-        super(name, username, password, age, maritalStatus,UserRole.MANAGER); // Call the User constructor
-        this.projectManager = projectManager;
-        this.registrationManager = registrationManager;
-        this.appManager = appManager;
-        this.enquiryManager = new OfficerEnquiryManager(this);
+            I_projectManager projectManager,
+            I_RegistrationManager registrationManager,
+            I_applicationManager appManager){
+    super(name, username, password, age, maritalStatus,UserRole.MANAGER); // Call the User constructor
+    this.projectManager = projectManager;
+    this.registrationManager = registrationManager;
+    this.appManager = appManager;
+    this.project = null;
+    this.enquiryManager = new OfficerEnquiryManager(this);
     }
-    public void setProject(){
+
+    public void setProject()
+    {
         List<BTOProject> projects = projectManager.getManagedProject();
-        if (projects.isEmpty()) {
+
+        if (projects.isEmpty()) 
+        {
             System.out.println("No assigned projects available.");
             return;
         }
-        for(BTOProject project:projects){
-            if(project.getApplicationClosingDate().isAfter(LocalDate.now()) && project.getApplicationOpeningDate().isBefore(LocalDate.now())){
-                this.project=project;
-                break;
-            }
+
+        for(BTOProject project:projects)
+        {
+            if (project.getApplicationClosingDate().isAfter(LocalDate.now()) 
+             && project.getApplicationOpeningDate().isBefore(LocalDate.now()))
+        {
+            this.project=project;
+            return;
         }
+        }
+
+        System.out.println("No active projects found within current application period.");
     }
+
     //AppManager part
-    public boolean approveBTOApplication(String application_id, String newStatus){
+    public boolean approveBTOApplication(String application_id, String newStatus)
+    {
+        if (project == null) 
+        {
+            System.out.println("No active project to approve");
+            return false;
+        }
+
         List<BTOApplication> app_list=project.getApplications();
-        BTOApplication cur_Application=null;
-        FlatList flatList=project.getFlatLists();
-        for( BTOApplication application: app_list){
-            if(application.getApplicationId().equals(application_id)){
+        if (app_list.isEmpty() || app_list == null) 
+        {
+            System.out.println("No applications available for approval.");
+            return false;
+        }
+
+        BTOApplication cur_Application = null;
+        for(BTOApplication application: app_list)
+        {
+            if (application.getApplicationId().equals(application_id))
+            {
                 cur_Application= application;
                 break;
             }
         }
-        if (cur_Application == null) {
+
+        if (cur_Application == null) 
+        {
             throw new IllegalArgumentException("Application with ID " + application_id + " not found.");
         }
-        return appManager.approveBTOApplication(cur_Application, flatList, newStatus);
+
+        FlatList flatList=project.getFlatLists();
+        try
+        {
+            return appManager.approveBTOApplication(cur_Application, flatList, newStatus);
+        }
+        catch (IllegalArgumentException e) 
+        {
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
         //change the edits in BTOProject
     }
 
