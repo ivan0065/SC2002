@@ -4,20 +4,25 @@ import AppInterface.I_UserInterface;
 import AppInterface.I_applicant;
 import Main.BTO.BTOProject;
 import Main.BTO.ProjectDatabase;
+import Main.Enquiries.ApplicantEnquiryManager;
+import Main.Enquiries.Enquiry;
+import Main.Enquiries.EnquiryList;
 import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
 import Main.Enums.UserRole;
 import Main.Manager_control.BTOApplication;
 import Main.TimeManager;
+import Main.interfaces.I_applicant_EnquiryM;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Applicant extends User
+public class Applicant extends User implements I_applicant_EnquiryM
 {
     protected String currentApplicationId; // ID of current application
-    protected List<String> enquiryIds; // List containing ID of all enquiries made by applicant
+    protected List<Integer> enquiryIds; // List containing ID of all enquiries made by applicant
     protected List<BTOApplication> applications; // List of BTO applications made by the applicant
     protected BTOApplication newApp; // New application object
+    protected I_applicant_EnquiryM enquiryManager; // Enquiry manager for the applicant
     // Constructor
     public Applicant(String name, String nric, String password, int age, MaritalStatus martialStatus)
     {
@@ -25,7 +30,7 @@ public class Applicant extends User
         this.currentApplicationId = null; // No BTO application by default
         this.enquiryIds = new ArrayList<>();
         this.applications = new ArrayList<>(); // Initialize the list of applications
-
+        this.enquiryManager = new ApplicantEnquiryManager(this); // Initialize the enquiry manager
     }
 
     // can check if project is full etc(havent do this)
@@ -174,28 +179,75 @@ public class Applicant extends User
         return currentApplicationId;
     }
 
-    public List<String> getEnquiryIds()
+    public List<Integer> getEnquiryIds()
     {
         // Returns list of enquiry IDs
-        return new ArrayList<>(enquiryIds);
+        return enquiryIds;
     }
 
 
-    public void createEnquiry(String enquiryId)
+    public int addEnquiry(String enquiryContent, String project)
     {
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+        // Get the project by name
+        BTOProject project1 = projectDatabase.getProjectByName(project);
+        if (project1 == null) 
+        {
+            System.out.println("Project not found: " + project);
+            return -1;
+        }
+        // Create a new enquiry using the enquiry manager
+        EnquiryList enquirylist=project1.getEnquiryList();
+        int enquiryId=enquiryManager.addEnquiry(enquiryContent, project);
+        // Add the enquiry ID to the list of enquiry IDs
         if (enquiryIds.contains(enquiryId) == false)
         {
             enquiryIds.add(enquiryId);
         }
+        return 0;
     }
 
-    public boolean deleteEnquiry(String enquiryId)
+    public boolean removeEnquiry(int enquiryId,String project)
     {
+        // Check if the enquiry ID is valid
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+        // Get the project by name
+        BTOProject project1 = projectDatabase.getProjectByName(project);
+        if (project1 == null) 
+        {
+            System.out.println("Project not found: " + project);
+            return false;
+        }
+        // Get the enquiry list from the project
+        EnquiryList enquirylist=project1.getEnquiryList();
+        // Find the enquiry by ID
+        Enquiry enquiry = enquirylist.getEnquiryByID(enquiryId);
+        if (enquiry == null) 
+        {
+            System.out.println("Enquiry not found: " + enquiryId);
+            return false;
+        }
+        // Check if the enquiry belongs to the applicant
+        if (!enquiry.getSender().equals(this)) 
+        {
+            System.out.println("You do not have permission to delete this enquiry.");
+            return false;
+        }
+        // Remove the enquiry from the list
+        return enquiryManager.removeEnquiry(enquiryId, project);
         // Returns True is removed, False if enquiryId is not found
-        return enquiryIds.remove(enquiryId);
+
     }
 
+    public void ViewEnquiry(EnquiryList enquiryList) {
+        // View all enquiries made by the applicant
+        enquiryManager.ViewEnquiry(enquiryList);
+    }
 
+    public void editEnquiry(int enquiryID, String newQuestion, String project) {
+        // Edit an enquiry made by the applicant
+        enquiryManager.editEnquiry(enquiryID,newQuestion,project);
+    }
     @Override
     public I_UserInterface getUserInterface() {
         return new I_applicant(this);

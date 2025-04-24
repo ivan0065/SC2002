@@ -1,5 +1,6 @@
 package Main.Enquiries;
 import Main.BTO.BTOProject;
+import Main.BTO.ProjectDatabase;
 import Main.Personnel.Applicant;
 import Main.interfaces.I_applicant_EnquiryM;
 public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
@@ -21,25 +22,48 @@ public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
         }  
     }
     
-    public void addEnquiry(EnquiryList enquiryList, String question,BTOProject project){ 
-        int enquiryID = enquiryList.getEnquiries().size() + 1; 
-        Enquiry newEnquiry = new Enquiry(question, enquiryID, applicant);
-        enquiryList.addEnquiry(newEnquiry);
+    public int addEnquiry(String enquiryContent, String project){ 
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+        // Get the project by name
+        BTOProject project1 = projectDatabase.getProjectByName(project);
+        
+        // Create a new enquiry using the enquiry manager
+        EnquiryList enquirylist=project1.getEnquiryList();
+        int enquiryID = enquirylist.getEnquiries().size() + 1; 
+        Enquiry newEnquiry = new Enquiry(enquiryContent, enquiryID, applicant);
+        enquirylist.addEnquiry(newEnquiry);
         System.out.println("Enquiry added successfully.");
-
+        return enquiryID; // Return the ID of the new enquiry
     }
 
-    public void removeEnquiry(EnquiryList enquiryList, int enquiryID){
-        Enquiry enquiry = enquiryList.getEnquiryByID(enquiryID);
+    public boolean removeEnquiry(int enquiryId,String project){
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+        // Get the project by name
+        BTOProject project1 = projectDatabase.getProjectByName(project);
+        // Get the enquiry list from the project
+        EnquiryList enquirylist=project1.getEnquiryList();
+        // Find the enquiry by ID
+        Enquiry enquiry = enquirylist.getEnquiryByID(enquiryId);
+
         if(enquiry != null && enquiry.getSender().equals(applicant)){
-            enquiryList.removeEnquiry(enquiry);
+            enquirylist.removeEnquiry(enquiry);
             System.out.println("Enquiry removed successfully.");
+            return true;
         } else {
             System.out.println("Enquiry not found or you do not have permission to remove it.");
+            return false;
         }
     }
-    public void editEnquiry(EnquiryList enquiryList, int enquiryID, String newQuestion){
-        Enquiry enquiry = enquiryList.getEnquiryByID(enquiryID);
+    
+    public void editEnquiry(int enquiryID,String newQuestion,String project){
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+        // Get the project by name
+        BTOProject project1 = projectDatabase.getProjectByName(project);
+        // Get the enquiry list from the project
+        EnquiryList enquirylist=project1.getEnquiryList();
+        // Find the enquiry by ID
+        Enquiry enquiry = enquirylist.getEnquiryByID(enquiryID);
+
         if(enquiry != null && enquiry.getSender().equals(applicant)){
             enquiry.setQuestion(newQuestion);
             System.out.println("Enquiry edited successfully.");
@@ -47,6 +71,8 @@ public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
             System.out.println("Enquiry not found or you do not have permission to edit it.");
         }
     }
+    
 
+    
 
 }
