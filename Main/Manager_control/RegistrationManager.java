@@ -26,23 +26,6 @@ public class RegistrationManager implements I_RegistrationManager{
 		return allRegistrations;
 	}
 	
-	public List<BTOProject> getAvailForRegistration() {
-  
-    	ProjectDatabase database = new ProjectDatabase();
-    // Call the instance method instead of a static method
-    	List<BTOProject> allProjects = database.getBTOProjectsList();
-    	List<BTOProject> availProjects = new ArrayList<>();
-
-	    for (BTOProject project : allProjects) {
-	        int availableSlots = project.getRemainingOfficerSlots(); 
-	        if (availableSlots > 0) {
-	            availProjects.add(project);
-	        }
-	    }
-
-    return availProjects;
-}
-	
 	public boolean validateOfficerEligibility(String officerUserID, String projectName) {
 		// Get the list of applications tied to the project the officer is trying to register for
     		ProjectDatabase database = new ProjectDatabase();  
@@ -163,6 +146,18 @@ public class RegistrationManager implements I_RegistrationManager{
             project.addHDBOfficer(officer);
         }
     }
+    
+
+    @Override
+    public List<BTOProject> getAvailForRegistration(HDBOfficer officer) {
+        List<BTOProject> allProjects = ProjectDatabase.getInstance().getBTOProjectsList();
+        return allProjects.stream()
+            .filter(p -> p.getVisibilitySetting()
+                && !p.getHDBOfficerList().contains(officer)
+                && p.getRemainingOfficerSlots() > 0)
+            .toList();
+    }
+
 }
 
 	
