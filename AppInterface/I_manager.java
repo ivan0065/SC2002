@@ -5,6 +5,7 @@ import Main.BTO.Flat;
 import Main.BTO.FlatList;
 import Main.Enquiries.Enquiry;
 import Main.Enums.*;
+import Main.Manager_control.Registration;
 import Main.Personnel.HDBManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -180,23 +181,42 @@ public class I_manager implements I_UserInterface {
                 case 2:
                     do {
                         System.out.println("You have selected RegistrationManager Actions.");
-                        System.out.println("1. ");
-                        System.out.println("2. ");
-                        System.out.println("3. Generate Report for Applications");
-                        System.out.println("4. Back to Main Menu");
+                        System.out.println("1. View Pending Registrations");
+                        System.out.println("2. Approve Registration");
+                        System.out.println("3. Reject Registration");
+                        System.out.println("4. Generate Report for Applications");
+                        System.out.println("5. Back to Main Menu");
                         System.out.print("Enter your choice: ");
                         regChoice = scanner.nextInt();
                         scanner.nextLine(); // consume the newline character
                         switch(regChoice){
                             case 1:
-                                // Implement approve BTO application logic here
+                                List<Registration> pendingRegs = manager.getPendingRegistrations();
+                                if (pendingRegs.isEmpty()) {
+                                    System.out.println("No pending registrations found.");
+                                } else {
+                                    System.out.println("Pending Registrations:");
+                                    for (Registration reg : pendingRegs) {
+                                        System.out.println("Registration ID: " + reg.getRegistrationId());
+                                        System.out.println("Officer: " + reg.getOfficer().getUserID());
+                                        System.out.println("Project: " + reg.getProject().getProjectName());
+                                        System.out.println("Date: " + reg.getRegistrationDate());
+                                        System.out.println("Status: " + reg.getRegistrationStatus());
+                                        System.out.println("---------------------------");
+                                    }
+                                }
                                 break;
                             case 2:
-                                // Implement approve BTO withdrawal logic here
+                                System.out.println("Enter registration ID to approve:");
+                                String approveId = scanner.nextLine();
+                                manager.approveRegistration(approveId);
                                 break;
                             case 3:
-                                // Implement generate report for applications logic here
+                                System.out.println("Enter registration ID to reject:");
+                                String rejectId = scanner.nextLine();
+                                manager.rejectRegistration(rejectId);
                                 break;
+            
                             case 4:
                                 System.out.println("Returning to Main Menu...");
                                 break;

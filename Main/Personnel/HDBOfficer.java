@@ -124,17 +124,20 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
         System.out.println("Registration request submitted for project: " + project.getProjectName());
         System.out.println("Your request is pending approval from the HDB Manager.");
     }
-    
-    public String getHDBManagerRegistrationStatus()
-    {
-        return HDBManagerRegistrationStatus;
-    }
 
-    public String getHDBOfficerRegistrationStatus()
-    {
-        return HDBManagerRegistrationStatus;
-    }
 
+    public String getRegistrationStatusForProject(String projectName) {
+        RegistrationManager regManager = new RegistrationManager();
+        List<Registration> myRegs = regManager.getRegistrationsForOfficer(this.getUserID());
+        
+        for (Registration reg : myRegs) {
+            if (reg.getProject().getProjectName().equals(projectName)) {
+                return reg.getRegistrationStatus();
+            }
+        }
+        
+        return "NO_REGISTRATION";
+    }
     public void updateProjectInProfile()
     {
         //?

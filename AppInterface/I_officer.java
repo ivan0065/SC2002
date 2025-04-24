@@ -71,10 +71,11 @@ public class I_officer implements I_UserInterface {
                                     break;
                                 }
                                 officer.joinProject(existingProject);
-                                System.out.println("Joined Project: " + projectName);
                                 break;
                             case 5:
-                                System.out.println("Registration Status: " + officer.getHDBOfficerRegistrationStatus());
+                                System.out.println("Enter project name to check registration status: ");
+                                String projectName2 = scanner.nextLine();
+                                System.out.println("Registration Status: " + officer.getRegistrationStatusForProject(projectName2));
                                 break;
                             case 6:
                                 System.out.println("Enquiries:");
