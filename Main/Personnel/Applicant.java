@@ -168,9 +168,9 @@ public class Applicant extends User implements I_applicant_EnquiryM
             }
         }
     }
-    public void viewApplicationStatus()
+    public String viewApplicationStatus()
     {
-        System.out.println(newApp.toString());
+        return newApp.toString()
     }
 
 
