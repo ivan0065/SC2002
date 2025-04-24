@@ -80,7 +80,7 @@ public class I_manager implements I_UserInterface {
                                 }
                                 System.out.println("Enter project neighbourhood:");
                                 String projectNeighbourhood = scanner.nextLine();
-                                System.out.println("Enter flat types (comma-separated, e.g., Two_Room,Three_Room):");
+                                System.out.println("Enter flat types (comma-separated):");
                                 String flatTypesStr = scanner.nextLine();
                                 System.out.println("Enter project visibility (true/false):");
                                 boolean isVisible = false;
@@ -92,68 +92,34 @@ public class I_manager implements I_UserInterface {
                                     continue; // go back to the project menu
                                 }
                                 scanner.nextLine(); // consume the newline character
-
-                                // Display available flat types to help the user
-                                System.out.println("Available flat types: " + java.util.Arrays.toString(FlatType.values()));
-                                System.out.println("Enter flat list with quantities and price (e.g., Two_Room:50,500000,Three_Room:30,700000):");
+                                System.out.println("Enter flat list (comma-separated):");
                                 String flatListStr = scanner.nextLine();
                                 
-                                String flatTypePriceStr = scanner.nextLine();
-                                // Process flat types
                                 String[] flatTypesArray = flatTypesStr.split(",");
+                                String[] flatListArray = flatListStr.split(",");
+                                // Convert flat types to FlatType enum
                                 List<FlatType> flatTypes = new ArrayList<>();
                                 for (String flatTypeStr : flatTypesArray) {
                                     try {
-                                        String trimmed = flatTypeStr.trim();
-                                        FlatType flatType = null;
-                                        
-                                        if (trimmed.equalsIgnoreCase("Two_Room") || trimmed.equalsIgnoreCase("2") || trimmed.equalsIgnoreCase("2_Room")) {
-                                            flatType = FlatType.Two_Room;
-                                        } else if (trimmed.equalsIgnoreCase("Three_Room") || trimmed.equalsIgnoreCase("3") || trimmed.equalsIgnoreCase("3_Room")) {
-                                            flatType = FlatType.Three_Room;
-                                        } else {
-                                            throw new IllegalArgumentException("Unknown flat type: " + trimmed);
-                                        }
-                                        
+                                        FlatType flatType = FlatType.valueOf(flatTypeStr.trim());
                                         flatTypes.add(flatType);
                                     } catch (IllegalArgumentException e) {
                                         System.out.println("Invalid flat type: " + flatTypeStr + ". Skipping this entry.");
                                         System.out.println("Valid flat types are: " + java.util.Arrays.toString(FlatType.values()));
                                     }
                                 }
-
-                                // Process flat list with quantities
+                                // Create FlatList object
                                 List<Flat> flatlist = new ArrayList<>();
-                                String[] flatEntries = flatListStr.split(",");
-                                for (String entry : flatEntries) {
+                                for (String flat : flatListArray) {
                                     try {
-                                        String[] parts = entry.trim().split(":");
-                                        if (parts.length != 2) {
-                                            System.out.println("Invalid format for entry: " + entry + ". Expected format: TYPE:QUANTITY");
-                                            continue;
-                                        }
-                                        
-                                        String flatTypeStr = parts[0].trim();
-                                        FlatType flatType = null;
-                                        
-                                        if (flatTypeStr.equalsIgnoreCase("Two_Room") || flatTypeStr.equalsIgnoreCase("2") || flatTypeStr.equalsIgnoreCase("2_Room")) {
-                                            flatType = FlatType.Two_Room;
-                                        } else if (flatTypeStr.equalsIgnoreCase("Three_Room") || flatTypeStr.equalsIgnoreCase("3") || flatTypeStr.equalsIgnoreCase("3_Room")) {
-                                            flatType = FlatType.Three_Room;
-                                        } else {
-                                            throw new IllegalArgumentException("Unknown flat type: " + flatTypeStr);
-                                        }
-                                        int quantity = Integer.parseInt(parts[1].trim());
-                                        int price=Integer.parseInt(parts[2].trim());
-                                        for (int i = 0; i < quantity; i++) {
-                                            Flat flatObj = new Flat(flatType, price); // Assuming price is 0 for simplicity
-                                            flatlist.add(flatObj);
-                                        }
+                                        FlatType flatType = FlatType.valueOf(flat.trim());
+                                        Flat flatObj = new Flat(flatType, 0); // Assuming price is 0 for simplicity
+                                        flatlist.add(flatObj);
                                     } catch (IllegalArgumentException e) {
-                                        System.out.println("Invalid flat type or quantity in: " + entry);
+                                        System.out.println("Invalid flat type: " + flat + ". Skipping this entry.");
                                         System.out.println("Valid flat types are: " + java.util.Arrays.toString(FlatType.values()));
                                     }
-}
+                                }
                                 FlatList flatList = new FlatList(flatlist);
                                 // Create the BTO project
                                 if (flatlist.isEmpty()) {
@@ -167,7 +133,7 @@ public class I_manager implements I_UserInterface {
                                 manager.createBTOProject(projectName, openingDate, closingDate, projectNeighbourhood, flatTypes, isVisible, flatList);
                                 break;
                             case 2:
-                                BTOProject proj;
+                                BTOProject proj;;
                                 System.out.println("Enter the project name to edit:");
                                 String projectName1 = scanner.nextLine();
                                 // Display the fields that can be edited
@@ -220,18 +186,18 @@ public class I_manager implements I_UserInterface {
                                 break;
                             case 4:
                                 System.out.println("Enter project name to toggle visibility:");
-                                String projectIdToToggle = scanner.nextLine();
+                                String projectNameToToggle = scanner.nextLine();
                                 BTOProject projectToToggle;
-                                // Check if the project ID exists in the managed projects
-                                if (manager.getManagedProject().stream().anyMatch(project -> project.getProjectName().equals(projectIdToToggle))) {
-                                    System.out.println("Project found: " + projectIdToToggle);
-                                    projectToToggle = manager.getManagedProject().stream().filter(project -> project.getProjectName().equals(projectIdToToggle)).findFirst().orElse(null);
+                                // Check if the project name exists in the managed projects
+                                if (manager.getManagedProject().stream().anyMatch(project -> project.getProjectName().equals(projectNameToToggle))) {
+                                    System.out.println("Project found: " + projectNameToToggle);
+                                    projectToToggle = manager.getManagedProject().stream().filter(project -> project.getProjectName().equals(projectNameToToggle)).findFirst().orElse(null);
                                 } else {
-                                    System.out.println("Project not found: " + projectIdToToggle);
+                                    System.out.println("Project not found: " + projectNameToToggle);
                                     break;
                                 }
                                 // Toggle the visibility of the project
-                                System.out.println("Toggling visibility for project ID: " + projectIdToToggle);
+                                System.out.println("Toggling visibility for project name: " + projectNameToToggle);
                                 System.out.println("Enter new visibility (true/false):");
                                 boolean newVisibility = scanner.nextBoolean();
                                 manager.toggleProjectVisibility(projectToToggle,newVisibility);
