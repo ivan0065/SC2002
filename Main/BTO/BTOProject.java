@@ -33,10 +33,9 @@ public class BTOProject {
 	private String projectNeighbourhood;
 
 	private FlatList flatLists;
-
-	private String projectId;
 	
 	private EnquiryList enquiryList;
+	
 	public BTOProject(HDBManager HDBManagerInCharge,
 					List<HDBOfficer> HDBOfficerList,
 		            List<BTOApplication> applications,
@@ -47,9 +46,8 @@ public class BTOProject {
 		            boolean isVisible,
 		            List<FlatType> flatTypes,
 		            String projectNeighbourhood,
-					FlatList flatLists,
-					String projectId) {
-					{
+					FlatList flatLists) {
+		
 		this.HDBManagerInCharge = HDBManagerInCharge;
 		this.HDBOfficerList = HDBOfficerList;
 		this.applications = applications;
@@ -62,14 +60,13 @@ public class BTOProject {
 		this.flatTypes = flatTypes;
 		this.projectNeighbourhood = projectNeighbourhood;
 		this.flatLists= flatLists;
-		this.projectId = projectId;
 		
 		this.HDBOfficerList = new ArrayList<>();
 	    this.applications = new ArrayList<>();
 	    this.applicantList = new ArrayList<>();
 	    this.flatTypes = new ArrayList<>();
 		this.enquiryList =	new EnquiryList();
-	}	}
+	}
 
 	public String getProjectName() {
 	    return projectName;
@@ -130,13 +127,6 @@ public class BTOProject {
 	    this.HDBManagerInCharge = HDBManagerInCharge;
 	}
 
-	public String getProjectId(){
-		return projectId;
-	}
-	
-	public void setProjectId(String projectId){
-		this.projectId = projectId;
-	}
 	// Editing Lists
 	
 	public List<HDBOfficer> getHDBOfficerList() {
@@ -146,12 +136,12 @@ public class BTOProject {
 	public void addHDBOfficer(HDBOfficer officer) {
 	    HDBOfficerList.add(officer);
 	}
-	public void addOfficer(String officerNRIC) {
+	public void addOfficer(String officerName) {
         // This method might be called before all officers are loaded,
         // so we can't directly find the officer here.
         // In a real implementation, we would add the officer from the user database
         // For now, we just make a note that this project should have this officer
-        System.out.println("Note: Officer with NRIC " + officerNRIC + " will be assigned to project " + projectName + " after loading.");
+        System.out.println("Note: Officer " + officerName + " will be assigned to project " + projectName + " after loading.");
         
         // The actual officer will be added in the loadOfficersFromCSV method
         // when we have loaded all officers from the CSV file

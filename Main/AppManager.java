@@ -186,12 +186,12 @@ public class AppManager {
                 if (project.getVisibilitySetting() && project.isApplicableFor(applicant.getAge(), applicant.getMaritalStatus() == MaritalStatus.MARRIED)) {
                     filteredProjects.add(project);
                 }
-            } else if (user.getRole() == UserRole.HDB_OFFICER) {
+            } else if (user.getRole() == UserRole.OFFICER) {
                 HDBOfficer officer = (HDBOfficer) user;
                 if (officer.getAssignedProjects().contains(project) || (project.getVisibilitySetting() && project.isApplicableFor(officer.getAge(), officer.getMaritalStatus() == MaritalStatus.MARRIED))) {
                     filteredProjects.add(project);
                 }
-            } else if (user.getRole() == UserRole.HDB_MANAGER) {
+            } else if (user.getRole() == UserRole.MANAGER) {
                 filteredProjects.add(project);
             }
         }
@@ -267,7 +267,7 @@ public class AppManager {
         }
         Enquiry enquiry = new Enquiry(enquiryString, enquiryList.getEnquiries().size() + 1, user);
         enquiryList.addEnquiry(enquiry);
-        if (user.getRole() == UserRole.APPLICANT || user.getRole() == UserRole.HDB_OFFICER) {
+        if (user.getRole() == UserRole.APPLICANT || user.getRole() == UserRole.OFFICER) {
             Applicant applicant = (Applicant) user;
             applicant.createEnquiry(String.valueOf(enquiry.getEnquiryID()));
         }
@@ -276,15 +276,15 @@ public class AppManager {
 
     // View enquiries
     public void viewEnquiry(User user) {
-        if (user.getRole() == UserRole.APPLICANT || user.getRole() == UserRole.HDB_OFFICER) {
+        if (user.getRole() == UserRole.APPLICANT || user.getRole() == UserRole.OFFICER) {
             Applicant applicant = (Applicant) user;
-            for (String enquiryId : applicant.getEnquiryIds()) {
-                Enquiry enquiry = enquiryList.getEnquiryByID(Integer.parseInt(enquiryId));
+            for (Integer enquiryId : applicant.getEnquiryIds()) {
+                Enquiry enquiry = enquiryList.getEnquiryByID(Integer.parseInt(String.valueOf(enquiryId)));
                 if (enquiry != null) {
                     enquiry.printEnquiry();
                 }
             }
-        } else if (user.getRole() == UserRole.HDB_MANAGER) {
+        } else if (user.getRole() == UserRole.MANAGER) {
             HDBManager manager = (HDBManager) user;
             for (Enquiry enquiry : enquiryList.getEnquiries()) {
                 BTOProject project = projectDatabase.getProjectById(enquiry.getProject());
@@ -427,7 +427,7 @@ public class AppManager {
     // Helper method to get applicant by NRIC
     private Applicant getApplicantByNRIC(String nric) {
         User user = projectDatabase.getUserByNRIC(nric);
-        if (user != null && (user.getRole() == UserRole.APPLICANT || user.getRole() == UserRole.HDB_OFFICER)) {
+        if (user != null && (user.getRole() == UserRole.APPLICANT || user.getRole() == UserRole.OFFICER)) {
             return (Applicant) user;
         }
         return null;
