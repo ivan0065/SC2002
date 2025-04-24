@@ -103,7 +103,7 @@ public class I_manager implements I_UserInterface {
                                 scanner.nextLine(); // consume the newline character
                                 System.out.println("Enter flat list (comma-separated):");
                                 String flatListStr = scanner.nextLine();
-                                
+                                // Process flat types
                                 String[] flatTypesArray = flatTypesStr.split(",");
                                 String[] flatListArray = flatListStr.split(",");
                                 // Convert flat types to FlatType enum
@@ -119,14 +119,44 @@ public class I_manager implements I_UserInterface {
                                 }
                                 // Create FlatList object
                                 List<Flat> flatlist = new ArrayList<>();
-                                for (String flat : flatListArray) {
+                                String[] flatEntries = flatListStr.split(",");
+                                for (int i = 0; i < flatEntries.length - 1; i += 2) {
                                     try {
-                                        FlatType flatType = FlatType.valueOf(flat.trim());
-                                        Flat flatObj = new Flat(flatType, 0); // Assuming price is 0 for simplicity
-                                        flatlist.add(flatObj);
+                                        String typeQuantityEntry = flatEntries[i].trim();
+                                        String priceEntry = flatEntries[i+1].trim();
+                                        
+                                        // Extract flat type and quantity
+                                        String[] typeAndQuantity = typeQuantityEntry.split(":");
+                                        if (typeAndQuantity.length != 2) {
+                                            System.out.println("Invalid format for entry: " + typeQuantityEntry + ". Expected format: TYPE:QUANTITY");
+                                            continue;
+                                        }
+                                        
+                                        String flatTypeOnly = typeAndQuantity[0].trim();
+                                        int quantity = Integer.parseInt(typeAndQuantity[1].trim());
+                                        int price = Integer.parseInt(priceEntry);
+                                        
+                                        FlatType flatType = null;
+                                        if (flatTypeOnly.equalsIgnoreCase("Two_Room") || flatTypeOnly.equalsIgnoreCase("2") || 
+                                            flatTypeOnly.equalsIgnoreCase("2_Room")) {
+                                            flatType = FlatType.Two_Room;
+                                        } else if (flatTypeOnly.equalsIgnoreCase("Three_Room") || flatTypeOnly.equalsIgnoreCase("3") || 
+                                                  flatTypeOnly.equalsIgnoreCase("3_Room")) {
+                                            flatType = FlatType.Three_Room;
+                                        } else {
+                                            throw new IllegalArgumentException("Unknown flat type: " + flatTypeOnly);
+                                        }
+                                        
+                                        for (int j = 0; j < quantity; j++) {
+                                            Flat flatObj = new Flat(flatType, price);
+                                            flatlist.add(flatObj);
+                                        }
+                                    } catch (IndexOutOfBoundsException e) {
+                                        System.out.println("Incomplete flat entry at index " + i + ". Make sure each flat type has both quantity and price.");
                                     } catch (IllegalArgumentException e) {
-                                        System.out.println("Invalid flat type: " + flat + ". Skipping this entry.");
-                                        System.out.println("Valid flat types are: " + java.util.Arrays.toString(FlatType.values()));
+                                        System.out.println("Invalid flat type, quantity, or price: " + e.getMessage());
+                                    } catch (Exception e) {
+                                        System.out.println("Error processing flat entry: " + e.getMessage());
                                     }
                                 }
                                 FlatList flatList = new FlatList(flatlist);
@@ -212,7 +242,19 @@ public class I_manager implements I_UserInterface {
                                 manager.toggleProjectVisibility(projectToToggle,newVisibility);
                                 break;
                             case 5:
-                                manager.viewManagedProjects();
+                                System.out.println("Managed Projects:");
+                                List<BTOProject> managedProjects = manager.getManagedProject();
+                                if (managedProjects.isEmpty()) {
+                                    System.out.println("No managed projects found.");
+                                } else {
+                                    for (BTOProject project : managedProjects) {
+                                        System.out.println("Project Name: " + project.getProjectName());
+                                        System.out.println("Opening Date: " + project.getApplicationOpeningDate());
+                                        System.out.println("Closing Date: " + project.getApplicationClosingDate());
+                                        System.out.println("Neighbourhood: " + project.getProjectNeighbourhood());
+                                        System.out.println("---------------------------");
+                                    }
+                                }
                                 break;
                             case 6:
                                 manager.viewALLprojects();
