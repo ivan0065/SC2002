@@ -47,8 +47,9 @@ public class BTOProject {
 		            boolean isVisible,
 		            List<FlatType> flatTypes,
 		            String projectNeighbourhood,
-					FlatList flatLists
-					) {
+					FlatList flatLists,
+					String projectId) {
+					{
 		this.HDBManagerInCharge = HDBManagerInCharge;
 		this.HDBOfficerList = HDBOfficerList;
 		this.applications = applications;
@@ -61,12 +62,14 @@ public class BTOProject {
 		this.flatTypes = flatTypes;
 		this.projectNeighbourhood = projectNeighbourhood;
 		this.flatLists= flatLists;
+		this.projectId = projectId;
 		
 		this.HDBOfficerList = new ArrayList<>();
 	    this.applications = new ArrayList<>();
 	    this.applicantList = new ArrayList<>();
 	    this.flatTypes = new ArrayList<>();
-		this.enquiryList =	new EnquiryList();	}
+		this.enquiryList =	new EnquiryList();
+	}	}
 
 	public String getProjectName() {
 	    return projectName;

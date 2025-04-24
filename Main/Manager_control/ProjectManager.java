@@ -24,8 +24,9 @@ public class ProjectManager implements I_projectManager{
 		            boolean isVisible,
 		            List<FlatType> flatTypes,
 		            String projectNeighbourhood,
-					FlatList flatLists){
-        BTOProject newProject = new BTOProject(HDBManagerInCharge,HDBOfficerList,applications,applicantList,projectName,applicationOpeningDate,applicationClosingDate,isVisible,flatTypes,projectNeighbourhood,flatLists);
+					FlatList flatLists,
+                    String projectId){
+        BTOProject newProject = new BTOProject(HDBManagerInCharge,HDBOfficerList,applications,applicantList,projectName,applicationOpeningDate,applicationClosingDate,isVisible,flatTypes,projectNeighbourhood,flatLists, projectId);
         managedProjects.add(newProject);
     }
 
