@@ -216,7 +216,7 @@ public class I_manager implements I_UserInterface {
                                 break;
                         }
                     } while (projectChoice != 7); // Continue until the user chooses to exit
-                    
+                    break;
                 case 2:
                     do {
                         System.out.println("You have selected RegistrationManager Actions.");
@@ -264,6 +264,7 @@ public class I_manager implements I_UserInterface {
                                 break;
                         }
                     }while(regChoice!=4);
+                break;
                 case 3:
                     do {
                         System.out.println("You have selected ApplicationManager Actions.");
@@ -358,6 +359,7 @@ public class I_manager implements I_UserInterface {
                                 break;
                         }
                     }while(appChoice!=4);
+                break;
                 case 4:
                     System.out.println("You have selected EnquiryManager Actions.");
                     System.out.println("1. View All Enquiries");
