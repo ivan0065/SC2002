@@ -13,11 +13,13 @@ import java.util.Scanner;
 
 public class I_officer implements I_UserInterface {
     private HDBOfficer officer;
+    private I_applicant applicantUI;
     private RegistrationManager regManager = new RegistrationManager();
     private Scanner scanner = new Scanner(System.in);
 
     public I_officer(HDBOfficer officer) {
         this.officer = officer;
+        this.applicantUI = new I_applicant(officer);
     }
 
     public void showMenu(){
@@ -97,44 +99,7 @@ public class I_officer implements I_UserInterface {
                     } while (officerChoice != 7);
                     break;
                 case 2:
-                    do {
-                        System.out.println("Welcome to the Applicant Portal!");
-                        System.out.println("1.Apply for BTO");
-                        System.out.println("2.View Application Status");
-                        System.out.println("3.Make Enquiry");
-                        System.out.println("4.Delete Enquiry");
-                        System.out.println("5.View Open Projects");
-                        Scanner scanner = new Scanner(System.in);
-                        applicantchoice = scanner.nextInt();
-                        switch (applicantchoice) {
-                            case 1:
-                                System.out.println("Enter project ID and flat type to apply for BTO:");
-                                String projectId = scanner.next(); // Get project ID from user input
-                                String flatType = scanner.next(); // Get flat type from user input
-                                FlatType flatType1 = FlatType.valueOf(flatType.toUpperCase());
-                                officer.applyBTO(projectId, flatType1); // Call applyBTO method with user input
-                                break;
-                            case 2:
-                                officer.viewApplicationStatus(); // Call viewApplicationStatus method with user input
-                                break;
-                            case 3:
-                                System.out.println("Enter enquiry ID to make an enquiry:");
-                                String enquiryId = scanner.next(); // Get enquiry ID from user input
-                                officer.createEnquiry(enquiryId); // Call makeEnquiry method with user input
-                                break;
-                            case 4:
-                                System.out.println("Enter enquiry ID to delete an enquiry:");
-                                String enquiryIdToDelete = scanner.next(); // Get enquiry ID from user input
-                                officer.deleteEnquiry(enquiryIdToDelete); // Call deleteEnquiry method with user input
-                                break;
-                            case 5:
-                                System.out.println("Viewing open projects for the user group:");
-                                officer.viewOpenToUserGroup(); // Call viewOpenToUserGroup method with user input
-                                break;
-                            default:
-                                System.out.println("Invalid choice, please try again.");
-                        }
-                    } while (applicantchoice != 5);
+                    applicantUI.show_menu();
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
