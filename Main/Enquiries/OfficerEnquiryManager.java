@@ -23,7 +23,7 @@ public class OfficerEnquiryManager implements I_officer_EnquiryM {
         for(Enquiry enquiry: enquiryList.getEnquiries()){
             List<BTOProject> assigned_projects = officer.getAssignedProjects();
             for (BTOProject project : assigned_projects) {
-                if (enquiry.getProject().equals(project.getProjectId()) ) {
+                if (enquiry.getProject().equals(project.getProjectName()) ) {
                     enquiry.printEnquiry();
                     status = true;
                 }
