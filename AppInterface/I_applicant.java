@@ -13,16 +13,17 @@ public class I_applicant implements I_UserInterface{
     
     public void show_menu(){
         int choice;
+        System.out.println("Welcome to the Applicant Portal!");
         do {
-            System.out.println("Welcome to the Applicant Portal!");
             System.out.println("1.Apply for BTO");
             System.out.println("2.Withdraw Application");
             System.out.println("3.View Application Status");
             System.out.println("4.Make Enquiry");
             System.out.println("5.Delete Enquiry");
             System.out.println("6.Edit Enquiry");
-            System.out.println("7.View Open Projects");
-            System.out.println("8.Exit");
+            System.out.println("7.View Enquirys");
+            System.out.println("8.View Open Projects");
+            System.out.println("9.Exit");
             System.out.print("Please select an option: ");
             Scanner scanner = new Scanner(System.in);
             choice = scanner.nextInt();
@@ -91,16 +92,20 @@ public class I_applicant implements I_UserInterface{
                     applicant.editEnquiry(enquiryIdToEdit, newQuestion,project2); // Call editEnquiry method with user input
                     break;
                 case 7:
+                    System.out.println("Viewing all enquiries for the user:");
+                    applicant.viewEnquiry(); // Call viewEnquiry method with user input
+                    break;
+                case 8:
                     System.out.println("Viewing open projects for the user group:");
                     applicant.viewOpenToUserGroup(); // Call viewOpenToUserGroup method with user input
                     break;
-                case 8:
+                case 9:
                     System.out.println("Exiting the Applicant Portal. Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice, please try again.");
             }
-        } while (choice != 8);
+        } while (choice != 9);
     }
     
     @Override
