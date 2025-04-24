@@ -46,7 +46,8 @@ public class I_manager implements I_UserInterface {
                         System.out.println("4. Toggle Project Visibility");
                         System.out.println("5. View All Managed Projects");
                         System.out.println("6. View All Projects");
-                        System.out.println("7. Back to Main Menu");
+                        System.out.println("7. Change Password");
+                        System.out.println("8. Back to Main Menu");
                         System.out.print("Enter your choice: ");
                         projectChoice = scanner.nextInt();
                         scanner.nextLine(); // consume the newline character
@@ -209,13 +210,36 @@ public class I_manager implements I_UserInterface {
                                 manager.viewALLprojects();
                                 break;
                             case 7:
+                                System.out.println("Change Password");
+                                System.out.print("Enter your current password: ");
+                                String currentPassword = scanner.nextLine();
+                                
+                                // Verify current password
+                                if (manager.checkPassword(currentPassword)) {
+                                    System.out.print("Enter new password: ");
+                                    String newPassword = scanner.nextLine();
+                                    System.out.print("Confirm new password: ");
+                                    String confirmPassword = scanner.nextLine();
+                                    
+                                    if (newPassword.equals(confirmPassword)) {
+                                        // Call the changePassword method from User superclass
+                                        manager.changePassword(true, newPassword);
+                                        System.out.println("Password successfully changed.");
+                                    } else {
+                                        System.out.println("Passwords do not match. Password change failed.");
+                                    }
+                                } else {
+                                    System.out.println("Incorrect current password. Password change failed.");
+                                }
+                                break;
+                            case 8:
                                 System.out.println("Returning to Main Menu...");
                                 break;
                             default:
                                 System.out.println("Invalid choice. Please try again.");
                                 break;
                         }
-                    } while (projectChoice != 7); // Continue until the user chooses to exit
+                    } while (projectChoice != 8); // Continue until the user chooses to exit
                     break;
                 case 2:
                     do {

@@ -42,7 +42,8 @@ public class I_officer implements I_UserInterface {
                         System.out.println("5. View Registration Status");
                         System.out.println("6. View Enquires");
                         System.out.println("7. Reply to Enquiry");
-                        System.out.println("8. Exit Officer Menu");
+                        System.out.println("8. Change Password");
+                        System.out.println("9. Exit Officer Menu");
                         System.out.print("Please select an option: ");
                         officerChoice = scanner.nextInt();
                         scanner.nextLine(); // Consume newline character
@@ -95,11 +96,34 @@ public class I_officer implements I_UserInterface {
                                 officer.replyEnquiry(enquiry, reply);
                                 break;
                             case 8:
+                                System.out.println("Change Password");
+                                System.out.print("Enter your current password: ");
+                                String currentPassword = scanner.nextLine();
+                                
+                                // Verify current password
+                                if (officer.checkPassword(currentPassword)) {
+                                    System.out.print("Enter new password: ");
+                                    String newPassword = scanner.nextLine();
+                                    System.out.print("Confirm new password: ");
+                                    String confirmPassword = scanner.nextLine();
+                                    
+                                    if (newPassword.equals(confirmPassword)) {
+                                        // Call the changePassword method from User superclass
+                                        officer.changePassword(true, newPassword);
+                                        System.out.println("Password successfully changed.");
+                                    } else {
+                                        System.out.println("Passwords do not match. Password change failed.");
+                                    }
+                                } else {
+                                    System.out.println("Incorrect current password. Password change failed.");
+                                }
+                                break;
+                            case 9:
                                 return;
                             default:
                                 System.out.println("Invalid choice. Please try again.");
                         }
-                    } while (officerChoice != 8);
+                    } while (officerChoice != 9);
                     break;
                 case 2:
                     applicantUI.show_menu();
