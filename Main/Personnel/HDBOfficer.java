@@ -8,6 +8,7 @@ import Main.Enquiries.*;
 import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
 import Main.Manager_control.Registration;
+import Main.Manager_control.RegistrationManager;
 import Main.interfaces.I_officer_EnquiryM;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -117,8 +118,11 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
                 } 
         }
         
-        // Missing: approval required by HDB Manager
-        assignedProjects.add(project);
+        // Create a registration request instead of directly joining
+        RegistrationManager registrationManager = new RegistrationManager();
+        registrationManager.createRegistration(project, this);
+        System.out.println("Registration request submitted for project: " + project.getProjectName());
+        System.out.println("Your request is pending approval from the HDB Manager.");
     }
     
     public String getHDBManagerRegistrationStatus()
@@ -150,11 +154,11 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
     }
 
 
-    public void viewAssignedProjectDetails(String projectId)
+    public void viewAssignedProjectDetails(String projectName)
     {
         for (int i = 0; i < assignedProjects.size(); i++)
         {
-            if (assignedProjects.get(i).getProjectId() == projectId)
+            if (assignedProjects.get(i).getProjectName() == projectName)
             {
                 BTOProject currproj = assignedProjects.get(i);
                 System.out.printf("Project name: %s%n", currproj.getProjectName());

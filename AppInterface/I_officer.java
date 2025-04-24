@@ -36,12 +36,13 @@ public class I_officer implements I_UserInterface {
                     do { 
                         System.out.println("Officer Menu:");
                         System.out.println("1. View Assigned Projects");
-                        System.out.println("2. View Projects Available to Join as an Officer");
-                        System.out.println("3. Join Project");
-                        System.out.println("4. View Registration Status");
-                        System.out.println("5. View Enquires");
-                        System.out.println("6. Reply to Enquiry");
-                        System.out.println("7. Exit Officer Menu");
+                        System.out.println("2. View details of Assigned Project");
+                        System.out.println("3. View Projects Available to Join as an Officer");
+                        System.out.println("4. Join Project");
+                        System.out.println("5. View Registration Status");
+                        System.out.println("6. View Enquires");
+                        System.out.println("7. Reply to Enquiry");
+                        System.out.println("8. Exit Officer Menu");
                         System.out.print("Please select an option: ");
                         officerChoice = scanner.nextInt();
                         scanner.nextLine(); // Consume newline character
@@ -53,9 +54,13 @@ public class I_officer implements I_UserInterface {
                                 }
                                 break;
                             case 2:
+                                System.out.print("Enter Project Name: ");
+                                String projectName1 = scanner.nextLine();
+                                officer.viewAssignedProjectDetails(projectName1);
+                            case 3:
                                 viewAvailableProjectsToJoin();
                                 break;
-                            case 3:
+                            case 4:
                                 System.out.print("Enter Project Name: ");
                                 String projectName = scanner.nextLine();
                                 // should go through DB and find the project
@@ -68,14 +73,14 @@ public class I_officer implements I_UserInterface {
                                 officer.joinProject(existingProject);
                                 System.out.println("Joined Project: " + projectName);
                                 break;
-                            case 4:
+                            case 5:
                                 System.out.println("Registration Status: " + officer.getHDBOfficerRegistrationStatus());
                                 break;
-                            case 5:
+                            case 6:
                                 System.out.println("Enquiries:");
                                 officer.ViewEnquiry();
                                 break;
-                            case 6:
+                            case 7:
                                 System.out.print("Enter Enquiry ID to reply: ");
                                 int enquiryId = scanner.nextInt();
                                 scanner.nextLine(); // Consume newline character
@@ -88,12 +93,12 @@ public class I_officer implements I_UserInterface {
                                 String reply = scanner.nextLine();
                                 officer.replyEnquiry(enquiry, reply);
                                 break;
-                            case 7:
+                            case 8:
                                 return;
                             default:
                                 System.out.println("Invalid choice. Please try again.");
                         }
-                    } while (officerChoice != 7);
+                    } while (officerChoice != 8);
                     break;
                 case 2:
                     applicantUI.show_menu();

@@ -198,6 +198,71 @@ public class HDBManager extends User implements I_officer_EnquiryM{
     public boolean checkApplicationPeriodClash(HDBOfficer officer,BTOProject project){
         return registrationManager.checkApplicationPeriodClash(officer, project);
     }
+
+    public List<Registration> getPendingRegistrations() {
+        List<Registration> pendingRegs = new ArrayList<>();
+        for (Registration reg : registrationManager.getRegistrationList()) {
+            if (reg.getRegistrationStatus().equals("PENDING") && 
+                reg.getProject().getHDBManagerInCharge().getUserID().equals(this.getUserID())) {
+                pendingRegs.add(reg);
+            }
+        }
+        return pendingRegs;
+    }
+
+    public void approveRegistration(String registrationId) {
+        Registration reg = registrationManager.getRegistrationByRegId(registrationId);
+        if (reg == null) {
+            System.out.println("Registration not found: " + registrationId);
+            return;
+        }
+        
+        if (!reg.getProject().getHDBManagerInCharge().getUserID().equals(this.getUserID())) {
+            System.out.println("You are not authorized to approve this registration.");
+            return;
+        }
+        
+        // Check if there are available officer slots
+        if (reg.getProject().getRemainingOfficerSlots() <= 0) {
+            System.out.println("No available officer slots for this project.");
+            reg.updateStatus("REJECTED");
+            return;
+        }
+        
+        // Check for application period clash
+        if (registrationManager.checkApplicationPeriodClash(reg.getOfficer(), reg.getProject())) {
+            System.out.println("Application period clashes with another project the officer is handling.");
+            reg.updateStatus("REJECTED");
+            return;
+        }
+        
+        // Approve the registration
+        reg.updateStatus("APPROVED");
+        
+        // Add officer to the project
+        reg.getProject().addHDBOfficer(reg.getOfficer());
+        
+        // Add project to officer's assigned projects
+        reg.getOfficer().getAssignedProjects().add(reg.getProject());
+        
+        System.out.println("Registration approved: " + registrationId);
+    }
+
+    public void rejectRegistration(String registrationId) {
+        Registration reg = registrationManager.getRegistrationByRegId(registrationId);
+        if (reg == null) {
+            System.out.println("Registration not found: " + registrationId);
+            return;
+        }
+        
+        if (!reg.getProject().getHDBManagerInCharge().getUserID().equals(this.getUserID())) {
+            System.out.println("You are not authorized to reject this registration.");
+            return;
+        }
+        
+        reg.updateStatus("REJECTED");
+        System.out.println("Registration rejected: " + registrationId);
+    }
     public void ViewEnquiry() {
         if(projectManager.getManagedProject().isEmpty()){
             System.out.println("No assigned projects available.");
