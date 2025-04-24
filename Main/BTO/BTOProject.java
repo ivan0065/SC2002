@@ -1,239 +1,249 @@
-package Main.Personnel;
+package Main.BTO;
 
-import Main.BTO.*;
-import Main.Enquiries.Enquiry;
 import Main.Enquiries.EnquiryList;
-import Main.Enquiries.OfficerEnquiryManager;
-import Main.Enums.FilterCriteria;
 import Main.Enums.FlatType;
-import Main.Enums.MaritalStatus;
-import Main.Enums.UserRole;
-import Main.Manager_control.*;
-import Main.interfaces.I_RegistrationManager;
-import Main.interfaces.I_applicationManager;
-import Main.interfaces.I_officer_EnquiryM;
-import Main.interfaces.I_projectManager;
+import Main.Manager_control.BTOApplication;
+import Main.Personnel.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import AppInterface.I_UserInterface;
-import AppInterface.I_manager;
-import AppInterface.I_officer;
+public class BTOProject {
+		
+	private HDBManager HDBManagerInCharge;
+	
+	private List<HDBOfficer> HDBOfficerList; 
+	
+	private List<BTOApplication> applications;
+	
+	private List<Applicant> applicantList;
+		
+	private String projectName;
+	
+	private LocalDate applicationOpeningDate;
+	
+	private LocalDate applicationClosingDate;
+	
+	private boolean isVisible;
+	
+	private String projectStatus;
+	
+	private List<FlatType> flatTypes;
+	
+	private String projectNeighbourhood;
 
+	private FlatList flatLists;
 
-public class HDBManager extends User implements I_officer_EnquiryM{
-    private I_projectManager projectManager;
-    private I_RegistrationManager registrationManager;
-    private I_applicationManager appManager;
-    private I_officer_EnquiryM enquiryManager;
-    private BTOProject project;
+	private String projectId;
+	
+	private EnquiryList enquiryList;
+	public BTOProject(HDBManager HDBManagerInCharge,
+					List<HDBOfficer> HDBOfficerList,
+		            List<BTOApplication> applications,
+		            List<Applicant> applicantList,
+		            String projectName,
+		            LocalDate applicationOpeningDate,
+		            LocalDate applicationClosingDate,
+		            boolean isVisible,
+		            List<FlatType> flatTypes,
+		            String projectNeighbourhood,
+					FlatList flatLists
+					) {
+		this.HDBManagerInCharge = HDBManagerInCharge;
+		this.HDBOfficerList = HDBOfficerList;
+		this.applications = applications;
+		this.applicantList = applicantList;
+		this.projectName = projectName;
+		this.applicationOpeningDate = applicationOpeningDate;
+		this.applicationClosingDate = applicationClosingDate;
+		this.isVisible = isVisible;
+		this.projectStatus = "PENDING";
+		this.flatTypes = flatTypes;
+		this.projectNeighbourhood = projectNeighbourhood;
+		this.flatLists= flatLists;
+		
+		this.HDBOfficerList = new ArrayList<>();
+	    this.applications = new ArrayList<>();
+	    this.applicantList = new ArrayList<>();
+	    this.flatTypes = new ArrayList<>();
+		this.enquiryList =	new EnquiryList();	}
 
-        // Constructor for HDBManager
-    public HDBManager(String name, String username, String password, int age, MaritalStatus maritalStatus,
-                    I_projectManager projectManager,
-                    I_RegistrationManager registrationManager,
-                    I_applicationManager appManager){
-        super(name, username, password, age, maritalStatus,UserRole.MANAGER); // Call the User constructor
-        this.projectManager = projectManager;
-        this.registrationManager = registrationManager;
-        this.appManager = appManager;
-        this.enquiryManager = new OfficerEnquiryManager(this);
-    }
-    public void setProject(){
-        List<BTOProject> projects = projectManager.getManagedProject();
-        if (projects.isEmpty()) {
-            System.out.println("No assigned projects available.");
-            return;
-        }
-        for(BTOProject project:projects){
-            if(project.getApplicationClosingDate().isAfter(LocalDate.now()) && project.getApplicationOpeningDate().isBefore(LocalDate.now())){
-                this.project=project;
-                break;
-            }
-        }
-    }
-    //AppManager part
-    public boolean approveBTOApplication(String application_id, String newStatus){
-        List<BTOApplication> app_list=project.getApplications();
-        BTOApplication cur_Application=null;
-        FlatList flatList=project.getFlatLists();
-        for( BTOApplication application: app_list){
-            if(application.getApplicationId().equals(application_id)){
-                cur_Application= application;
-                break;
-            }
-        }
-        if (cur_Application == null) {
-            throw new IllegalArgumentException("Application with ID " + application_id + " not found.");
-        }
-        return appManager.approveBTOApplication(cur_Application, flatList, newStatus);
-        //change the edits in BTOProject
-    }
+	public String getProjectName() {
+	    return projectName;
+	}
 
-    public void approveBTOWithdrawal(String application_id, String newStatus){
-        List<BTOApplication> app_list=project.getApplications();
-        FlatList flatList=project.getFlatLists();
-        BTOApplication cur_Application=null;
-        for( BTOApplication application: app_list){
-            if(application.getApplicationId().equals(application_id)){
-                cur_Application= application;
-                break;
-            }
-        }
-        if (cur_Application == null) {
-            throw new IllegalArgumentException("Application with ID " + application_id + " not found.");
-        }
-        appManager.approveBTOWithdrawal(cur_Application, flatList, newStatus);
-    }
+	public void setProjectName(String projectName) {
+	    this.projectName = projectName;
+	}
 
-    public void generateReport(FilterCriteria criteria){
-        List<BTOApplication> app_list=project.getApplications();
-        appManager.generateApplicantReport(criteria, app_list,project);
-    }
-    
-    //ProjectManager part
+	public LocalDate getApplicationOpeningDate() {
+	    return applicationOpeningDate;
+	}
 
-    public void createBTOProject(String projectName,LocalDate openingDate,LocalDate closingDate,String projectNeighbourhood,List<FlatType> flatTypes, Boolean isVisible,FlatList flatLists){
-        List<HDBOfficer> HDBOfficerlist= new ArrayList<HDBOfficer>();
-        List<BTOApplication> applications= new ArrayList<BTOApplication>();
-        List<Applicant> applicantList= new ArrayList<Applicant>();
-        projectManager.createBTOProject(this,HDBOfficerlist,applications,applicantList,projectName,openingDate,closingDate,isVisible,flatTypes,projectNeighbourhood,flatLists);
-    }
+	public void setApplicationOpeningDate(LocalDate applicationOpeningDate) {
+	    this.applicationOpeningDate = applicationOpeningDate;
+	}
 
-    public void editBTOProject(int choice,BTOProject project){
-        projectManager.editBTOProject(choice,project);
-    }
+	public LocalDate getApplicationClosingDate() {
+	    return applicationClosingDate;
+	}
 
-    public void deleteBTOProject(String ProjectName){
-        projectManager.deleteBTOProject(ProjectName);
-    }
+	public void setApplicationClosingDate(LocalDate applicationClosingDate) {
+	    this.applicationClosingDate = applicationClosingDate;
+	}
 
-    public void toggleProjectVisibility(BTOProject project,boolean isVisible){
-        projectManager.toggleProjectVisibility(project,isVisible);
-    }
+	public boolean getVisibilitySetting() {
+	    return isVisible;
+	}
 
-    public List<BTOProject> getManagedProject(){
-        return projectManager.getManagedProject();
-    }
+	public void setVisible(boolean visible) {
+	    this.isVisible = visible;
+	}
 
-    public void viewManagedProjects(){
-        projectManager.viewBTOProjects();
-    }
+	public String getProjectStatus() {
+	    return projectStatus;
+	}
 
-    public void viewALLprojects(){
-        //use projectdatabase
-        ProjectDatabase BTOdatabase= ProjectDatabase.getInstance();
-        for (BTOProject proj: BTOdatabase.getAllProjects()){
-            proj.displayProject();
-        }
-    }
-    public String getuserID(){
-        return super.getUserID();
-    }
-    //RegistrationManager part
-    
-    public void addRegistration(Registration registration){
-        registrationManager.addRegistration(registration);
-    }
+	public void setProjectStatus(String projectStatus) {
+	    this.projectStatus = projectStatus;
+	}
 
-    public List<Registration> getRegistrationList(){
-        return registrationManager.getRegistrationList();
-    }
+	public EnquiryList getEnquiryList() {
+	    return enquiryList;
+	}
+	public String getProjectNeighbourhood() {
+	    return projectNeighbourhood;
+	}
 
-    public List<BTOProject> getAvailForRegistration() {
-        HDBOfficer officer = null;
-		return registrationManager.getAvailForRegistration(officer);
-    }
+	public void setProjectNeighbourhood(String projectNeighbourhood) {
+	    this.projectNeighbourhood = projectNeighbourhood;
+	}
 
-    public boolean validateOfficerEligibility(String officerUserID, String projectName) {
-        return registrationManager.validateOfficerEligibility(officerUserID, projectName);
-    }
+	public HDBManager getHDBManagerInCharge() {
+	    return HDBManagerInCharge;
+	}
 
-    public void createRegistration(BTOProject project, HDBOfficer officer) {
-        registrationManager.createRegistration(project, officer);
-    }
+	public void setHDBManagerInCharge(HDBManager HDBManagerInCharge) {
+	    this.HDBManagerInCharge = HDBManagerInCharge;
+	}
 
-    public boolean updateRegistrationStatus(String registrationId){
-        return registrationManager.updateRegistrationStatus(registrationId);
-    }    
-    
-    public boolean checkApplicationPeriodClash(HDBOfficer officer,BTOProject project){
-        return registrationManager.checkApplicationPeriodClash(officer, project);
-    }
-    public void ViewEnquiry() {
-        if(projectManager.getManagedProject().isEmpty()){
-            System.out.println("No assigned projects available.");
-            return;
-        }
-        for (BTOProject project : projectManager.getManagedProject()) {
-            EnquiryList enquiries = project.getEnquiryList();
-            if (enquiries.isEmpty()) {
-                System.out.println("No enquiries available for project: " + project.getProjectName());
-            } else {
-                System.out.println("Enquiries for project: " + project.getProjectName());
-                enquiries.ViewEnquiry();
-            }
-        }
-    }
-    //EnquiryManager part
-    public void replyEnquiry(Enquiry enquiry,String reply){
-        enquiryManager.replyEnquiry(enquiry, reply);
-    }
-    public void getEnquiries(){
-        if(projectManager.getManagedProject().isEmpty()){
-            System.out.println("No assigned projects available.");
-            return;
-        }
-        for (BTOProject project : projectManager.getManagedProject()) {
-            EnquiryList enquiries = project.getEnquiryList();
-            if (enquiries.isEmpty()) {
-                System.out.println("No enquiries available for project: " + project.getProjectName());
-            } else {
-                System.out.println("Enquiries for project: " + project.getProjectName());
-                enquiries.getEnquiries();
-            }
-        }
-    }
-    public Enquiry getEnquiryByID(int enquiryID){
-        if(projectManager.getManagedProject().isEmpty()){
-            System.out.println("No assigned projects available.");
-            return null;
-        }
-        for (BTOProject project : projectManager.getManagedProject()) {
-            EnquiryList enquiries = project.getEnquiryList();
-            if (enquiries.isEmpty()) {
-                System.out.println("No enquiries available for project: " + project.getProjectName());
-            } else {
-                Enquiry enquiry = enquiries.getEnquiryByID(enquiryID);
-                return enquiry;
-            }
-        }
-        return null;
-    }
+	public String getProjectId(){
+		return projectId;
+	}
+	
+	public void setProjectId(String projectId){
+		this.projectId = projectId;
+	}
+	// Editing Lists
+	
+	public List<HDBOfficer> getHDBOfficerList() {
+	    return HDBOfficerList;
+	}
 
-    
-    @Override
-    public void ViewEnquiry(EnquiryList enquiryList) {
-        if(projectManager.getManagedProject().isEmpty()){
-            System.out.println("No assigned projects available.");
-            return;
-        }
-        for (BTOProject project : projectManager.getManagedProject()) {
-            EnquiryList enquiries = project.getEnquiryList();
-            if (enquiries.isEmpty()) {
-                System.out.println("No enquiries available for project: " + project.getProjectName());
-            } else {
-                System.out.println("Enquiries for project: " + project.getProjectName());
-                enquiries.ViewEnquiry();
-            }
-        }
-    }  
-    
-    @Override
-    public I_UserInterface getUserInterface() {
-        return new I_manager(this);
+	public void addHDBOfficer(HDBOfficer officer) {
+	    HDBOfficerList.add(officer);
+	}
+	public void addOfficer(String officerNRIC) {
+        // This method might be called before all officers are loaded,
+        // so we can't directly find the officer here.
+        // In a real implementation, we would add the officer from the user database
+        // For now, we just make a note that this project should have this officer
+        System.out.println("Note: Officer with NRIC " + officerNRIC + " will be assigned to project " + projectName + " after loading.");
+        
+        // The actual officer will be added in the loadOfficersFromCSV method
+        // when we have loaded all officers from the CSV file
     }
+	public List<BTOApplication> getApplications() {
+	    return applications;
+	}
 
+	public void addApplication(BTOApplication application) {
+	    applications.add(application);
+	}
+
+	public List<Applicant> getApplicantList() {
+	    return applicantList;
+	}
+
+	public void addApplicant(Applicant applicant) {
+	    applicantList.add(applicant);
+	}
+
+	public List<FlatType> getFlatTypes() {
+	    return flatTypes;
+	}
+
+	public void addFlatType(FlatType flatType) {
+	    flatTypes.add(flatType);
+	}
+	
+	public FlatList getFlatLists() {
+	    return flatLists;
+	}
+	// methods
+
+	public int getRemainingOfficerSlots() {
+	    return 10 - HDBOfficerList.size();
+	}
+
+	public boolean isApplicableFor(int age, boolean isMarried) {
+	    if (isMarried) {
+	        if (age >= 21) {
+	            return true; 
+	        }
+	    } else {
+	        if (age >= 35) {
+	            for (FlatType ft : flatTypes) {
+	                if (ft == FlatType.Two_Room) {
+	                    return true;
+	                }
+	            }
+	        }
+	    }
+	    return false; 
+	}
+	//IDK if needed cus when when manager approve application, auto updated
+	/*public boolean updateFlatAvailability(String flatTypeStr, int count) {
+	    // Find the matching FlatType object from this.flatTypes
+	    FlatType targetType = null;
+	    for (FlatType ft : flatTypes) {
+	        if (ft.toString().equalsIgnoreCase(flatTypeStr)) {
+	            targetType = ft;
+	            break;
+	        }
+	    }
+
+	    if (targetType == null) {
+	        return false; // No matching FlatType found in this project
+	    }
+
+	    // Find the corresponding FlatList and update count
+	    for (Flat flatList : flatLists) {
+	        FlatType typeInList = flatList.getFlatType();
+	        if (typeInList == targetType) {
+	            flatLists.getUnitCount().put(targetType, count);
+	            flatLists.setNumAvailableUnits(count);
+	            return true;
+	        }
+	    }
+
+	    return false; // Matching FlatList not found
+	}*/
+	
+
+	public void displayProject() {
+	    System.out.println("=== BTO Project Details ===");
+	    System.out.println("Project Name        : " + projectName);
+	    System.out.println("Neighbourhood       : " + projectNeighbourhood);
+	    System.out.println("Project Status      : " + projectStatus);
+	    System.out.println("Visible to Public   : " + (isVisible ? "Yes" : "No"));
+	    System.out.println("Application Period  : " + applicationOpeningDate + " to " + applicationClosingDate);
+	    System.out.println("Available Officer Slots : " + getRemainingOfficerSlots());
+	    System.out.println();
+
+	    System.out.println("Available Flat Types and Units:");
+	    flatLists.print_unitCount();
+	    System.out.println("============================\n");
+	}
 
 }
