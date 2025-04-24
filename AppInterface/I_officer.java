@@ -3,15 +3,12 @@ package AppInterface;
 import Main.BTO.BTOProject;
 import Main.BTO.ProjectDatabase;
 import Main.Enquiries.Enquiry;
-import Main.Manager_control.RegistrationManager;
 import Main.Personnel.*;
-import java.util.List;
 import java.util.Scanner;
 
 public class I_officer implements I_UserInterface {
     private HDBOfficer officer;
     private I_applicant applicantUI;
-    private RegistrationManager regManager = new RegistrationManager();
     private Scanner scanner = new Scanner(System.in);
 
     public I_officer(HDBOfficer officer) {
@@ -57,8 +54,9 @@ public class I_officer implements I_UserInterface {
                                 System.out.print("Enter Project Name: ");
                                 String projectName1 = scanner.nextLine();
                                 officer.viewAssignedProjectDetails(projectName1);
+                                break;
                             case 3:
-                                viewAvailableProjectsToJoin();
+                                officer.viewAvailableProjectsToJoin();
                                 break;
                             case 4:
                                 System.out.print("Enter Project Name: ");
@@ -75,7 +73,9 @@ public class I_officer implements I_UserInterface {
                             case 5:
                                 System.out.println("Enter project name to check registration status: ");
                                 String projectName2 = scanner.nextLine();
-                                System.out.println("Registration Status: " + officer.getRegistrationStatusForProject(projectName2));
+                                ProjectDatabase projectDatabase1 = ProjectDatabase.getInstance();
+                                BTOProject existingProject1 = projectDatabase1.getProjectByName(projectName2);
+                                System.out.println("Registration Status: " + officer.getRegistrationStatusForProject(existingProject1));
                                 break;
                             case 6:
                                 System.out.println("Enquiries:");
@@ -132,23 +132,6 @@ public class I_officer implements I_UserInterface {
             }
             
         } while (choice!=3);
-    }
-    
-    private void viewAvailableProjectsToJoin() {
-        List<BTOProject> joinableProjects = regManager.getAvailForRegistration(officer);
-
-        if (joinableProjects.isEmpty()) {
-            System.out.println("No available projects to register for at the moment.");
-            return;
-        }
-
-        System.out.println("\nAvailable Projects to Join:");
-        for (int i = 0; i < joinableProjects.size(); i++) {
-            BTOProject project = joinableProjects.get(i);
-            System.out.println((i + 1) + ". " + project.getProjectName() + 
-                " | Remaining Officer Slots: " + project.getRemainingOfficerSlots());
-        }
-
     }
 
 

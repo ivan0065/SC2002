@@ -4,11 +4,11 @@ import AppInterface.I_UserInterface;
 import AppInterface.I_officer;
 import Main.BTO.BTOProject;
 import Main.BTO.FlatList;
+import Main.BTO.ProjectDatabase;
 import Main.Enquiries.*;
 import Main.Enums.FlatType;
 import Main.Enums.MaritalStatus;
 import Main.Manager_control.Registration;
-import Main.Manager_control.RegistrationManager;
 import Main.interfaces.I_officer_EnquiryM;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -117,21 +117,21 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
                     return;
                 } 
         }
-        
+        HDBManager manager = project.getHDBManagerInCharge();
+
         // Create a registration request instead of directly joining
-        RegistrationManager registrationManager = new RegistrationManager();
-        registrationManager.createRegistration(project, this);
+        
+        manager.createRegistration(project, this);
         System.out.println("Registration request submitted for project: " + project.getProjectName());
         System.out.println("Your request is pending approval from the HDB Manager.");
     }
 
 
-    public String getRegistrationStatusForProject(String projectName) {
-        RegistrationManager regManager = new RegistrationManager();
-        List<Registration> myRegs = regManager.getRegistrationsForOfficer(this.getUserID());
-        
+    public String getRegistrationStatusForProject(BTOProject project) {
+        HDBManager manager = project.getHDBManagerInCharge();
+        List<Registration> myRegs = manager.getRegistrationList();
         for (Registration reg : myRegs) {
-            if (reg.getProject().getProjectName().equals(projectName)) {
+            if(reg.getOfficer().getUserID().equals(this.getUserID()) && reg.getProject().getProjectName().equals(project.getProjectName())) {
                 return reg.getRegistrationStatus();
             }
         }
@@ -156,6 +156,20 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
         super.applyBTO(projectName, flatType);
     }
 
+    public void viewAvailableProjectsToJoin(){
+        ProjectDatabase database =ProjectDatabase.getInstance();
+        List<BTOProject> availableProjects = database.getBTOProjectsList();
+        if (availableProjects.isEmpty()) {
+            System.out.println("No available projects to join.");
+            return;
+        }
+        System.out.println("Available Projects to Join:");
+        for (int i = 0; i < availableProjects.size(); i++) {
+            BTOProject project = availableProjects.get(i);
+            System.out.println((i + 1) + ". " + project.getProjectName() + 
+                " | Remaining Officer Slots: " + project.getRemainingOfficerSlots());
+        }
+    }
 
     public void viewAssignedProjectDetails(String projectName)
     {

@@ -173,6 +173,9 @@ public class HDBManager extends User implements I_officer_EnquiryM{
     }
     //RegistrationManager part
     
+    public I_RegistrationManager getRegistrationManager(){
+        return registrationManager;
+    }
     public void addRegistration(Registration registration){
         registrationManager.addRegistration(registration);
     }
