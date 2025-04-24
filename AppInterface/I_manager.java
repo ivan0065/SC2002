@@ -20,7 +20,8 @@ public class I_manager implements I_UserInterface {
     }
 
     public void showMenu() {
-        int choice;
+        int choice = -1;
+        Scanner scanner = new Scanner(System.in);
         int projectChoice;
         int regChoice;
         int appChoice;
@@ -33,9 +34,16 @@ public class I_manager implements I_UserInterface {
             System.out.println("4. EnquiryManager Actions");
             System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
-            Scanner scanner = new Scanner(System.in);
-            choice = scanner.nextInt();
-            scanner.nextLine(); // consume the newline character
+
+            if (scanner.hasNextInt()) {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // consume the newline character
+            } else {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.nextLine(); // consume the invalid input
+                continue;
+            }
+
             switch(choice){
                 case 1:
                     do{
@@ -464,30 +472,60 @@ public class I_manager implements I_UserInterface {
                         System.out.println("4. Back to Main Menu");
                         System.out.print("Enter your choice: ");
                         appChoice = scanner.nextInt();
-                        scanner.nextLine(); // consume the newline character
+                        scanner.nextLine(); 
+
                         switch(appChoice){
                             case 1:
                                 System.out.println("Enter application ID to approve or reject:");
-                                String app_Id=scanner.nextLine();
-                                System.out.println("Enter 1 to approve, 2 to reject");
-                                int app_approved=scanner.nextInt();
-                                if(app_approved==1){
-                                    manager.approveBTOApplication(app_Id,"Approved");
+                                String app_Id = scanner.nextLine();
+                                
+                                if (app_Id == null || app_Id.trim().isEmpty()) {
+                                    System.out.println("Application ID cannot be empty. Please try again.");
+                                    break;
                                 }
-                                else if(app_approved==2){
-                                    manager.approveBTOApplication(app_Id,"Rejected");
+                                
+                                System.out.println("Enter 1 to approve, 2 to reject");
+                                int app_approved;
+                                try {
+                                    app_approved = scanner.nextInt();
+                                    scanner.nextLine(); // consume the newline character
+                                    
+                                    if (app_approved == 1) {
+                                        manager.approveBTOApplication(app_Id, "Approved");
+                                        System.out.println("Application approved successfully.");
+                                    } else if (app_approved == 2) {
+                                        manager.approveBTOApplication(app_Id, "Rejected");
+                                        System.out.println("Application rejected successfully.");
+                                    } else {
+                                        System.out.println("Invalid choice. Please enter 1 to approve or 2 to reject.");
+                                    }
+                                } catch (Exception e) {
+                                    System.out.println("Invalid input. Please enter a valid number (1 or 2).");
+                                    scanner.nextLine();
                                 }
                                 break;
+
                             case 2:
                                 System.out.println("Enter application_withdrawal ID to approve or reject:");
                                 String app_withdrawal_Id=scanner.nextLine();
                                 System.out.println("Enter 1 to approve, 2 to reject");
-                                int app_withdrawal_approved=scanner.nextInt();
-                                if(app_withdrawal_approved==1){
-                                    manager.approveBTOWithdrawal(app_withdrawal_Id,"Approved");
-                                }
-                                else if(app_withdrawal_approved==2){
-                                    manager.approveBTOWithdrawal(app_withdrawal_Id,"Rejected");
+                                int app_withdrawal_approved;
+                                try {
+                                    app_withdrawal_approved = scanner.nextInt();
+                                    scanner.nextLine(); // consume the newline character
+                                    
+                                    if (app_withdrawal_approved == 1) {
+                                        manager.approveBTOWithdrawal(app_withdrawal_Id, "Approved");
+                                        System.out.println("Withdrawal approved successfully.");
+                                    } else if (app_withdrawal_approved == 2) {
+                                        manager.approveBTOWithdrawal(app_withdrawal_Id, "Rejected");
+                                        System.out.println("Withdrawal rejected successfully.");
+                                    } else {
+                                        System.out.println("Invalid choice. Please enter 1 to approve or 2 to reject.");
+                                    }
+                                } catch (Exception e) {
+                                    System.out.println("Invalid input. Please enter a valid number (1 or 2).");
+                                    scanner.nextLine();
                                 }
                                 break;
                             case 3:
@@ -502,43 +540,49 @@ public class I_manager implements I_UserInterface {
                                 System.out.println("8. 3_room");
                                 int criteria_choice=scanner.nextInt();
                                 scanner.nextLine();
-                                switch (criteria_choice) {
-                                    case 1:
-                                        System.out.println("Generating report for all applicants...");
-                                        manager.generateReport(FilterCriteria.ALL);
-                                        break;
-                                    case 2:
-                                        System.out.println("Generating report for married applicants...");
-                                        manager.generateReport(FilterCriteria.MARRIED);
-                                        break;
-                                    case 3:
-                                        System.out.println("Generating report for single applicants...");
-                                        manager.generateReport(FilterCriteria.SINGLE);
-                                        break;
-                                    case 4:
-                                        System.out.println("Generating report for youth applicants...");
-                                        manager.generateReport(FilterCriteria.Youths);
-                                        break;
-                                    case 5:
-                                        System.out.println("Generating report for middle-aged applicants...");
-                                        manager.generateReport(FilterCriteria.Middle_aged);
-                                        break;
-                                    case 6:
-                                        System.out.println("Generating report for elderly applicants...");
-                                        manager.generateReport(FilterCriteria.Elderly);
-                                        break;
-                                    case 7:
-                                        System.out.println("Generating report for applicants interested in 2-room flats...");
-                                        manager.generateReport(FilterCriteria.Flat_type_2room);
-                                        break;
-                                    case 8:
-                                        System.out.println("Generating report for applicants interested in 3-room flats...");
-                                        manager.generateReport(FilterCriteria.Flat_type_3room);
-                                        break;
-                                    default:
-                                        System.out.println("Invalid choice. Generating report for all applicants by default.");
-                                        manager.generateReport(FilterCriteria.ALL);
-                                        break;
+                                try {
+                                    switch (criteria_choice) {
+                                        case 1:
+                                            System.out.println("Generating report for all applicants...");
+                                            manager.generateReport(FilterCriteria.ALL);
+                                            break;
+                                        case 2:
+                                            System.out.println("Generating report for married applicants...");
+                                            manager.generateReport(FilterCriteria.MARRIED);
+                                            break;
+                                        case 3:
+                                            System.out.println("Generating report for single applicants...");
+                                            manager.generateReport(FilterCriteria.SINGLE);
+                                            break;
+                                        case 4:
+                                            System.out.println("Generating report for youth applicants...");
+                                            manager.generateReport(FilterCriteria.Youths);
+                                            break;
+                                        case 5:
+                                            System.out.println("Generating report for middle-aged applicants...");
+                                            manager.generateReport(FilterCriteria.Middle_aged);
+                                            break;
+                                        case 6:
+                                            System.out.println("Generating report for elderly applicants...");
+                                            manager.generateReport(FilterCriteria.Elderly);
+                                            break;
+                                        case 7:
+                                            System.out.println("Generating report for applicants interested in 2-room flats...");
+                                            manager.generateReport(FilterCriteria.Flat_type_2room);
+                                            break;
+                                        case 8:
+                                            System.out.println("Generating report for applicants interested in 3-room flats...");
+                                            manager.generateReport(FilterCriteria.Flat_type_3room);
+                                            break;
+                                        default:
+                                            System.out.println("Invalid choice. Generating report for all applicants by default.");
+                                            manager.generateReport(FilterCriteria.ALL);
+                                            break;
+                                    }
+                                } catch (IllegalArgumentException e) {
+                                    System.out.println("Error: Invalid filter criteria. Please try again.");
+                                } catch (Exception e) {
+                                    System.out.println("An unexpected error occurred: " + e.getMessage());
                                 }
                                 break;
                             case 4:
@@ -565,16 +609,34 @@ public class I_manager implements I_UserInterface {
                             break;
                         case 2:
                             System.out.print("Enter Enquiry ID to reply: ");
-                            int enquiryId = scanner.nextInt();
-                            scanner.nextLine(); // Consume newline character
-                            Enquiry enquiry=manager.getEnquiryByID(enquiryId);
+                            int enquiryId = -1;
+                            try {
+                                enquiryId = scanner.nextInt();
+                                scanner.nextLine();
+                            } catch (Exception e) {
+                                System.out.println("Invalid input. Please enter a valid Enquiry ID.");
+                                scanner.nextLine();
+                            }
+
+                            Enquiry enquiry = manager.getEnquiryByID(enquiryId);
                             if (enquiry == null) {
-                                System.out.println("Enquiry not found.");
+                                System.out.println("Enquiry not found. Please check the Enquiry ID and try again.");
                                 break;
                             }
+
                             System.out.print("Enter Reply: ");
                             String reply = scanner.nextLine();
-                            manager.replyEnquiry(enquiry, reply);
+                            if (reply.trim().isEmpty()) {
+                                System.out.println("Reply cannot be empty. Please enter a valid reply.");
+                                break;
+                            }
+
+                            try {
+                                manager.replyEnquiry(enquiry, reply);
+                                System.out.println("Reply sent successfully.");
+                            } catch (Exception e) {
+                                System.out.println("An error occurred while sending the reply: " + e.getMessage());
+                            }
                             break;
                         case 3:
                             System.out.println("Returning to Main Menu...");
@@ -590,8 +652,7 @@ public class I_manager implements I_UserInterface {
                 default:
                     System.out.println("Invalid choice. Please try again.");
                     break;
-            } // Close switch block
-            scanner.close();
+            }
         } while (choice != 5); // Continue until the user chooses to exit
     } // Close showMenu method
     
