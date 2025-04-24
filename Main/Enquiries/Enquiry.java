@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public class Enquiry{
     private String question;
-    private String reply;
+    private String reply=null;
     private int enquiryID;
     private Boolean status=false;
     private User sender;
@@ -36,12 +36,14 @@ public class Enquiry{
         this.sender = sender;
         this.timestamp = LocalDateTime.now();
     }
-    public void printEnquiry(){
+    public void printEnquiry() {
         System.out.println("Enquiry ID: " + enquiryID);
-        System.out.println("Sender: " + sender.getUserID());
+        System.out.println("Sender: " + sender.getUserID() + " (" + sender.getName() + ")");
+        System.out.println("Project: " + (project != null ? project.getProjectName() : "Unknown"));
         System.out.println("Question: " + question);
         System.out.println("Timestamp: " + timestamp);
-        if(status==true){
+        System.out.println("Status: " + (status ? "Replied" : "Pending"));
+        if (status) {
             System.out.println("Reply: " + reply);
         }
     }

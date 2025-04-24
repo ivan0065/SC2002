@@ -202,7 +202,6 @@ public class Applicant extends User implements I_applicant_EnquiryM
             return -1;
         }
         // Create a new enquiry using the enquiry manager
-        EnquiryList enquirylist=project1.getEnquiryList();
         int enquiryId=enquiryManager.addEnquiry(enquiryContent, project);
         // Add the enquiry ID to the list of enquiry IDs
         if (enquiryIds.contains(enquiryId) == false)

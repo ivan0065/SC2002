@@ -157,10 +157,9 @@ public class ProjectDatabase {
                     
                     // Add officer if present
                     if (!officerNRIC.isEmpty() && !officerNRIC.equalsIgnoreCase("null")) {
-                        String[] officers = officerNRIC.split(";");
-                        for (String officer : officers) {
-                            project.addOfficer(officer.trim());
-                        }
+                        // We'll store the officer data for later processing
+                        // For now, just print it for debugging
+                        System.out.println("Project " + projectName + " has officer data: " + officerNRIC);
                     }
                     
                     projects.add(project);

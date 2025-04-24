@@ -47,13 +47,27 @@ public class RegistrationManager implements I_RegistrationManager{
 	}
 	
 	public void createRegistration(BTOProject project, HDBOfficer officer) {
-		if (validateOfficerEligibility(officer.getUserID(), project.getProjectName())) {
-		        Registration reg = new Registration(project, officer);
-		        allRegistrations.add(reg);              
-		        officer.addRegistration(reg);  
-                reg.updateStatus("PENDING");    
-		}
-   	}
+        System.out.println("DEBUG: Creating registration for officer " + officer.getUserID() + 
+                     " for project " + project.getProjectName());
+                     
+        if (validateOfficerEligibility(officer.getUserID(), project.getProjectName())) {
+            // Create a new registration
+            Registration reg = new Registration(project, officer);
+            
+            // Set initial status
+            reg.updateStatus("PENDING");
+            
+            // Add to the global registration list
+            this.addRegistration(reg);
+            
+            // Also add to the officer's personal registration list
+            officer.addRegistration(reg);
+            
+            System.out.println("DEBUG: Registration created successfully with ID: " + reg.getRegistrationId());
+        } else {
+            System.out.println("DEBUG: Officer not eligible to register for this project");
+        }
+    }
 	
 	public List<Registration> getRegistrationsForOfficer(String officerUserID) {
 	        List<Registration> officerRegistrations = new ArrayList<>();

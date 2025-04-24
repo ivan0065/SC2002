@@ -31,19 +31,35 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
         this.curProject=null;
     }
     
+    
     public void ViewEnquiry() {
-        if(assignedProjects.isEmpty()){
-            System.out.println("No assigned projects available.");
+        // This method should show all enquiries for all assigned projects
+        if (assignedProjects == null || assignedProjects.isEmpty()) {
+            System.out.println("You are not assigned to any projects.");
             return;
         }
+        
+        boolean foundEnquiries = false;
+        
+        System.out.println("\n===== Viewing All Enquiries for Your Assigned Projects =====");
+        
         for (BTOProject project : assignedProjects) {
-            EnquiryList enquiries = project.getEnquiryList();
-            if (enquiries.isEmpty()) {
-                System.out.println("No enquiries available for project: " + project.getProjectName());
-            } else {
-                System.out.println("Enquiries for project: " + project.getProjectName());
-                enquiries.ViewEnquiry();;
+            EnquiryList projectEnquiries = project.getEnquiryList();
+            
+            if (projectEnquiries != null && !projectEnquiries.isEmpty()) {
+                System.out.println("\nProject: " + project.getProjectName());
+                System.out.println("---------------------------");
+                
+                for (Enquiry enquiry : projectEnquiries.getEnquiries()) {
+                    enquiry.printEnquiry();
+                    System.out.println("---------------------------");
+                    foundEnquiries = true;
+                }
             }
+        }
+        
+        if (!foundEnquiries) {
+            System.out.println("No enquiries found for any of your assigned projects.");
         }
     }
     public void replyEnquiry(Enquiry enquiry,String reply){
@@ -71,81 +87,147 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
         }
         for (BTOProject project : assignedProjects) {
             EnquiryList enquiries = project.getEnquiryList();
-            if (enquiries.isEmpty()) {
-                System.out.println("No enquiries available for project: " + project.getProjectName());
-            } else {
+            if (enquiries != null && !enquiries.isEmpty()) {
                 Enquiry enquiry = enquiries.getEnquiryByID(enquiryID);
-                return enquiry;
+                
+                if (enquiry != null) {
+                    System.out.println("Found enquiry " + enquiryID + " in project " + project.getProjectName());
+                    return enquiry;
+                }
             }
         }
+        System.out.println("Enquiry with ID " + enquiryID + " not found in any assigned projects.");
         return null;
     }
 
+    @Override
     public void ViewEnquiry(EnquiryList enquiryList) {
-        if(assignedProjects.isEmpty()){
-            System.out.println("No assigned projects available.");
-            return;
-        }
-        for (BTOProject project : assignedProjects) {
-            EnquiryList enquiries = project.getEnquiryList();
-            if (enquiries.isEmpty()) {
-                System.out.println("No enquiries available for project: " + project.getProjectName());
-            } else {
-                System.out.println("Enquiries for project: " + project.getProjectName());
-                enquiries.ViewEnquiry();;
-            }
-        }
+        // Delegate to the enquiry manager
+        enquiryManager.ViewEnquiry(enquiryList);
     }
 
-    public void joinProject(BTOProject project)
-    {
-        for (int i = 0; i < assignedProjects.size(); i++)
-        {
-            if (currentApplicationId == null ? assignedProjects.get(i).getProjectName() == null : currentApplicationId.equals(assignedProjects.get(i).getProjectName()))
-                {
-                    System.out.printf("You have already applied for the project %s as an applicant%n", assignedProjects.get(i).getProjectName());
+    public void joinProject(BTOProject project) {
+        if (currentApplicationId != null) {
+            for (BTOProject existingProject : assignedProjects) {
+                if (existingProject.getProjectName().equals(project.getProjectName())) {
+                    System.out.printf("You have already applied for the project %s as an applicant%n", 
+                                    project.getProjectName());
                     return;
                 }
-            else if (!project.getApplicationOpeningDate().isAfter(assignedProjects.get(i).getApplicationOpeningDate()))
-                {
-                    System.out.printf("Current application opening date clashes with pre-existing project: %s%n", assignedProjects.get(i).getProjectName());
-                    return;
-                }
-            else if (!project.getApplicationOpeningDate().isAfter(assignedProjects.get(i).getApplicationOpeningDate()))
-                {
-                    System.out.printf("Current application closing date clashes with pre-existing project: %s%n", assignedProjects.get(i).getProjectName());
-                    return;
-                } 
+            }
         }
-        HDBManager manager = project.getHDBManagerInCharge();
-
-        // Create a registration request instead of directly joining
+    
+        // Check for application period clashes with existing projects
+        for (BTOProject existingProject : assignedProjects) {
+            boolean openingDateClash = !(project.getApplicationOpeningDate().isBefore(existingProject.getApplicationOpeningDate()) || 
+                                       project.getApplicationOpeningDate().isAfter(existingProject.getApplicationClosingDate()));
+                                       
+            boolean closingDateClash = !(project.getApplicationClosingDate().isBefore(existingProject.getApplicationOpeningDate()) || 
+                                       project.getApplicationClosingDate().isAfter(existingProject.getApplicationClosingDate()));
+            
+            if (openingDateClash || closingDateClash) {
+                System.out.printf("Current application period clashes with pre-existing project: %s%n", 
+                                existingProject.getProjectName());
+                return;
+            }
+        }
         
+        // Get the manager of the project
+        HDBManager manager = project.getHDBManagerInCharge();
+        
+        if (manager == null) {
+            System.out.println("Cannot register for project: No manager assigned to this project.");
+            return;
+        }
+        
+        // Create a registration request through the manager
         manager.createRegistration(project, this);
+        
         System.out.println("Registration request submitted for project: " + project.getProjectName());
         System.out.println("Your request is pending approval from the HDB Manager.");
+        
+        // Check if the registration was created successfully
+        String status = getRegistrationStatusForProject(project);
+        System.out.println("Current registration status: " + status);
+    }
+    
+    // Add this overloaded method to handle direct joining during initialization
+    public void joinProject(BTOProject project, boolean isDirectJoin) {
+        if (isDirectJoin) {
+            // Direct join without checks (for CSV loading)
+            if (this.assignedProjects == null) {
+                this.assignedProjects = new ArrayList<>();
+            }
+            
+            // Check if already assigned to avoid duplicates
+            for (BTOProject existingProject : this.assignedProjects) {
+                if (existingProject.getProjectName().equals(project.getProjectName())) {
+                    // Already assigned, just return quietly
+                    return;
+                }
+            }
+            
+            this.assignedProjects.add(project);
+            return;
+        } else {
+            // Normal operation - call the standard method
+            joinProject(project);
+        }
     }
 
 
     public String getRegistrationStatusForProject(BTOProject project) {
-        HDBManager manager = project.getHDBManagerInCharge();
-        if (manager == null) {
-            System.out.println("No HDB Manager assigned to this project.");
-            return "NO_REGISTRATION";
-        }
-        List<Registration> myRegs = manager.getRegistrationList();
-        if (myRegs == null) {
-            System.out.println("No registrations found for this project.");
-            return "NO_REGISTRATION";
-        }
-        for (Registration reg : myRegs) {
-            if(reg.getOfficer().getUserID().equals(this.getUserID()) && reg.getProject().getProjectName().equals(project.getProjectName())) {
-                return reg.getRegistrationStatus();
+        System.out.println("DEBUG: Checking registration status for project " + project.getProjectName());
+        
+        // First, check officer's own registrations list
+        if (this.registrations != null && !this.registrations.isEmpty()) {
+            System.out.println("DEBUG: Officer has " + this.registrations.size() + " registrations");
+            
+            for (Registration reg : this.registrations) {
+                if (reg.getProject() != null && 
+                    reg.getProject().getProjectName().equals(project.getProjectName())) {
+                    
+                    String status = reg.getRegistrationStatus();
+                    System.out.println("DEBUG: Found registration with status: " + status);
+                    return status;
+                }
             }
+        } else {
+            System.out.println("DEBUG: Officer's registration list is empty or null");
         }
         
+        // If not found in officer's list, check manager's list
+        HDBManager manager = project.getHDBManagerInCharge();
+        if (manager != null) {
+            List<Registration> managerRegs = manager.getRegistrationList();
+            if (managerRegs != null && !managerRegs.isEmpty()) {
+                System.out.println("DEBUG: Manager has " + managerRegs.size() + " registrations");
+                
+                for (Registration reg : managerRegs) {
+                    if (reg.getOfficer() != null && reg.getProject() != null && 
+                        reg.getOfficer().getUserID().equals(this.getUserID()) && 
+                        reg.getProject().getProjectName().equals(project.getProjectName())) {
+                        
+                        String status = reg.getRegistrationStatus();
+                        System.out.println("DEBUG: Found registration in manager's list with status: " + status);
+                        return status;
+                    }
+                }
+            } else {
+                System.out.println("DEBUG: Manager's registration list is empty or null");
+            }
+        } else {
+            System.out.println("DEBUG: Project has no manager assigned");
+        }
+        
+        // Last resort: check global registration list from registration manager
+        // We need a way to access the global registration list
+        // This might require restructuring your code or passing a reference
+        
+        System.out.println("DEBUG: No registration found after all checks");
         return "NO_REGISTRATION";
     }
+
     public void updateProjectInProfile()
     {
         //?
@@ -181,38 +263,42 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
 
     public void viewAssignedProjectDetails(String projectName)
     {
+        boolean projectFound = false;
         for (int i = 0; i < assignedProjects.size(); i++)
         {
-            if (assignedProjects.get(i).getProjectName() == projectName)
+            if (assignedProjects.get(i).getProjectName().equals(projectName))
             {
+                projectFound = true;
                 BTOProject currproj = assignedProjects.get(i);
                 System.out.printf("Project name: %s%n", currproj.getProjectName());
-                // Not implemented yet
                 System.out.printf("Project neighbourhood: %s%n", currproj.getProjectNeighbourhood());
                 System.out.println("Flat types:");
-                // Not implemented yet
+                
                 List<FlatType> currflats = currproj.getFlatTypes();
                 FlatList curflatList= currproj.getFlatLists();
                 for (int j = 0; j < currflats.size(); j++)
                 {
-                    System.out.printf("Flat type %d: %s%n", j, currflats.get(i));
-                    System.out.printf("Number of units for flat type %s: %d", currflats.get(i).toString(), curflatList.getavail_byroom().get(currflats.get(i)));
+                    System.out.printf("Flat type %d: %s%n", j, currflats.get(j));
+                    System.out.printf("Number of units for flat type %s: %d%n", currflats.get(j).toString(), curflatList.getavail_byroom().get(currflats.get(j)));
                 }
                 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
                 String openingDate = currproj.getApplicationOpeningDate().format(formatter);
-                String closingDate = currproj.getApplicationOpeningDate().format(formatter);
-                // note: change return type of getApplicationOpeningDate() and getApplicationClosingDate() in BTOProject to LocalDate instead of string
+                String closingDate = currproj.getApplicationClosingDate().format(formatter); // Fixed to use closing date
+                
                 System.out.printf("Application opening date: %s%n", openingDate);
                 System.out.printf("Application closing date: %s%n", closingDate);
                 
-                // Suggestion: add getName() and Name to User
-                System.out.printf("HDB Manager in charge: %s%n", currproj.getHDBManagerInCharge().getuserID()); 
-                // Not implemented yet
+                System.out.printf("HDB Manager in charge: %s%n", currproj.getHDBManagerInCharge().getUserID()); 
                 System.out.printf("Available HDB officer slots: %d%n", currproj.getRemainingOfficerSlots());
             }
         }
+        
+        if (!projectFound) {
+            System.out.println("Project '" + projectName + "' not found in your assigned projects.");
+        }
     }
+
     //if user book flat, auto updated
     public void updateNumofFlats(int num, FlatType flatType)
     {
@@ -225,7 +311,24 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
     }
 
     public void addRegistration(Registration registration) {
-        registrations.add(registration);
+        if (this.registrations == null) {
+            this.registrations = new ArrayList<>();
+        }
+        
+        // Check for duplicates
+        boolean isDuplicate = false;
+        for (Registration reg : this.registrations) {
+            if (reg.getRegistrationId().equals(registration.getRegistrationId())) {
+                isDuplicate = true;
+                break;
+            }
+        }
+        
+        if (!isDuplicate) {
+            this.registrations.add(registration);
+            System.out.println("Added registration " + registration.getRegistrationId() + 
+                            " to officer " + this.getUserID());
+        }
     }
 
     @Override

@@ -138,7 +138,20 @@ public class BTOProject {
 	}
 
 	public void addHDBOfficer(HDBOfficer officer) {
-	    HDBOfficerList.add(officer);
+	    if (this.HDBOfficerList == null) {
+			this.HDBOfficerList = new ArrayList<>();
+		}
+		
+		// Check if officer is already in the list to avoid duplicates
+		for (HDBOfficer existingOfficer : this.HDBOfficerList) {
+			if (existingOfficer.getUserID().equals(officer.getUserID())) {
+				System.out.println("Officer " + officer.getUserID() + " is already assigned to project " + this.projectName);
+				return;
+			}
+		}
+		
+		this.HDBOfficerList.add(officer);
+		System.out.println("Added officer " + officer.getUserID() + " to project " + this.projectName);
 	}
 	public void addOfficer(String officerName) {
         // This method might be called before all officers are loaded,

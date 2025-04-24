@@ -4,6 +4,7 @@ import Main.BTO.BTOProject;
 import Main.BTO.ProjectDatabase;
 import Main.Enquiries.Enquiry;
 import Main.Personnel.*;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class I_officer implements I_UserInterface {
@@ -86,18 +87,45 @@ public class I_officer implements I_UserInterface {
                                 officer.ViewEnquiry();
                                 break;
                             case 7:
-                                System.out.print("Enter Enquiry ID to reply: ");
-                                int enquiryId = scanner.nextInt();
-                                scanner.nextLine(); // Consume newline character
-                                Enquiry enquiry=officer.getEnquiryByID(enquiryId);
-                                if (enquiry == null) {
-                                    System.out.println("Enquiry not found.");
-                                    break;
+                                // First, view all enquiries to see what's available
+                                System.out.println("Viewing all enquiries for your assigned projects:");
+                                officer.ViewEnquiry();
+                                
+                                System.out.print("\nEnter Enquiry ID to reply to: ");
+                                try {
+                                    int enquiryId = scanner.nextInt();
+                                    scanner.nextLine(); // Consume newline character
+                                    
+                                    Enquiry enquiry = officer.getEnquiryByID(enquiryId);
+                                    
+                                    if (enquiry != null) {
+                                        System.out.println("\nSelected Enquiry:");
+                                        enquiry.printEnquiry();
+                                        
+                                        System.out.print("\nEnter your reply: ");
+                                        String reply = scanner.nextLine();
+                                        
+                                        if (reply.trim().isEmpty()) {
+                                            System.out.println("Reply cannot be empty. Operation cancelled.");
+                                        } else {
+                                            officer.replyEnquiry(enquiry, reply);
+                                            System.out.println("Reply submitted successfully.");
+                                            
+                                            // Show the updated enquiry
+                                            System.out.println("\nUpdated Enquiry:");
+                                            enquiry.printEnquiry();
+                                        }
+                                    } else {
+                                        System.out.println("No enquiry found with ID " + enquiryId + ".");
+                                    }
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid input. Please enter a number for the enquiry ID.");
+                                    scanner.nextLine(); // Clear the invalid input
+                                } catch (Exception e) {
+                                    System.out.println("An error occurred: " + e.getMessage());
                                 }
-                                System.out.print("Enter Reply: ");
-                                String reply = scanner.nextLine();
-                                officer.replyEnquiry(enquiry, reply);
                                 break;
+                                
                             case 8:
                                 System.out.println("Change Password");
                                 System.out.print("Enter your current password: ");

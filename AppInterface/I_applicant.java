@@ -1,8 +1,11 @@
 package AppInterface;
 
+import Main.BTO.BTOProject;
+import Main.BTO.ProjectDatabase;
 import Main.Enums.FlatType;
 import Main.Personnel.Applicant;
 import Main.Personnel.HDBOfficer;
+import java.util.List;
 import java.util.Scanner;
 
 public class I_applicant implements I_UserInterface{
@@ -66,12 +69,45 @@ public class I_applicant implements I_UserInterface{
                     applicant.viewApplicationStatus(); // Call viewApplicationStatus method with user input
                     break;
                 case 4:
-                    System.out.println("Enter project to make an enquiry:");
-                    String project = scanner.next(); // Get enquiry ID from user input
-                    System.out.println("Enter your question:");
-                    scanner.nextLine(); // Consume any previous newline character
-                    String question = scanner.nextLine(); // Get question from user input
-                    applicant.addEnquiry(question,project); // Call makeEnquiry method with user input
+                    System.out.println("Available projects to enquire about:");
+                    ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+                    List<BTOProject> availableProjects = projectDatabase.getAllProjects();
+                    
+                    if (availableProjects.isEmpty()) {
+                        System.out.println("No projects available.");
+                        break;
+                    }
+                    
+                    for (int i = 0; i < availableProjects.size(); i++) {
+                        BTOProject project = availableProjects.get(i);
+                        System.out.println((i+1) + ". " + project.getProjectName());
+                    }
+                    
+                    System.out.print("Enter project name to make an enquiry: ");
+                    String projectName = scanner.nextLine().trim();
+                    
+                    // Verify the project exists
+                    BTOProject selectedProject = projectDatabase.getProjectByName(projectName);
+                    if (selectedProject == null) {
+                        System.out.println("Project not found: " + projectName);
+                        break;
+                    }
+                    
+                    System.out.print("Enter your question: ");
+                    String question = scanner.nextLine();
+                    
+                    if (question.isEmpty()) {
+                        System.out.println("Question cannot be empty.");
+                        break;
+                    }
+                    
+                    int enquiryId = applicant.addEnquiry(question, projectName);
+                    
+                    if (enquiryId > 0) {
+                        System.out.println("Enquiry created successfully with ID: " + enquiryId);
+                    } else {
+                        System.out.println("Failed to create enquiry.");
+                    }
                     break;
                 case 5:
                     System.out.println("Enter project to make an enquiry:");

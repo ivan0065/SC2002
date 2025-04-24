@@ -59,13 +59,16 @@ public class ApplicantEnquiryManager implements I_applicant_EnquiryM{
         ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
         // Get the project by name
         BTOProject project1 = projectDatabase.getProjectByName(project);
-        
+        if (project == null) {
+            System.out.println("Project not found: " + project);
+            return -1;
+        }
         // Create a new enquiry using the enquiry manager
         EnquiryList enquirylist=project1.getEnquiryList();
         int enquiryID = enquirylist.getEnquiries().size() + 1; 
-        Enquiry newEnquiry = new Enquiry(enquiryContent, enquiryID, applicant);
+        Enquiry newEnquiry = new Enquiry(enquiryContent, enquiryID, applicant,project1);
         enquirylist.addEnquiry(newEnquiry);
-        System.out.println("Enquiry added successfully.");
+        System.out.println("Enquiry added successfully to project: " + project);
         return enquiryID; // Return the ID of the new enquiry
     }
 

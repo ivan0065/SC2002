@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class UserFileLoader {
     private static ProjectDatabase projectDatabase;
@@ -63,7 +64,10 @@ public class UserFileLoader {
                 int age = Integer.parseInt(parts[2]);
                 MaritalStatus maritalStatus = parseMaritalStatus(parts[3]);
                 String password = parts[4];
-                officers.add(new HDBOfficer(name, nric, password, age, maritalStatus));
+                HDBOfficer officer = new HDBOfficer(name, nric, password, age, maritalStatus);
+                officers.add(officer);
+                officersByNRIC.put(nric, officer); // Store officer by NRIC for quick access
+                System.out.println("Loaded officer: " + officer.getUserID());
             }
         } catch (IOException e) {
             System.err.println("Error loading officers: " + e.getMessage());
@@ -139,24 +143,77 @@ public class UserFileLoader {
     
     private static void linkOfficersToProjects() {
         if (projectDatabase == null) return;
-        
+        // Cache officers for quick lookup
+        Map<String, HDBOfficer> officerMap = new HashMap<>();
+        for (User user : projectDatabase.getAllUsers()) {
+            if (user instanceof HDBOfficer) {
+                HDBOfficer officer = (HDBOfficer) user;
+                officersByNRIC.put(officer.getUserID(), officer);
+                officerMap.put(officer.getUserID(), officer);
+                System.out.println("Found officer: " + officer.getUserID());
+            }
+        }
         for (BTOProject project : projectDatabase.getAllProjects()) {
-            // For each project, check officers assigned by NRIC
-            List<String> officerNRICs = new ArrayList<>();
+            System.out.println("Processing project: " + project.getProjectName());
             
-            // Extract officer NRICs from project (you'll need to implement this 
-            // based on how your ProjectDatabase stores this information)
-            // This is just a placeholder:
-            // officerNRICs = project.getOfficerNRICList();
+            // Parse officers from project data
+            // The officer field in ProjectList.csv has comma-separated NRICs
+            String projectName = project.getProjectName();
             
-            for (String officerNRIC : officerNRICs) {
-                if (officersByNRIC.containsKey(officerNRIC)) {
-                    HDBOfficer officer = officersByNRIC.get(officerNRIC);
-                    project.addHDBOfficer(officer);
-                    officer.joinProject(project);
+            // Get raw officer data from CSV (assuming it's in "Daniel,Emily" format)
+            try {
+                File file = new File("data/ProjectList.csv");
+                Scanner scanner = new Scanner(file);
+                
+                // Skip header
+                if (scanner.hasNextLine()) {
+                    scanner.nextLine();
+                }
+                
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    String[] parts = line.split(",");
+                    
+                    // Check if this line is for our project
+                    if (parts.length >= 13 && parts[0].trim().equals(projectName)) {
+                        String officerData = parts[12].trim();
+                        
+                        if (!officerData.isEmpty() && !officerData.equalsIgnoreCase("null")) {
+                            String[] officerNames = officerData.split(";");
+                            
+                            for (String officerName : officerNames) {
+                                // Find officer by name in our officer map
+                                for (HDBOfficer officer : officerMap.values()) {
+                                    if (officer.getName().trim().equalsIgnoreCase(officerName.trim())) {
+                                        System.out.println("Linking officer " + officer.getUserID() + " to project " + projectName);
+                                        project.addHDBOfficer(officer);
+                                        officer.getAssignedProjects().add(project);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                scanner.close();
+            } catch (Exception e) {
+                System.err.println("Error linking officers to project: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } 
+        // Verify officer assignments
+        System.out.println("\n===== OFFICER ASSIGNMENTS =====");
+        for (HDBOfficer officer : officerMap.values()) {
+            List<BTOProject> assignedProjects = officer.getAssignedProjects();
+            int projectCount = (assignedProjects != null) ? assignedProjects.size() : 0;
+            System.out.println("Officer " + officer.getName() + " (" + officer.getUserID() + ") has " + projectCount + " projects");
+            
+            if (assignedProjects != null && !assignedProjects.isEmpty()) {
+                for (BTOProject project : assignedProjects) {
+                    System.out.println("  - " + project.getProjectName());
                 }
             }
-        }  
+        }
     }
 
     // Helper method to get a manager by NRIC
