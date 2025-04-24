@@ -22,7 +22,6 @@ public class I_officer implements I_UserInterface {
     public void showMenu(){
         int choice;
         int officerChoice;
-        int applicantchoice;
         do { 
             System.out.println("Welcome to the HDB Officer Interface!");
             System.out.println("1. View Officer Menu");
