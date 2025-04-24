@@ -23,6 +23,7 @@ public class I_applicant implements I_UserInterface{
             System.out.println("6.Edit Enquiry");
             System.out.println("7.View Enquirys");
             System.out.println("8.View Open Projects");
+            System.out.println("9.Change Password");
             System.out.println("10.Exit");
             System.out.print("Please select an option: ");
             Scanner scanner = new Scanner(System.in);
@@ -126,6 +127,7 @@ public class I_applicant implements I_UserInterface{
                     } else {
                         System.out.println("Incorrect current password. Password change failed.");
                     }
+                    break;
                 case 10:
                     System.out.println("Exiting the Applicant Portal. Goodbye!");
                     break;
