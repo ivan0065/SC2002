@@ -35,6 +35,9 @@ public class Enquiry{
         this.reply=reply;
         this.status=true;
     }
+    public String getReply(){
+        return reply;
+    }
     public String getQuestion() {
         return question;
     }

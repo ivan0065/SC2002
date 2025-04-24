@@ -258,7 +258,7 @@ public class ProjectDatabase {
                     }
                     
                     // Create officer and add to users list
-                    HDBOfficer officer = new HDBOfficer(name, nric, password, age, maritalStatus, UserRole.OFFICER);
+                    HDBOfficer officer = new HDBOfficer(name, nric, password, age, maritalStatus);
                     users.add(officer);
                     officerCount++;
                     

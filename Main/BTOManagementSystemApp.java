@@ -1,11 +1,6 @@
 package Main;
 
-import AppInterface.I_applicant;
-import AppInterface.I_manager;
 import Main.Personnel.*;
-import Main.Enums.FlatType;
-import Main.Enums.UserRole;
-
 import java.util.*;
 
 public class BTOManagementSystemApp {
@@ -36,7 +31,7 @@ public class BTOManagementSystemApp {
 
     private static User authenticate(String userId, String password, List<User> users) {
         for (User user : users) {
-            if (user.getUserID().equals(userId) && user.getPassword().equals(password)) {
+            if (user.getUserID().equals(userId) && user.checkPassword(password)) {
                 return user;
             }
         }

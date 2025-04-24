@@ -17,6 +17,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import AppInterface.I_UserInterface;
+import AppInterface.I_manager;
 import AppInterface.I_officer;
 
 
@@ -228,7 +230,7 @@ public class HDBManager extends User implements I_officer_EnquiryM{
     }  
     
     @Override
-    public IUserInterface getUserInterface() {
+    public I_UserInterface getUserInterface() {
         return new I_manager(this);
     }
 

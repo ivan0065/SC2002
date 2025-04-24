@@ -1,5 +1,7 @@
 package Main.Personnel;
 
+import AppInterface.I_UserInterface;
+import AppInterface.I_applicant;
 import Main.BTO.BTOProject;
 import Main.BTO.ProjectDatabase;
 import Main.Enums.FlatType;
@@ -174,7 +176,7 @@ public class Applicant extends User
 
 
     @Override
-    public IUserInterface getUserInterface() {
+    public I_UserInterface getUserInterface() {
         return new I_applicant(this);
     }
 

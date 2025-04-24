@@ -1,7 +1,7 @@
 package Main.Personnel;
+import AppInterface.I_UserInterface;
 import Main.Enums.MaritalStatus;
-import Main.Enums.UserRole;
-import Main.interfaces.IUserInterface; 
+import Main.Enums.UserRole; 
 
 public abstract class User
 {
@@ -88,5 +88,5 @@ public abstract class User
         // useBTOProjectDatabase class once created
     }
 
-    public abstract IUserInterface getUserInterface();
+    public abstract I_UserInterface getUserInterface();
 }

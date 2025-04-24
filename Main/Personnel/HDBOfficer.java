@@ -1,5 +1,7 @@
 package Main.Personnel;
 
+import AppInterface.I_UserInterface;
+import AppInterface.I_officer;
 import Main.BTO.BTOProject;
 import Main.BTO.FlatList;
 import Main.Enquiries.*;
@@ -190,5 +192,10 @@ public class HDBOfficer extends Applicant implements I_officer_EnquiryM
 
     public void addRegistration(Registration registration) {
         registrations.add(registration);
+    }
+
+    @Override
+    public I_UserInterface getUserInterface(){
+        return new I_officer(this);
     }
 }

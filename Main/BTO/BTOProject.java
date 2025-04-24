@@ -143,7 +143,16 @@ public class BTOProject {
 	public void addHDBOfficer(HDBOfficer officer) {
 	    HDBOfficerList.add(officer);
 	}
-
+	public void addOfficer(String officerNRIC) {
+        // This method might be called before all officers are loaded,
+        // so we can't directly find the officer here.
+        // In a real implementation, we would add the officer from the user database
+        // For now, we just make a note that this project should have this officer
+        System.out.println("Note: Officer with NRIC " + officerNRIC + " will be assigned to project " + projectName + " after loading.");
+        
+        // The actual officer will be added in the loadOfficersFromCSV method
+        // when we have loaded all officers from the CSV file
+    }
 	public List<BTOApplication> getApplications() {
 	    return applications;
 	}
