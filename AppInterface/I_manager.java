@@ -101,7 +101,7 @@ public class I_manager implements I_UserInterface {
                                 List<FlatType> flatTypes = new ArrayList<>();
                                 for (String flatTypeStr : flatTypesArray) {
                                     try {
-                                        FlatType flatType = FlatType.valueOf(flatTypeStr.trim().toUpperCase());
+                                        FlatType flatType = FlatType.valueOf(flatTypeStr.trim());
                                         flatTypes.add(flatType);
                                     } catch (IllegalArgumentException e) {
                                         System.out.println("Invalid flat type: " + flatTypeStr + ". Skipping this entry.");
@@ -112,7 +112,7 @@ public class I_manager implements I_UserInterface {
                                 List<Flat> flatlist = new ArrayList<>();
                                 for (String flat : flatListArray) {
                                     try {
-                                        FlatType flatType = FlatType.valueOf(flat.trim().toUpperCase());
+                                        FlatType flatType = FlatType.valueOf(flat.trim());
                                         Flat flatObj = new Flat(flatType, 0); // Assuming price is 0 for simplicity
                                         flatlist.add(flatObj);
                                     } catch (IllegalArgumentException e) {
@@ -525,6 +525,7 @@ public class I_manager implements I_UserInterface {
                     System.out.println("Invalid choice. Please try again.");
                     break;
             } // Close switch block
+            scanner.close();
         } while (choice != 5); // Continue until the user chooses to exit
     } // Close showMenu method
     
