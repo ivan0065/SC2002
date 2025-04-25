@@ -18,14 +18,13 @@ public interface I_projectManager {
 		            LocalDate applicationOpeningDate,
 		            LocalDate applicationClosingDate,
 		            boolean isVisible,
-		            String projectStatus,
 		            List<FlatType> flatTypes,
 		            String projectNeighbourhood,
-					FlatList flatLists,
-					String projectId);
+					FlatList flatLists);
     void editBTOProject(int choice,BTOProject project);
     void deleteBTOProject(String projectName);
     void toggleProjectVisibility(BTOProject project,boolean isVisible);
     List<BTOProject> getManagedProject();
     void viewBTOProjects();
+	public void addManagedProject(BTOProject project);
 }

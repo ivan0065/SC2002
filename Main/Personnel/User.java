@@ -1,18 +1,22 @@
 package Main.Personnel;
+import AppInterface.I_UserInterface;
 import Main.Enums.MaritalStatus;
-import Main.Enums.UserRole;
+import Main.Enums.UserRole; 
 
 public abstract class User
 {
+    private String name;
     private String userID; // User ID is NRIC (S/T, 7 digits, ending letter)
     private String password = "password";
     private int age;
+    private boolean loginStatus = false; // Default login status is false
     private MaritalStatus maritalStatus;
     private UserRole userRole;
 
     // Constructor
-    public User(String userID, String password, int age, MaritalStatus maritalStatus, UserRole userRole) 
+    public User(String name, String userID, String password, int age, MaritalStatus maritalStatus, UserRole userRole) 
     {
+        this.name = name;
         this.userID = userID;
         this.password = password;
         this.age = age;
@@ -25,7 +29,9 @@ public abstract class User
     {
         return userID;
     }
-
+    public String getName(){
+        return name;
+    }
     public int getAge()
     {
         return age;
@@ -65,6 +71,14 @@ public abstract class User
         }
     }
 
+    public void setLoginStatus(boolean loginStatus)
+    {
+        this.loginStatus = loginStatus;
+    }
+    public boolean getLoginStatus()
+    {
+        return loginStatus;
+    }
     // Utility methods
     public boolean checkPassword(String inputPassword)
     {
@@ -75,4 +89,6 @@ public abstract class User
     {
         // useBTOProjectDatabase class once created
     }
+
+    public abstract I_UserInterface getUserInterface();
 }

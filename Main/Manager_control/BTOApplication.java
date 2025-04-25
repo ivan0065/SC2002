@@ -2,6 +2,7 @@ package Main.Manager_control;
 
 import Main.BTO.BTOProject;
 import Main.BTO.FlatList;
+import Main.BTO.ProjectDatabase;
 import Main.Enums.FlatType;
 import Main.Personnel.Applicant;
 
@@ -9,7 +10,7 @@ import Main.Personnel.Applicant;
 public class BTOApplication {
     private String applicationId;
     private String applicantId; // NRIC of applicant
-    private String projectId;
+    private String projectName;
     private String applicationStatus; // "PENDING", "SUCCESSFUL", "UNSUCCESSFUL", "BOOKED"
     private FlatType flatType;
     private String applicationDate;
@@ -20,7 +21,7 @@ public class BTOApplication {
         // Note: applicationId is not set in constructor anymore
         this.applicationId = "APP-" + java.util.UUID.randomUUID().toString().substring(0, 8);
         this.applicantId = applicantId;
-        this.projectId = projectId;
+        this.projectName = projectId;
         this.flatType = flatType;
         this.applicationStatus = "PENDING"; // Default status upon creation
         this.applicationDate = java.time.LocalDate.now().toString();
@@ -48,7 +49,7 @@ public class BTOApplication {
     }
     
     public String getProjectId() {
-        return projectId;
+        return projectName;
     }
     
     public String getApplicationStatus() {
@@ -93,7 +94,7 @@ public class BTOApplication {
         System.out.println("===== APPLICATION DETAILS =====");
         System.out.println("Application ID: " + applicationId);
         System.out.println("Applicant ID: " + applicantId);
-        System.out.println("Project ID: " + projectId);
+        System.out.println("Project Name: " + projectName);
         System.out.println("Flat Type: " + flatType);
         System.out.println("Application Status: " + applicationStatus);
         System.out.println("Application Date: " + applicationDate);
@@ -121,9 +122,10 @@ public class BTOApplication {
             return false;
         }
         //can consider removing this if needed
-            BTOProject project = projectDatabase.getProjectByName(projectId);
+            ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+            BTOProject project = projectDatabase.getProjectByName(projectName);
         if (project == null) {
-            System.out.println("Project not found: " + projectId);
+            System.out.println("Project not found: " + projectName);
             return false;
         }
     
@@ -149,7 +151,7 @@ public class BTOApplication {
     public String toString() {
         return "Application ID: " + applicationId +
                "\nApplicant ID: " + applicantId +
-               "\nProject ID: " + projectId +
+               "\nProject ID: " + projectName +
                "\nFlat Type: " + flatType +
                "\nApplication Status: " + applicationStatus +
                "\nApplication Date: " + applicationDate +

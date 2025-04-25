@@ -8,26 +8,27 @@ import Main.Personnel.HDBManager;
 import Main.Personnel.HDBOfficer;
 import Main.interfaces.I_projectManager;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 public class ProjectManager implements I_projectManager{
-    private List<BTOProject> managedProjects;
+    private List<BTOProject> managedProjects= new ArrayList<>();
 
+    @Override
     public void createBTOProject(HDBManager HDBManagerInCharge,
-					List<HDBOfficer> HDBOfficerList,
-		            List<BTOApplication> applications,
-		            List<Applicant> applicantList,
-		            String projectName,
-		            LocalDate applicationOpeningDate,
-		            LocalDate applicationClosingDate,
-		            boolean isVisible,
-		            String projectStatus,
-		            List<FlatType> flatTypes,
-		            String projectNeighbourhood,
-					FlatList flatLists,
-					String projectId){
-        BTOProject newProject = new BTOProject(HDBManagerInCharge,HDBOfficerList,applications,applicantList,projectName,applicationOpeningDate,applicationClosingDate,isVisible,projectStatus,flatTypes,projectNeighbourhood,flatLists,projectId);
+                    List<HDBOfficer> HDBOfficerList,
+                    List<BTOApplication> applications,
+                    List<Applicant> applicantList,
+                    String projectName,
+                    LocalDate applicationOpeningDate,
+                    LocalDate applicationClosingDate,
+                    boolean isVisible,
+                    List<FlatType> flatTypes,
+                    String projectNeighbourhood,
+                    FlatList flatLists
+                    ) {
+        BTOProject newProject = new BTOProject(HDBManagerInCharge,HDBOfficerList,applications,applicantList,projectName,applicationOpeningDate,applicationClosingDate,isVisible,flatTypes,projectNeighbourhood,flatLists);
         managedProjects.add(newProject);
     }
 
@@ -71,21 +72,18 @@ public class ProjectManager implements I_projectManager{
                 project.setProjectNeighbourhood(newNeighbourhood);
             }
             case 6 -> {
-                System.out.println("Enter visibility (true/false): ");
-                boolean isVisible = Boolean.parseBoolean(scanner.nextLine());
+                System.out.println("Enter visibility (1=true/2=false): ");
+                int visibilityChoice = scanner.nextInt();
+                boolean isVisible = visibilityChoice == 1;
                 toggleProjectVisibility(project, isVisible);
             }
-            case 7 -> {
-                System.out.println("Enter new project ID: ");
-                String newProjectId = scanner.nextLine();
-                project.setProjectId(newProjectId);
-            }
+            
             default -> System.out.println("Invalid choice.");
         }
         // Implement flat list editing logic here
         // Implement HDBManager editing logic here
         // Implement HDBOfficer list editing logic here
-                
+        scanner.close();       
     }
 
     public void deleteBTOProject(String ProjectName){
@@ -116,6 +114,9 @@ public class ProjectManager implements I_projectManager{
 
     public List<BTOProject> getManagedProject(){
         return this.managedProjects;
+    }
+    public void addManagedProject(BTOProject project){
+        this.managedProjects.add(project);
     }
 
     public void viewBTOProjects(){

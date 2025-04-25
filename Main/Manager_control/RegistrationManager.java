@@ -1,12 +1,11 @@
 package Main.Manager_control;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import Main.BTO.ProjectDatabase;
 import Main.BTO.BTOProject;
+import Main.BTO.ProjectDatabase;
 import Main.Personnel.HDBOfficer;
 import Main.interfaces.I_RegistrationManager;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegistrationManager implements I_RegistrationManager{
 
@@ -27,23 +26,6 @@ public class RegistrationManager implements I_RegistrationManager{
 		return allRegistrations;
 	}
 	
-	public List<BTOProject> getAvailForRegistration() {
-  
-    	ProjectDatabase database = new ProjectDatabase();
-    // Call the instance method instead of a static method
-    	List<BTOProject> allProjects = database.getBTOProjectsList();
-    	List<BTOProject> availProjects = new ArrayList<>();
-
-	    for (BTOProject project : allProjects) {
-	        int availableSlots = project.getRemainingOfficerSlots(); 
-	        if (availableSlots > 0) {
-	            availProjects.add(project);
-	        }
-	    }
-
-    return availProjects;
-}
-	
 	public boolean validateOfficerEligibility(String officerUserID, String projectName) {
 		// Get the list of applications tied to the project the officer is trying to register for
     		ProjectDatabase database = new ProjectDatabase();  
@@ -55,7 +37,7 @@ public class RegistrationManager implements I_RegistrationManager{
 		
 		for (BTOApplication application : applications) {
 		    // If the officer's userID matches any applicant's userID for the given projectID, they are not eligible
-		    if (application.getUserID().equals(officerUserID) && application.getProjectName().equals(projectName)) {
+		    if (application.getApplicationId().equals(officerUserID) && application.getProjectId().equals(projectName)) {
 			return false;  // Officer cannot register as an officer for a project they have applied for
 		    }
 		}
@@ -65,12 +47,27 @@ public class RegistrationManager implements I_RegistrationManager{
 	}
 	
 	public void createRegistration(BTOProject project, HDBOfficer officer) {
-		if (validateOfficerEligibility(officer.getUserID(), project.getProjectName())) {
-		        Registration reg = new Registration(project, officer);
-		        allRegistrations.add(reg);              
-		        officer.addRegistration(reg);        
-		}
-   	}
+        System.out.println("DEBUG: Creating registration for officer " + officer.getUserID() + 
+                     " for project " + project.getProjectName());
+                     
+        if (validateOfficerEligibility(officer.getUserID(), project.getProjectName())) {
+            // Create a new registration
+            Registration reg = new Registration(project, officer);
+            
+            // Set initial status
+            reg.updateStatus("PENDING");
+            
+            // Add to the global registration list
+            this.addRegistration(reg);
+            
+            // Also add to the officer's personal registration list
+            officer.addRegistration(reg);
+            
+            System.out.println("DEBUG: Registration created successfully with ID: " + reg.getRegistrationId());
+        } else {
+            System.out.println("DEBUG: Officer not eligible to register for this project");
+        }
+    }
 	
 	public List<Registration> getRegistrationsForOfficer(String officerUserID) {
 	        List<Registration> officerRegistrations = new ArrayList<>();
@@ -112,7 +109,7 @@ public class RegistrationManager implements I_RegistrationManager{
     }
 
     // Helper method to check if two projects' application periods overlap
-    private boolean isPeriodClash(BTOProject existingProject, BTOProject newProject) {
+    public boolean isPeriodClash(BTOProject existingProject, BTOProject newProject) {
         return !(newProject.getApplicationClosingDate().isBefore(existingProject.getApplicationOpeningDate()) ||
                  newProject.getApplicationOpeningDate().isAfter(existingProject.getApplicationClosingDate()));
     }
@@ -152,7 +149,7 @@ public class RegistrationManager implements I_RegistrationManager{
         return false;  // No registration found with the given ID, update failed
     }
 	
-    private void updateProjectHDBOfficers(String registrationId) {
+    public void updateProjectHDBOfficers(String registrationId) {
         Registration registration = getRegistrationByRegId(registrationId);
 
         if (registration != null) {
@@ -164,6 +161,18 @@ public class RegistrationManager implements I_RegistrationManager{
             project.addHDBOfficer(officer);
         }
     }
+    
+
+    @Override
+    public List<BTOProject> getAvailForRegistration(HDBOfficer officer) {
+        List<BTOProject> allProjects = ProjectDatabase.getInstance().getBTOProjectsList();
+        return allProjects.stream()
+            .filter(p -> p.getVisibilitySetting()
+                && !p.getHDBOfficerList().contains(officer)
+                && p.getRemainingOfficerSlots() > 0)
+            .toList();
+    }
+
 }
 
 	

@@ -7,5 +7,5 @@ import java.util.List;
 public interface I_applicationManager{
     boolean approveBTOApplication(BTOApplication application, FlatList flatList,String newStatus);
     void approveBTOWithdrawal(BTOApplication application, FlatList flatList, String newStatus);
-    void generateApplicantReport(FilterCriteria criteria, List<BTOApplication> applications);
+    void generateApplicantReport(FilterCriteria criteria, List<BTOApplication> applications, BTOProject project);
 }

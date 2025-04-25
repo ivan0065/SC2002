@@ -1,10 +1,8 @@
 package Main.interfaces;
 
-import Main.BTO.BTOProject;
-import Main.Enquiries.EnquiryList;
-
 public interface I_applicant_EnquiryM extends EnquiryManager {
-    public void addEnquiry(EnquiryList enquiryList, String question, BTOProject project);
-    public void removeEnquiry(EnquiryList enquiryList, int enquiryID);
-    public void editEnquiry(EnquiryList enquiryList, int enquiryID, String newQuestion);
+    public int addEnquiry(String enquiryContent, String project);
+    public boolean removeEnquiry(int enquiryId,String project);
+    public void editEnquiry(int enquiryID,String newQuestion,String project);
+    public void viewEnquiry();
 }

@@ -1,27 +1,38 @@
 package Main.BTO;
 
+import Main.Enquiries.Enquiry;
+import Main.Enquiries.EnquiryList;
+import Main.Enums.FilterType;
+import Main.Enums.FlatType;
+import Main.Enums.MaritalStatus;
+import Main.Enums.SortType;
+import Main.Personnel.HDBManager;
+import Main.Personnel.User;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import Main.Enquiries.EnquiryList;
-import Main.Enquiries.Enquiry;
-import Main.Enums.FilterType;
-import Main.Enums.SortType;
-import Main.Enums.FlatType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * ProjectDatabase class that manages all BTO projects and their enquiries
  * Reads project data from CSV file and provides access to project information
  */
 public class ProjectDatabase {
-    private List<BTOProject> projects;
-    private EnquiryList enquiryList;
-    private static final String CSV_FILE_PATH = "ProjectList.csv";
+    private static ProjectDatabase instance;
+    private static List<BTOProject> projects;
+    private static EnquiryList enquiryList;
+    private static List<User> users;
+    private static Map<String, User> usersByNRIC;
+    // CSV file paths
+    private static final String PROJECT_CSV_PATH = "data/ProjectList.csv";
+    private static final String ENQUIRY_CSV_PATH = "data/EnquiryList.csv";
+    
     
     /**
      * Constructor for ProjectDatabase
@@ -30,15 +41,34 @@ public class ProjectDatabase {
     public ProjectDatabase() {
         this.projects = new ArrayList<>();
         this.enquiryList = new EnquiryList();
+        this.users = new ArrayList<>();
+        this.usersByNRIC = new HashMap<>();
+        // Load all CSV data
         loadProjectsFromCSV();
+        // not needed for now
+        /*loadApplicantsFromCSV();
+        loadOfficersFromCSV();
+        loadManagersFromCSV();*/
+}
+/* Get the singleton instance of ProjectDatabase
+     * Creates instance if it doesn't exist
+     * @return The singleton instance
+     */
+    public static synchronized ProjectDatabase getInstance() {
+        if (instance == null) {
+            instance = new ProjectDatabase();
+        }
+        return instance;
     }
-    
+
+
     /**
      * Loads project data from the CSV file using Scanner
      */
+
     private void loadProjectsFromCSV() {
         try {
-            File file = new File(CSV_FILE_PATH);
+            File file = new File(PROJECT_CSV_PATH);
             Scanner scanner = new Scanner(file);
             
             // Skip header line
@@ -92,25 +122,50 @@ public class ProjectDatabase {
                     for( int i=0;i<unitsType2;i++){
                         flatList.add(new Flat(flatType2, priceType2));
                     }
+                    
+                    // Create project ID
+                    String projectId = java.util.UUID.randomUUID().toString();
+                    
+                    // Create a simple placeholder manager that will be replaced later
+                    HDBManager placeholderManager = null;
+                    if (!managerNRIC.isEmpty() && !managerNRIC.equalsIgnoreCase("null")) {
+                        // Just store the NRIC - we'll replace with actual manager later
+                        placeholderManager = new HDBManager(
+                            "Placeholder", managerNRIC, "password", 
+                            30, MaritalStatus.SINGLE, null, null, null
+                        );
+                    }
+
+                    
                     // Create and add the project
                     BTOProject project = new BTOProject(
-                        projectName, neighborhood, openingDate, closingDate, 
-                        managerNRIC, officerSlot,flatList
+                        placeholderManager, 
+                        new ArrayList<>(), 
+                        new ArrayList<>(), 
+                        new ArrayList<>(), 
+                        projectName, 
+                        openingDate, 
+                        closingDate, 
+                        true,
+                        new ArrayList<>(), 
+                        neighborhood, 
+                        new FlatList(flatList)
                     );
-                
+                    // Add flat types
+                    project.addFlatType(flatType1);
+                    project.addFlatType(flatType2);
                     
                     // Add officer if present
                     if (!officerNRIC.isEmpty() && !officerNRIC.equalsIgnoreCase("null")) {
-                        String[] officers = officerNRIC.split(";");
-                        for (String officer : officers) {
-                            project.addOfficer(officer.trim());
-                        }
+                        // We'll store the officer data for later processing
+                        // For now, just print it for debugging
+                        System.out.println("Project " + projectName + " has officer data: " + officerNRIC);
                     }
                     
                     projects.add(project);
                     
                 } catch (Exception e) {
-                    System.err.println("Error processing line: " + line);
+                    System.err.println("Error processing project line: " + line);
                     System.err.println("Error details: " + e.getMessage());
                 }
                 
@@ -121,7 +176,7 @@ public class ProjectDatabase {
             System.out.println("Successfully loaded " + projects.size() + " projects from CSV.");
             
         } catch (FileNotFoundException e) {
-            System.err.println("CSV file not found: " + e.getMessage());
+            System.err.println("Project CSV file not found: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Error processing project data: " + e.getMessage());
             e.printStackTrace();
@@ -129,23 +184,297 @@ public class ProjectDatabase {
     }
     
     /**
+     * Loads applicant data from the CSV file using Scanner
+     */
+    /*private void loadApplicantsFromCSV() {
+        try {
+            File file = new File(APPLICANT_CSV_PATH);
+            Scanner scanner = new Scanner(file);
+            
+            // Skip header line
+            if (scanner.hasNextLine()) {
+                scanner.nextLine();
+            }
+            
+            int applicantCount = 0;
+            
+            // Process each line of data
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                Scanner lineScanner = new Scanner(line);
+                lineScanner.useDelimiter(",");
+                
+                try {
+                    // Parse applicant data
+                    String name = lineScanner.next().trim();
+                    String nric = lineScanner.next().trim();
+                    int age = Integer.parseInt(lineScanner.next().trim());
+                    String maritalStatusStr = lineScanner.next().trim();
+                    String password = lineScanner.next().trim();
+                    
+                    // Convert string to MaritalStatus enum
+                    MaritalStatus maritalStatus = MaritalStatus.SINGLE; // Default
+                    if (maritalStatusStr.equalsIgnoreCase("Married")) {
+                        maritalStatus = MaritalStatus.MARRIED;
+                    }
+                    
+                    // Create applicant and add to users list
+                    Applicant applicant = new Applicant(name, nric, password, age, maritalStatus);
+                    users.add(applicant);
+                    applicantCount++;
+                    
+                } catch (Exception e) {
+                    System.err.println("Error processing applicant line: " + line);
+                    System.err.println("Error details: " + e.getMessage());
+                }
+                
+                lineScanner.close();
+            }
+            
+            scanner.close();
+            System.out.println("Successfully loaded " + applicantCount + " applicants from CSV.");
+            
+        } catch (FileNotFoundException e) {
+            System.err.println("Applicant CSV file not found: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error processing applicant data: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Loads HDB officer data from the CSV file using Scanner
+     */
+    /*private void loadOfficersFromCSV() {
+        try {
+            File file = new File(OFFICER_CSV_PATH);
+            Scanner scanner = new Scanner(file);
+            
+            // Skip header line
+            if (scanner.hasNextLine()) {
+                scanner.nextLine();
+            }
+            
+            int officerCount = 0;
+            
+            // Process each line of data
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                Scanner lineScanner = new Scanner(line);
+                lineScanner.useDelimiter(",");
+                
+                try {
+                    // Parse officer data
+                    String name = lineScanner.next().trim();
+                    String nric = lineScanner.next().trim();
+                    int age = Integer.parseInt(lineScanner.next().trim());
+                    String maritalStatusStr = lineScanner.next().trim();
+                    String password = lineScanner.next().trim();
+                    
+                    // Convert string to MaritalStatus enum
+                    MaritalStatus maritalStatus = MaritalStatus.SINGLE; // Default
+                    if (maritalStatusStr.equalsIgnoreCase("Married")) {
+                        maritalStatus = MaritalStatus.MARRIED;
+                    }
+                    
+                    // Create officer and add to users list
+                    HDBOfficer officer = new HDBOfficer(name, nric, password, age, maritalStatus);
+                    users.add(officer);
+                    officerCount++;
+                    
+                    // Assign officer to projects if needed
+                    for (BTOProject project : projects) {
+                        List<HDBOfficer> officers = project.getHDBOfficerList();
+                        for (HDBOfficer existingOfficer : officers) {
+                            if (existingOfficer != null && existingOfficer.getUserID().equals(nric)) {
+                                officer.joinProject(project);
+                                break;
+                            }
+                        }
+                    }
+                    
+                } catch (Exception e) {
+                    System.err.println("Error processing officer line: " + line);
+                    System.err.println("Error details: " + e.getMessage());
+                }
+                
+                lineScanner.close();
+            }
+            
+            scanner.close();
+            System.out.println("Successfully loaded " + officerCount + " officers from CSV.");
+            
+        } catch (FileNotFoundException e) {
+            System.err.println("Officer CSV file not found: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error processing officer data: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }*/
+    
+    /**
+     * Loads HDB manager data from the CSV file using Scanner
+     */
+    /*private void loadManagersFromCSV() {
+        try {
+            File file = new File(MANAGER_CSV_PATH);
+            Scanner scanner = new Scanner(file);
+            
+            // Skip header line
+            if (scanner.hasNextLine()) {
+                scanner.nextLine();
+            }
+            
+            int managerCount = 0;
+            
+            // Process each line of data
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                Scanner lineScanner = new Scanner(line);
+                lineScanner.useDelimiter(",");
+                
+                try {
+                    // Parse manager data
+                    String name = lineScanner.next().trim();
+                    String nric = lineScanner.next().trim();
+                    int age = Integer.parseInt(lineScanner.next().trim());
+                    String maritalStatusStr = lineScanner.next().trim();
+                    String password = lineScanner.next().trim();
+                    
+                    // Convert string to MaritalStatus enum
+                    MaritalStatus maritalStatus = MaritalStatus.SINGLE; // Default
+                    if (maritalStatusStr.equalsIgnoreCase("Married")) {
+                        maritalStatus = MaritalStatus.MARRIED;
+                    }
+                    
+                    // Create manager and add to users list
+                    // Note: This constructor requires different arguments than what your class might have
+                    // Adjust as needed based on your implementation
+                    HDBManager manager = new HDBManager(name, nric, password, age, maritalStatus, null, null, null);
+                    users.add(manager);
+                    managerCount++;
+                    
+                    // Assign manager to projects
+                    for (BTOProject project : projects) {
+                        if (project.getHDBManagerInCharge() == null) {
+                            project.setHDBManagerInCharge(manager);
+                        }
+                    }
+                    
+                } catch (Exception e) {
+                    System.err.println("Error processing manager line: " + line);
+                    System.err.println("Error details: " + e.getMessage());
+                }
+                
+                lineScanner.close();
+            }
+            
+            scanner.close();
+            System.out.println("Successfully loaded " + managerCount + " managers from CSV.");
+            
+        } catch (FileNotFoundException e) {
+            System.err.println("Manager CSV file not found: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error processing manager data: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }*/
+    
+    
+    /**
+     * Loads enquiry data from the CSV file
+     * This method should be called after users are loaded through UserFileLoader
+     */
+    public void loadEnquiriesFromCSV() {
+        try {
+            File file = new File(ENQUIRY_CSV_PATH);
+            Scanner scanner = new Scanner(file);
+            
+            // Skip header line
+            if (scanner.hasNextLine()) {
+                scanner.nextLine();
+            }
+            
+            int enquiryCount = 0;
+            
+            // Process each line of data
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                Scanner lineScanner = new Scanner(line);
+                lineScanner.useDelimiter(",");
+                
+                try {
+                    // Parse enquiry data
+                    int enquiryID = Integer.parseInt(lineScanner.next().trim());
+                    String question = lineScanner.next().trim();
+                    String reply = lineScanner.next().trim();
+                    String userNRIC = lineScanner.next().trim();
+                    String timestampStr = lineScanner.next().trim();
+                    String projectName = lineScanner.next().trim();
+                    boolean status = Boolean.parseBoolean(lineScanner.next().trim());
+                    
+                    // Find user and project
+                    User user = usersByNRIC.get(userNRIC);
+                    BTOProject project = getProjectByName(projectName);
+                    
+                    if (user == null) {
+                        System.err.println("User with NRIC " + userNRIC + " not found for enquiry " + enquiryID);
+                        continue;
+                    }
+                    
+                    if (project == null) {
+                        System.err.println("Project with name " + projectName + " not found for enquiry " + enquiryID);
+                        continue;
+                    }
+                    
+                    // Parse timestamp
+                    LocalDateTime timestamp = LocalDateTime.parse(timestampStr);
+                    
+                    // Create enquiry and add to project's enquiry list
+                    Enquiry enquiry = new Enquiry(question, enquiryID, user, project, timestamp);
+                    if (!reply.isEmpty()) {
+                        enquiry.addReply(reply);
+                    }
+                    
+                    project.getEnquiryList().addEnquiry(enquiry);
+                    enquiryCount++;
+                    
+                } catch (Exception e) {
+                    System.err.println("Error processing enquiry line: " + line);
+                    System.err.println("Error details: " + e.getMessage());
+                }
+                
+                lineScanner.close();
+            }
+            
+            scanner.close();
+            System.out.println("Successfully loaded " + enquiryCount + " enquiries from CSV.");
+            
+        } catch (FileNotFoundException e) {
+            System.err.println("Enquiry CSV file not found: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error processing enquiry data: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    /**
      * Helper method to parse flat type string to enum
      */
     private FlatType parseFlatType(String typeStr) {
-    if (typeStr.contains("2-Room")) {
-        return FlatType.Two_Room; 
-    } else if (typeStr.contains("3-Room")) {
-        return FlatType.Three_Room; 
-    } else {
-        throw new IllegalArgumentException("Unknown flat type: " + typeStr);
+        if (typeStr.contains("2-Room")) {
+            return FlatType.Two_Room; 
+        } else if (typeStr.contains("3-Room")) {
+            return FlatType.Three_Room; 
+        } else {
+            throw new IllegalArgumentException("Unknown flat type: " + typeStr);
+        }
     }
-}
     
     /**
      * Helper method to parse date string to LocalDate
      */
     private LocalDate parseDate(String dateStr) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
         return LocalDate.parse(dateStr, formatter);
     }
     
@@ -155,34 +484,34 @@ public class ProjectDatabase {
      * @param sortFilter The enum specifying how to sort or filter the projects
      */
     public List<BTOProject> getBTOProjectsList() {
-    return new ArrayList<>(projects);
-}
-
-// Update the existing getBTOProjectsList method to properly handle VISIBLE_ONLY filter
-public void getBTOProjectsList(SortType sortFilter) {
-    List<BTOProject> filteredProjects = new ArrayList<>(projects);
-    
-    // Apply visibility filter first if needed
-    if (sortFilter == SortType.VISIBLE_ONLY) {
-        filteredProjects.removeIf(p -> !p.isVisible());
+        return new ArrayList<>(projects);
     }
+
+    // Update the existing getBTOProjectsList method to properly handle VISIBLE_ONLY filter
+    public void getBTOProjectsList(SortType sortFilter) {
+        List<BTOProject> filteredProjects = new ArrayList<>(projects);
         
+        // Apply visibility filter first if needed
+        if (sortFilter == SortType.VISIBLE_ONLY) {
+            filteredProjects.removeIf(p -> !p.getVisibilitySetting());
+        }
+            
         // Apply sorting/filtering based on the provided enum
         switch(sortFilter) {
             case ALPHABETICAL:
                 filteredProjects.sort((p1, p2) -> p1.getProjectName().compareTo(p2.getProjectName()));
                 break;
             case NEIGHBORHOOD:
-                filteredProjects.sort((p1, p2) -> p1.getNeighborhood().compareTo(p2.getNeighborhood()));
+                filteredProjects.sort((p1, p2) -> p1.getProjectNeighbourhood().compareTo(p2.getProjectNeighbourhood()));
                 break;
             case DATE_ASCENDING:
-                filteredProjects.sort((p1, p2) -> p1.getOpeningDate().compareTo(p2.getOpeningDate()));
+                filteredProjects.sort((p1, p2) -> p1.getApplicationOpeningDate().compareTo(p2.getApplicationOpeningDate()));
                 break;
             case DATE_DESCENDING:
-                filteredProjects.sort((p1, p2) -> p2.getOpeningDate().compareTo(p1.getOpeningDate()));
+                filteredProjects.sort((p1, p2) -> p2.getApplicationOpeningDate().compareTo(p1.getApplicationOpeningDate()));
                 break;
             case VISIBLE_ONLY:
-                filteredProjects.removeIf(p -> !p.isVisible());
+                filteredProjects.removeIf(p -> !p.getVisibilitySetting());
                 break;
             default:
                 // Default is alphabetical order as specified in requirements
@@ -210,9 +539,7 @@ public void getBTOProjectsList(SortType sortFilter) {
                 break;
             case PENDING:
                 for (Enquiry enquiry : allEnquiries) {
-                    // We need to check if the enquiry has a reply
-                    // Since the Enquiry class might not have hasReply(), we can adjust this
-                    // based on your implementation
+                    // Check if the enquiry has a reply
                     if (enquiry.getReply() == null || enquiry.getReply().isEmpty()) {
                         filteredEnquiries.add(enquiry);
                     }
@@ -248,10 +575,10 @@ public void getBTOProjectsList(SortType sortFilter) {
         System.out.println("=== BTO PROJECTS ===");
         for (BTOProject project : projectList) {
             System.out.println("Project Name: " + project.getProjectName());
-            System.out.println("Neighborhood: " + project.getNeighborhood());
-            System.out.println("Application Period: " + project.getOpeningDate() + 
-                             " to " + project.getClosingDate());
-            System.out.println("Visibility: " + (project.isVisible() ? "Visible" : "Hidden"));
+            System.out.println("Neighborhood: " + project.getProjectNeighbourhood());
+            System.out.println("Application Period: " + project.getApplicationOpeningDate() + 
+                             " to " + project.getApplicationClosingDate());
+            System.out.println("Visibility: " + (project.getVisibilitySetting() ? "Visible" : "Hidden"));
             System.out.println("---------------------------");
         }
     }
@@ -281,17 +608,25 @@ public void getBTOProjectsList(SortType sortFilter) {
      * @return The project with the specified name, or null if not found
      */
     public BTOProject getProjectByName(String projectName) {
-    if (projectName == null) {
+        if (projectName == null) {
+            return null;
+        }
+        
+        for (BTOProject project : projects) {
+            if (project.getProjectName().equalsIgnoreCase(projectName.trim())) {
+                return project;
+            }
+        }
         return null;
     }
     
-    for (BTOProject project : projects) {
-        if (project.getProjectName().equalsIgnoreCase(projectName.trim())) {
-            return project;
-        }
-    }
-    return null;
-}
+    /**
+     * Get a project by its ID
+     * 
+     * @param projectId The ID of the project to retrieve
+     * @return The project with the specified ID, or null if not found
+     */
+    
     
     /**
      * Get the list of all projects
@@ -321,11 +656,61 @@ public void getBTOProjectsList(SortType sortFilter) {
     }
     
     /**
-     * Reload projects from CSV file
+     * Add a new project to the system
+     * 
+     * @param project The project to add
+     */
+    public void addProject(BTOProject project) {
+        projects.add(project);
+    }
+    
+    /**
+     * Get the list of all users
+     * 
+     * @return The list of all users
+     */
+    public List<User> getAllUsers() {
+        return new ArrayList<>(users);
+    }
+    
+    public void setUsers(List<User> users) {
+        this.users = users;
+        // Populate the usersByNRIC map for easy lookup
+        for (User user : users) {
+            usersByNRIC.put(user.getUserID(), user);
+        }
+        
+        // Now that we have users, we can load enquiries
+        loadEnquiriesFromCSV();
+    }
+    /**
+     * Get user by NRIC
+     * 
+     * @param nric The NRIC of the user
+     * @return The user with the specified NRIC, or null if not found
+     */
+    public User getUserByNRIC(String nric) {
+        for (User user : users) {
+            if (user.getUserID().equals(nric)) {
+                return user;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Reload all data from CSV files
      * Useful for refreshing data after changes
      */
-    public void reloadProjects() {
+    public void reloadAllData() {
         projects.clear();
+        users.clear();
+        enquiryList = new EnquiryList();
+        
         loadProjectsFromCSV();
+        loadEnquiriesFromCSV();
+        /*loadApplicantsFromCSV();
+        loadOfficersFromCSV();
+        loadManagersFromCSV();*/
     }
 }
