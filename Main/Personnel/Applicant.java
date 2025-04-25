@@ -45,8 +45,14 @@ public class Applicant extends User implements I_applicant_EnquiryM
         List<BTOProject> filteredProjects = new ArrayList<>();
         for (BTOProject project : allProjects) 
         {
-            filteredProjects.add(project);
-            
+            // Only add visible projects
+            if (project.getVisibilitySetting()) {
+                // Check if this project is applicable for the user
+                boolean isMarried = getMaritalStatus() == MaritalStatus.MARRIED;
+                if (project.isApplicableFor(getAge(), isMarried)) {
+                    filteredProjects.add(project);
+                }
+            }
         }
         
         // Display the filtered projects to the user
@@ -62,7 +68,6 @@ public class Applicant extends User implements I_applicant_EnquiryM
                 System.out.println("Project Name: " + project.getProjectName());
             }
         }
-    
     }
 
     public void applyBTO(String projectname, FlatType flatType)
