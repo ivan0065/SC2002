@@ -6,13 +6,48 @@ import Main.interfaces.I_officer_EnquiryM;
 import java.util.List;
 public class OfficerEnquiryManager implements I_officer_EnquiryM {
     private HDBOfficer officer;
-
+    private HDBManager manager;
+ 
     public OfficerEnquiryManager(HDBOfficer officer) {
         this.officer = officer;
     }
     public OfficerEnquiryManager(HDBManager hdbManager) {
-        //TODO Auto-generated constructor stub
+        this.manager = hdbManager;
     }
+    public void replyEnquiryM(Enquiry enquiry, String reply) {
+        if (enquiry == null) {
+            System.out.println("Cannot reply to a null enquiry.");
+            return;
+        }
+        
+        if (reply == null || reply.trim().isEmpty()) {
+            System.out.println("Reply cannot be empty.");
+            return;
+        }
+        
+        // Check if the manager is authorized to reply to this enquiry
+        // Check if the officer is assigned to the project this enquiry belongs to
+        boolean isAuthorized = false;
+        List<BTOProject> assignedProjects = manager.getProjectManager().getManagedProject();
+
+        if (assignedProjects != null) {
+            for (BTOProject project : assignedProjects) {
+                if (project.getProjectName().equals(enquiry.getProject())) {
+                    isAuthorized = true;
+                    break;
+                }
+            }
+        }
+
+        if (!isAuthorized) {
+            System.out.println("You are not authorized to reply to enquiries for project: " + enquiry.getProject());
+            return;
+        }
+
+        // Add the reply
+        enquiry.addReply(reply);
+        System.out.println("Reply added successfully to enquiry ID: " + enquiry.getEnquiryID());
+        }
     @Override
     public void ViewEnquiry(EnquiryList enquiryList){
         Boolean status=false;

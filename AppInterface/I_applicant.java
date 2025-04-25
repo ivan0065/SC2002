@@ -66,7 +66,7 @@ public class I_applicant implements I_UserInterface{
                     applicant.withdrawApplication(applicationId); // Call withdrawApplication method with user input
                     break;
                 case 3:
-                    applicant.viewApplicationStatus(); // Call viewApplicationStatus method with user input
+                    System.out.println(applicant.viewApplicationStatus()); // Call viewApplicationStatus method with user input
                     break;
                 case 4:
                     System.out.println("Available projects to enquire about:");

@@ -5,10 +5,12 @@ import Main.BTO.Flat;
 import Main.BTO.FlatList;
 import Main.Enquiries.Enquiry;
 import Main.Enums.*;
+import Main.Manager_control.BTOApplication;
 import Main.Manager_control.Registration;
 import Main.Personnel.HDBManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -471,178 +473,236 @@ public class I_manager implements I_UserInterface {
                     }while(regChoice!=5);
                 break;
                 case 3:
-                    do {
-                        System.out.println("You have selected ApplicationManager Actions.");
-                        System.out.println("1. Approve BTO Application");
-                        System.out.println("2. Approve BTO Withdrawal");
-                        System.out.println("3. Generate Report for Applications");
-                        System.out.println("4. Back to Main Menu");
-                        System.out.print("Enter your choice: ");
-                        appChoice = scanner.nextInt();
-                        scanner.nextLine(); 
-
-                        switch(appChoice){
-                            case 1:
-                                System.out.println("Enter application ID to approve or reject:");
-                                String app_Id = scanner.nextLine();
-                                
-                                if (app_Id == null || app_Id.trim().isEmpty()) {
-                                    System.out.println("Application ID cannot be empty. Please try again.");
-                                    break;
-                                }
-                                
-                                System.out.println("Enter 1 to approve, 2 to reject");
-                                int app_approved;
-                                try {
-                                    app_approved = scanner.nextInt();
-                                    scanner.nextLine(); // consume the newline character
-                                    
-                                    if (app_approved == 1) {
-                                        manager.approveBTOApplication(app_Id, "Approved");
-                                        System.out.println("Application approved successfully.");
-                                    } else if (app_approved == 2) {
-                                        manager.approveBTOApplication(app_Id, "Rejected");
-                                        System.out.println("Application rejected successfully.");
-                                    } else {
-                                        System.out.println("Invalid choice. Please enter 1 to approve or 2 to reject.");
-                                    }
-                                } catch (Exception e) {
-                                    System.out.println("Invalid input. Please enter a valid number (1 or 2).");
-                                    scanner.nextLine();
-                                }
+                do {
+                    System.out.println("You have selected ApplicationManager Actions.");
+                    System.out.println("1. View All Applications");
+                    System.out.println("2. View Applications for a Specific Project");
+                    System.out.println("3. Approve/Reject BTO Application");
+                    System.out.println("4. Approve/Reject BTO Withdrawal Request");
+                    System.out.println("5. Generate Report for Applications");
+                    System.out.println("6. Back to Main Menu");
+                    System.out.print("Enter your choice: ");
+                    appChoice = scanner.nextInt();
+                    scanner.nextLine(); 
+            
+                    switch(appChoice){
+                        case 1:
+                            // View all applications across all managed projects
+                            manager.viewAllApplications();
+                            break;
+                            
+                        case 2:
+                            // View applications for a specific project
+                            System.out.print("Enter project name: ");
+                            String projectNameForApps = scanner.nextLine().trim();
+                            manager.viewProjectApplications(projectNameForApps);
+                            break;
+                            
+                        case 3:
+                            // Approve/Reject BTO Application
+                            System.out.println("Enter application ID to approve or reject:");
+                            String app_Id = scanner.nextLine().trim();
+                            
+                            if (app_Id == null || app_Id.trim().isEmpty()) {
+                                System.out.println("Application ID cannot be empty. Please try again.");
                                 break;
-
-                            case 2:
-                                System.out.println("Enter application_withdrawal ID to approve or reject:");
-                                String app_withdrawal_Id=scanner.nextLine();
-                                System.out.println("Enter 1 to approve, 2 to reject");
-                                int app_withdrawal_approved;
-                                try {
-                                    app_withdrawal_approved = scanner.nextInt();
-                                    scanner.nextLine(); // consume the newline character
-                                    
-                                    if (app_withdrawal_approved == 1) {
-                                        manager.approveBTOWithdrawal(app_withdrawal_Id, "Approved");
-                                        System.out.println("Withdrawal approved successfully.");
-                                    } else if (app_withdrawal_approved == 2) {
-                                        manager.approveBTOWithdrawal(app_withdrawal_Id, "Rejected");
-                                        System.out.println("Withdrawal rejected successfully.");
-                                    } else {
-                                        System.out.println("Invalid choice. Please enter 1 to approve or 2 to reject.");
-                                    }
-                                } catch (Exception e) {
-                                    System.out.println("Invalid input. Please enter a valid number (1 or 2).");
-                                    scanner.nextLine();
-                                }
+                            }
+                            
+                            // Find the application to display its current status
+                            BTOApplication foundApp = manager.findApplicationById(app_Id);
+                            if (foundApp != null) {
+                                System.out.println("Found application. Current status: " + foundApp.getApplicationStatus());
+                            } else {
+                                System.out.println("Application not found with ID: " + app_Id);
                                 break;
-                            case 3:
-                                System.out.println("Choose criteria to filter: ");
-                                System.out.println("1. All");
-                                System.out.println("2. Married");
-                                System.out.println("3. Single");
-                                System.out.println("4. Youth");
-                                System.out.println("5. Middle_aged");
-                                System.out.println("6. Elderly");
-                                System.out.println("7. 2_room");
-                                System.out.println("8. 3_room");
-                                int criteria_choice=scanner.nextInt();
+                            }
+                            
+                            System.out.println("Enter 1 to approve, 2 to reject");
+                            int app_approved;
+                            try {
+                                app_approved = scanner.nextInt();
+                                scanner.nextLine(); // consume the newline character
+                                
+                                if (app_approved == 1) {
+                                    manager.approveBTOApplication(app_Id, "Approved");
+                                    System.out.println("Application approved successfully.");
+                                } else if (app_approved == 2) {
+                                    manager.approveBTOApplication(app_Id, "Rejected");
+                                    System.out.println("Application rejected successfully.");
+                                } else {
+                                    System.out.println("Invalid choice. Please enter 1 to approve or 2 to reject.");
+                                }
+                            } catch (Exception e) {
+                                System.out.println("Invalid input. Please enter a valid number (1 or 2).");
                                 scanner.nextLine();
-                                try {
-                                    switch (criteria_choice) {
-                                        case 1:
-                                            System.out.println("Generating report for all applicants...");
-                                            manager.generateReport(FilterCriteria.ALL);
-                                            break;
-                                        case 2:
-                                            System.out.println("Generating report for married applicants...");
-                                            manager.generateReport(FilterCriteria.MARRIED);
-                                            break;
-                                        case 3:
-                                            System.out.println("Generating report for single applicants...");
-                                            manager.generateReport(FilterCriteria.SINGLE);
-                                            break;
-                                        case 4:
-                                            System.out.println("Generating report for youth applicants...");
-                                            manager.generateReport(FilterCriteria.Youths);
-                                            break;
-                                        case 5:
-                                            System.out.println("Generating report for middle-aged applicants...");
-                                            manager.generateReport(FilterCriteria.Middle_aged);
-                                            break;
-                                        case 6:
-                                            System.out.println("Generating report for elderly applicants...");
-                                            manager.generateReport(FilterCriteria.Elderly);
-                                            break;
-                                        case 7:
-                                            System.out.println("Generating report for applicants interested in 2-room flats...");
-                                            manager.generateReport(FilterCriteria.Flat_type_2room);
-                                            break;
-                                        case 8:
-                                            System.out.println("Generating report for applicants interested in 3-room flats...");
-                                            manager.generateReport(FilterCriteria.Flat_type_3room);
-                                            break;
-                                        default:
-                                            System.out.println("Invalid choice. Generating report for all applicants by default.");
-                                            manager.generateReport(FilterCriteria.ALL);
-                                            break;
-                                    }
-                                } catch (IllegalArgumentException e) {
-                                    System.out.println("Error: Invalid filter criteria. Please try again.");
-                                } catch (Exception e) {
-                                    System.out.println("An unexpected error occurred: " + e.getMessage());
+                            }
+                            break;
+            
+                        case 4:
+                            // Approve/Reject Withdrawal Request
+                            System.out.println("Enter application_withdrawal ID to approve or reject:");
+                            String app_withdrawal_Id = scanner.nextLine().trim();
+                            
+                            // Verify the application exists and has a pending withdrawal request
+                            BTOApplication withdrawalApp = manager.findApplicationById(app_withdrawal_Id);
+                            if (withdrawalApp == null) {
+                                System.out.println("Application not found with ID: " + app_withdrawal_Id);
+                                break;
+                            }
+                            
+                            if (withdrawalApp.getWithdrawalRequestStatus() == null ||
+                                !withdrawalApp.getWithdrawalRequestStatus().equals("PENDING")) {
+                                System.out.println("This application does not have a pending withdrawal request.");
+                                break;
+                            }
+                            
+                            System.out.println("Enter 1 to approve withdrawal, 2 to reject withdrawal");
+                            int app_withdrawal_approved;
+                            try {
+                                app_withdrawal_approved = scanner.nextInt();
+                                scanner.nextLine(); // consume the newline character
+                                
+                                if (app_withdrawal_approved == 1) {
+                                    manager.approveBTOWithdrawal(app_withdrawal_Id, "APPROVED");
+                                    System.out.println("Withdrawal approved successfully.");
+                                } else if (app_withdrawal_approved == 2) {
+                                    manager.approveBTOWithdrawal(app_withdrawal_Id, "REJECTED");
+                                    System.out.println("Withdrawal rejected successfully.");
+                                } else {
+                                    System.out.println("Invalid choice. Please enter 1 to approve or 2 to reject.");
                                 }
+                            } catch (Exception e) {
+                                System.out.println("Invalid input. Please enter a valid number (1 or 2).");
+                                scanner.nextLine();
+                            }
+                            break;
+                            
+                        case 5:
+                            // Generate Report - keeping existing code
+                            System.out.println("Enter project for report:");
+                            String projectForReport = scanner.nextLine().trim();
+                            if (projectForReport == null || projectForReport.trim().isEmpty()) {
+                                System.out.println("Project name cannot be empty. Please try again.");
                                 break;
-                            case 4:
-                                System.out.println("Returning to Main Menu...");
-                                break;
-                            default:
-                                System.out.println("Invalid choice. Please try again.");
-                                break;
-                        }
-                    }while(appChoice!=4);
+                            }
+                            System.out.println("Choose criteria to filter: ");
+                            System.out.println("1. All");
+                            System.out.println("2. Married");
+                            System.out.println("3. Single");
+                            System.out.println("4. Youth");
+                            System.out.println("5. Middle_aged");
+                            System.out.println("6. Elderly");
+                            System.out.println("7. 2_room");
+                            System.out.println("8. 3_room");
+                            int criteria_choice = scanner.nextInt();
+                            scanner.nextLine();
+                            try {
+                                switch (criteria_choice) {
+                                    case 1:
+                                        System.out.println("Generating report for all applicants...");
+                                        manager.generateReport(FilterCriteria.ALL,projectForReport);
+                                        break;
+                                    case 2:
+                                        System.out.println("Generating report for married applicants...");
+                                        manager.generateReport(FilterCriteria.MARRIED,projectForReport);
+                                        break;
+                                    case 3:
+                                        System.out.println("Generating report for single applicants...");
+                                        manager.generateReport(FilterCriteria.SINGLE,projectForReport);
+                                        break;
+                                    case 4:
+                                        System.out.println("Generating report for youth applicants...");
+                                        manager.generateReport(FilterCriteria.Youths,projectForReport);
+                                        break;
+                                    case 5:
+                                        System.out.println("Generating report for middle-aged applicants...");
+                                        manager.generateReport(FilterCriteria.Middle_aged,projectForReport);
+                                        break;
+                                    case 6:
+                                        System.out.println("Generating report for elderly applicants...");
+                                        manager.generateReport(FilterCriteria.Elderly,projectForReport);
+                                        break;
+                                    case 7:
+                                        System.out.println("Generating report for applicants interested in 2-room flats...");
+                                        manager.generateReport(FilterCriteria.Flat_type_2room,projectForReport);
+                                        break;
+                                    case 8:
+                                        System.out.println("Generating report for applicants interested in 3-room flats...");
+                                        manager.generateReport(FilterCriteria.Flat_type_3room,projectForReport);
+                                        break;
+                                    default:
+                                        System.out.println("Invalid choice. Generating report for all applicants by default.");
+                                        manager.generateReport(FilterCriteria.ALL,projectForReport);
+                                        break;
+                                }
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Error: Invalid filter criteria. Please try again.");
+                            } catch (Exception e) {
+                                System.out.println("An unexpected error occurred: " + e.getMessage());
+                            }
+                            break;
+                            
+                        case 6:
+                            System.out.println("Returning to Main Menu...");
+                            break;
+                            
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                            break;
+                    }
+                } while(appChoice!=6);
                 break;
                 case 4:
-                    System.out.println("You have selected EnquiryManager Actions.");
-                    System.out.println("1. View All Enquiries");
+                int enquiryChoice;
+                do{
+                    System.out.println("1. View Enquires");
                     System.out.println("2. Reply to Enquiry");
                     System.out.println("3. Back to Main Menu");
                     System.out.print("Enter your choice: ");
-                    int enquiryChoice = scanner.nextInt();
-                    scanner.nextLine(); // consume the newline character
-                    switch(enquiryChoice){
+                    enquiryChoice = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline character
+                    switch (enquiryChoice) {
                         case 1:
-                            System.out.println("Enquires:");
-                            manager.ViewEnquiry();
+                            // View Enquiries
+                            manager.viewAllEnquiries();
                             break;
                         case 2:
-                            System.out.print("Enter Enquiry ID to reply: ");
-                            int enquiryId = -1;
+                            // Reply to Enquiry
+                            System.out.println("Viewing all enquiries for your assigned projects:");
+                            manager.ViewEnquiry();
+                            
+                            System.out.print("\nEnter Enquiry ID to reply to: ");
                             try {
-                                enquiryId = scanner.nextInt();
-                                scanner.nextLine();
+                                int enquiryId = scanner.nextInt();
+                                scanner.nextLine(); // Consume newline character
+                                
+                                Enquiry enquiry = manager.getEnquiryByID(enquiryId);
+                                
+                                if (enquiry != null) {
+                                    System.out.println("\nSelected Enquiry:");
+                                    enquiry.printEnquiry();
+                                    
+                                    System.out.print("\nEnter your reply: ");
+                                    String reply = scanner.nextLine();
+                                    
+                                    if (reply.trim().isEmpty()) {
+                                        System.out.println("Reply cannot be empty. Operation cancelled.");
+                                    } else {
+                                        manager.replyEnquiry(enquiry, reply);
+                                        System.out.println("Reply submitted successfully.");
+                                        
+                                        // Show the updated enquiry
+                                        System.out.println("\nUpdated Enquiry:");
+                                        enquiry.printEnquiry();
+                                    }
+                                } else {
+                                    System.out.println("No enquiry found with ID " + enquiryId + ".");
+                                }
+                            } catch (InputMismatchException e) {
+                                System.out.println("Invalid input. Please enter a number for the enquiry ID.");
+                                scanner.nextLine(); // Clear the invalid input
                             } catch (Exception e) {
-                                System.out.println("Invalid input. Please enter a valid Enquiry ID.");
-                                scanner.nextLine();
-                            }
-
-                            Enquiry enquiry = manager.getEnquiryByID(enquiryId);
-                            if (enquiry == null) {
-                                System.out.println("Enquiry not found. Please check the Enquiry ID and try again.");
-                                break;
-                            }
-
-                            System.out.print("Enter Reply: ");
-                            String reply = scanner.nextLine();
-                            if (reply.trim().isEmpty()) {
-                                System.out.println("Reply cannot be empty. Please enter a valid reply.");
-                                break;
-                            }
-
-                            try {
-                                manager.replyEnquiry(enquiry, reply);
-                                System.out.println("Reply sent successfully.");
-                            } catch (Exception e) {
-                                System.out.println("An error occurred while sending the reply: " + e.getMessage());
+                                System.out.println("An error occurred: " + e.getMessage());
                             }
                             break;
                         case 3:
@@ -652,15 +712,17 @@ public class I_manager implements I_UserInterface {
                             System.out.println("Invalid choice. Please try again.");
                             break;
                     }
-                    break;
+                } while (enquiryChoice != 3); // Continue until the user chooses to exit
+                break;
                 case 5:
-                    System.out.println("Exiting the program. Goodbye!");
+                    System.out.println("Exiting the application. Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
                     break;
             }
-        } while (choice != 5); // Continue until the user chooses to exit
+        
+        } while (choice != 5); // Close do-while loop for main menu
     } // Close showMenu method
     
     @Override

@@ -133,46 +133,119 @@ public class Applicant extends User implements I_applicant_EnquiryM
         }
 
         // Create random application ID
-        String applicationId = java.util.UUID.randomUUID().toString();
+        String applicationId = "APP-" + java.util.UUID.randomUUID().toString().substring(0, 8);
         // Create new BTOApplication object
         newApp = new BTOApplication(applicationId, this.getUserID(), projectname, flatType);
-        //Add new application to applicaitions list and project
-        applications.add(newApp);
-        currentApplicationId = applicationId;
+        // Add the application to the applicant's list
+        if (this.applications == null) {
+            this.applications = new ArrayList<>();
+        }
+        this.applications.add(newApp);
+        this.currentApplicationId = applicationId;
+        
+        // Add the application to the project
         targetProject.addApplication(newApp);
-
-        System.out.printf("Successfully applied for project %s with flat type %s%n", targetProject.getProjectName(), flatType);
-
+        
+        // Add the applicant to the project's applicant list if not already there
+        boolean applicantExists = false;
+        for (Applicant existingApplicant : targetProject.getApplicantList()) {
+            if (existingApplicant != null && existingApplicant.getUserID().equals(this.getUserID())) {
+                applicantExists = true;
+                break;
+            }
+        }
+        
+        if (!applicantExists) {
+            targetProject.addApplicant(this);
+        }
+        
+        System.out.println("Successfully applied for project " + targetProject.getProjectName() + 
+                        " with flat type " + flatType + ".");
+        System.out.println("Your application ID is: " + applicationId);
+        System.out.println("Please keep this ID for future reference.");
     }
 
-    public void withdrawApplication(String applicationId)
-    {
-        // Check if the application ID is valid
-        if (currentApplicationId == null || !currentApplicationId.equals(applicationId)) 
-        {
+
+    public void withdrawApplication(String applicationId) {
+        // Check if the application ID matches the current application
+        if (currentApplicationId == null || !currentApplicationId.equals(applicationId)) {
             System.out.println("Invalid application ID. Please check and try again.");
             return;
         }
-
-        // Remove the application from the list and reset currentApplicationId
-        applications.removeIf(app -> app.getApplicationId().equals(applicationId));
-        currentApplicationId = null;
-        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
-        // Find the project associated with the application ID and remove it from the project as well
-        for (BTOProject project : projectDatabase.getAllProjects()) 
-        {
-            if (project.getApplications().removeIf(app -> app.getApplicationId().equals(applicationId))) 
-            {
-                System.out.printf("Successfully withdrew application with ID %s from project %s%n", applicationId, project.getProjectName());
-                return;
+    
+        BTOApplication appToWithdraw = null;
+        for (BTOApplication app : applications) {
+            if (app.getApplicationId().equals(applicationId)) {
+                appToWithdraw = app;
+                break;
             }
         }
+        
+        if (appToWithdraw == null) {
+            System.out.println("Application not found in your applications list.");
+            return;
+        }
+        
+        // Check the current status of the application
+        String currentStatus = appToWithdraw.getApplicationStatus();
+        
+        // If the application is already in UNSUCCESSFUL status, directly remove it
+        if ("UNSUCCESSFUL".equals(currentStatus)) {
+            applications.remove(appToWithdraw);
+            currentApplicationId = null;
+            
+            // Remove from project as well
+            ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+            BTOProject project = projectDatabase.getProjectByName(appToWithdraw.getProjectId());
+            if (project != null) {
+                project.getApplications().remove(appToWithdraw);
+                System.out.println("Unsuccessful application has been withdrawn successfully.");
+            }
+            return;
+        }
+        
+        // For other statuses, submit a withdrawal request
+        appToWithdraw.requestWithdrawal();
+        System.out.println("Withdrawal request submitted for application " + applicationId);
+        System.out.println("Your request will be reviewed by the HDB manager.");
     }
-    public String viewApplicationStatus()
-    {
-        return newApp.toString();
+    
+    // Enhanced viewApplicationStatus method to show more application details
+    public String viewApplicationStatus() {
+        if (currentApplicationId == null) {
+            return "You do not have any active BTO applications.";
+        }
+        
+        BTOApplication currentApp = null;
+        for (BTOApplication app : applications) {
+            if (app.getApplicationId().equals(currentApplicationId)) {
+                currentApp = app;
+                break;
+            }
+        }
+        
+        if (currentApp == null) {
+            return "Application not found. Please contact customer support.";
+        }
+        
+        StringBuilder status = new StringBuilder();
+        status.append("\n===== APPLICATION STATUS =====\n");
+        status.append("Application ID: ").append(currentApp.getApplicationId()).append("\n");
+        status.append("Project: ").append(currentApp.getProjectId()).append("\n");
+        status.append("Flat Type: ").append(currentApp.getFlatType()).append("\n");
+        status.append("Application Date: ").append(currentApp.getApplicationDate()).append("\n");
+        status.append("Status: ").append(currentApp.getApplicationStatus()).append("\n");
+        
+        if (currentApp.getWithdrawalRequestStatus() != null) {
+            status.append("Withdrawal Request Status: ").append(currentApp.getWithdrawalRequestStatus()).append("\n");
+        }
+        
+        status.append("=============================\n");
+        
+        // Print and return the status
+        System.out.println(status.toString());
+        return status.toString();
     }
-
 
     public String getCurrentApplicationId()
     {

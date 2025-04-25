@@ -64,45 +64,169 @@ public class HDBManager extends User implements I_officer_EnquiryM{
     //AppManager part
     public boolean approveBTOApplication(String application_id, String newStatus)
     {
-        if (project == null) 
-        {
-            System.out.println("No active project to approve");
+        if (project == null) {
+            // Try to find a project managed by this manager that has the application
+            List<BTOProject> managedProjects = projectManager.getManagedProject();
+            for (BTOProject managedProject : managedProjects) {
+                for (BTOApplication app : managedProject.getApplications()) {
+                    if (app.getApplicationId().equals(application_id)) {
+                        // Found the application in this project
+                        project = managedProject;
+                        break;
+                    }
+                }
+                if (project != null) break;
+            }
+            
+            if (project == null) {
+                System.out.println("No project found with application ID: " + application_id);
+                return false;
+            }
+        }
+    
+        List<BTOApplication> app_list = project.getApplications();
+        if (app_list == null || app_list.isEmpty()) {
+            System.out.println("No applications available for approval in project: " + project.getProjectName());
             return false;
         }
-
-        List<BTOApplication> app_list=project.getApplications();
-        if (app_list.isEmpty() || app_list == null) 
-        {
-            System.out.println("No applications available for approval.");
-            return false;
-        }
-
+    
         BTOApplication cur_Application = null;
-        for(BTOApplication application: app_list)
-        {
-            if (application.getApplicationId().equals(application_id))
-            {
-                cur_Application= application;
+        for (BTOApplication application : app_list) {
+            if (application.getApplicationId().equals(application_id)) {
+                cur_Application = application;
                 break;
             }
         }
-
-        if (cur_Application == null) 
-        {
-            throw new IllegalArgumentException("Application with ID " + application_id + " not found.");
+    
+        if (cur_Application == null) {
+            System.out.println("Application with ID " + application_id + " not found in project: " + project.getProjectName());
+            return false;
         }
-
-        FlatList flatList=project.getFlatLists();
-        try
-        {
-            return appManager.approveBTOApplication(cur_Application, flatList, newStatus);
-        }
-        catch (IllegalArgumentException e) 
-        {
+    
+        FlatList flatList = project.getFlatLists();
+        try {
+            // Map the UI status strings to application status strings
+            String applicationStatus;
+            if (newStatus.equalsIgnoreCase("Approved")) {
+                applicationStatus = "SUCCESSFUL";
+            } else if (newStatus.equalsIgnoreCase("Rejected")) {
+                applicationStatus = "UNSUCCESSFUL";
+            } else {
+                applicationStatus = newStatus; // Use as-is for direct status names
+            }
+            
+            // Use the application manager to approve the application
+            boolean result = appManager.approveBTOApplication(cur_Application, flatList, applicationStatus);
+            if (result) {
+                System.out.println("Application " + application_id + " has been set to " + applicationStatus);
+            } else {
+                System.out.println("Failed to update application status");
+            }
+            return result;
+        } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
             return false;
         }
-        //change the edits in BTOProject
+    }
+
+    public void viewAllApplications() {
+        List<BTOProject> managedProjects = projectManager.getManagedProject();
+        if (managedProjects == null || managedProjects.isEmpty()) {
+            System.out.println("You don't manage any projects.");
+            return;
+        }
+        
+        boolean foundApplications = false;
+        System.out.println("\n===== ALL BTO APPLICATIONS =====");
+        
+        for (BTOProject managedProject : managedProjects) {
+            List<BTOApplication> applications = managedProject.getApplications();
+            if (applications != null && !applications.isEmpty()) {
+                System.out.println("\nProject: " + managedProject.getProjectName());
+                System.out.println("---------------------------");
+                
+                for (BTOApplication app : applications) {
+                    System.out.println("Application ID: " + app.getApplicationId());
+                    System.out.println("Applicant ID: " + app.getApplicantId());
+                    System.out.println("Flat Type: " + app.getFlatType());
+                    System.out.println("Status: " + app.getApplicationStatus());
+                    
+                    if (app.getWithdrawalRequestStatus() != null) {
+                        System.out.println("Withdrawal Request: " + app.getWithdrawalRequestStatus());
+                    }
+                    
+                    System.out.println("---------------------------");
+                    foundApplications = true;
+                }
+            }
+        }
+        
+        if (!foundApplications) {
+            System.out.println("No applications found in any of your managed projects.");
+        }
+    }
+    
+    /**
+     * View applications for a specific project
+     * @param projectName The name of the project to view applications for
+     */
+    public void viewProjectApplications(String projectName) {
+        BTOProject targetProject = null;
+        List<BTOProject> managedProjects = projectManager.getManagedProject();
+        
+        for (BTOProject proj : managedProjects) {
+            if (proj.getProjectName().equals(projectName)) {
+                targetProject = proj;
+                break;
+            }
+        }
+        
+        if (targetProject == null) {
+            System.out.println("Project not found or you don't manage it: " + projectName);
+            return;
+        }
+        
+        List<BTOApplication> applications = targetProject.getApplications();
+        if (applications == null || applications.isEmpty()) {
+            System.out.println("No applications found for project: " + projectName);
+            return;
+        }
+        
+        System.out.println("\n===== APPLICATIONS FOR " + projectName + " =====");
+        for (BTOApplication app : applications) {
+            System.out.println("Application ID: " + app.getApplicationId());
+            System.out.println("Applicant ID: " + app.getApplicantId());
+            System.out.println("Flat Type: " + app.getFlatType());
+            System.out.println("Status: " + app.getApplicationStatus());
+            
+            if (app.getWithdrawalRequestStatus() != null) {
+                System.out.println("Withdrawal Request: " + app.getWithdrawalRequestStatus());
+            }
+            
+            System.out.println("---------------------------");
+        }
+    }
+    
+    /**
+     * Find application by ID across all managed projects
+     * @param applicationId The ID of the application to find
+     * @return The application if found, null otherwise
+     */
+    public BTOApplication findApplicationById(String applicationId) {
+        List<BTOProject> managedProjects = projectManager.getManagedProject();
+        
+        for (BTOProject proj : managedProjects) {
+            List<BTOApplication> applications = proj.getApplications();
+            if (applications != null) {
+                for (BTOApplication app : applications) {
+                    if (app.getApplicationId().equals(applicationId)) {
+                        return app;
+                    }
+                }
+            }
+        }
+        
+        return null;
     }
 
     public void approveBTOWithdrawal(String application_id, String newStatus){
@@ -121,13 +245,23 @@ public class HDBManager extends User implements I_officer_EnquiryM{
         appManager.approveBTOWithdrawal(cur_Application, flatList, newStatus);
     }
 
-    public void generateReport(FilterCriteria criteria){
+    public void generateReport(FilterCriteria criteria,String Project){
         List<BTOApplication> app_list=project.getApplications();
-        appManager.generateApplicantReport(criteria, app_list,project);
+        ProjectDatabase DB= ProjectDatabase.getInstance();
+        for (BTOProject project: DB.getAllProjects()){
+            if (project.getProjectName().equals(Project)){
+                BTOProject proj=project;
+                appManager.generateApplicantReport(criteria, app_list,proj);
+                break;
+            }
+        }
+        
     }
     
     //ProjectManager part
-
+    public I_projectManager  getProjectManager(){
+        return projectManager;
+    }
     public void createBTOProject(String projectName,LocalDate openingDate,LocalDate closingDate,String projectNeighbourhood,List<FlatType> flatTypes, Boolean isVisible,FlatList flatLists){
         List<HDBOfficer> HDBOfficerlist= new ArrayList<HDBOfficer>();
         List<BTOApplication> applications= new ArrayList<BTOApplication>();
@@ -281,9 +415,21 @@ public class HDBManager extends User implements I_officer_EnquiryM{
             }
         }
     }
+    public void viewAllEnquiries(){
+        ProjectDatabase projectDatabase = ProjectDatabase.getInstance();
+        for (BTOProject project : projectDatabase.getAllProjects()) {
+            EnquiryList enquiries = project.getEnquiryList();
+            if (enquiries.isEmpty()) {
+                System.out.println("No enquiries available for project: " + project.getProjectName());
+            } else {
+                System.out.println("Enquiries for project: " + project.getProjectName());
+                enquiries.ViewEnquiry();
+            }
+        }
+    }
     //EnquiryManager part
     public void replyEnquiry(Enquiry enquiry,String reply){
-        enquiryManager.replyEnquiry(enquiry, reply);
+        enquiryManager.replyEnquiryM(enquiry, reply);
     }
     public void getEnquiries(){
         if(projectManager.getManagedProject().isEmpty()){

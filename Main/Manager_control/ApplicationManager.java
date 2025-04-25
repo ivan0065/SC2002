@@ -32,7 +32,8 @@ public class ApplicationManager implements I_applicationManager{
         List<ApplicantReport> report= reportGen.generateReport(applications, criteria, project);
 
         for(ApplicantReport r: report){
-            r.toString();
+            System.out.println(r.toString());
         }
         }
+
 }
