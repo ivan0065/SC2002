@@ -16,6 +16,7 @@ import Main.interfaces.I_projectManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import AppInterface.I_UserInterface;
 import AppInterface.I_manager;
@@ -65,69 +66,79 @@ public class HDBManager extends User implements I_officer_EnquiryM{
     public boolean approveBTOApplication(String application_id, String newStatus)
     {
         if (project == null) {
-            // Try to find a project managed by this manager that has the application
-            List<BTOProject> managedProjects = projectManager.getManagedProject();
-            for (BTOProject managedProject : managedProjects) {
-                for (BTOApplication app : managedProject.getApplications()) {
-                    if (app.getApplicationId().equals(application_id)) {
-                        // Found the application in this project
-                        project = managedProject;
-                        break;
-                    }
+        // Try to find a project managed by this manager that has the application
+        List<BTOProject> managedProjects = projectManager.getManagedProject();
+        for (BTOProject managedProject : managedProjects) {
+            for (BTOApplication app : managedProject.getApplications()) {
+                if (app.getApplicationId().equals(application_id)) {
+                    // Found the application in this project
+                    project = managedProject;
+                    break;
                 }
-                if (project != null) break;
             }
-            
-            if (project == null) {
-                System.out.println("No project found with application ID: " + application_id);
-                return false;
-            }
+            if (project != null) break;
         }
-    
-        List<BTOApplication> app_list = project.getApplications();
-        if (app_list == null || app_list.isEmpty()) {
-            System.out.println("No applications available for approval in project: " + project.getProjectName());
-            return false;
-        }
-    
-        BTOApplication cur_Application = null;
-        for (BTOApplication application : app_list) {
-            if (application.getApplicationId().equals(application_id)) {
-                cur_Application = application;
-                break;
-            }
-        }
-    
-        if (cur_Application == null) {
-            System.out.println("Application with ID " + application_id + " not found in project: " + project.getProjectName());
-            return false;
-        }
-    
-        FlatList flatList = project.getFlatLists();
-        try {
-            // Map the UI status strings to application status strings
-            String applicationStatus;
-            if (newStatus.equalsIgnoreCase("Approved")) {
-                applicationStatus = "SUCCESSFUL";
-            } else if (newStatus.equalsIgnoreCase("Rejected")) {
-                applicationStatus = "UNSUCCESSFUL";
-            } else {
-                applicationStatus = newStatus; // Use as-is for direct status names
-            }
-            
-            // Use the application manager to approve the application
-            boolean result = appManager.approveBTOApplication(cur_Application, flatList, applicationStatus);
-            if (result) {
-                System.out.println("Application " + application_id + " has been set to " + applicationStatus);
-            } else {
-                System.out.println("Failed to update application status");
-            }
-            return result;
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
+        
+        if (project == null) {
+            System.out.println("No project found with application ID: " + application_id);
             return false;
         }
     }
+
+    List<BTOApplication> app_list = project.getApplications();
+    if (app_list == null || app_list.isEmpty()) {
+        System.out.println("No applications available for approval in project: " + project.getProjectName());
+        return false;
+    }
+
+    BTOApplication cur_Application = null;
+    for (BTOApplication application : app_list) {
+        if (application.getApplicationId().equals(application_id)) {
+            cur_Application = application;
+            break;
+        }
+    }
+
+    if (cur_Application == null) {
+        System.out.println("Application with ID " + application_id + " not found in project: " + project.getProjectName());
+        return false;
+    }
+
+    FlatList flatList = project.getFlatLists();
+    try {
+        // Map the UI status strings to application status strings
+        String applicationStatus;
+        if (newStatus.equalsIgnoreCase("Approved")) {
+            applicationStatus = "SUCCESSFUL";
+        } else if (newStatus.equalsIgnoreCase("Rejected")) {
+            applicationStatus = "UNSUCCESSFUL";
+        } else {
+            applicationStatus = newStatus; // Use as-is for direct status names
+        }
+        
+        // Check if there are available units before approving
+        if (applicationStatus.equals("SUCCESSFUL")) {
+            FlatType flatType = cur_Application.getFlatType();
+            Map<FlatType, Integer> unitCount = flatList.getavail_byroom();
+            if (unitCount.get(flatType) <= 0) {
+                System.out.println("Cannot approve application: No available units of flat type " + flatType);
+                return false;
+            }
+        }
+        
+        // Use the application manager to approve the application
+        boolean result = appManager.approveBTOApplication(cur_Application, flatList, applicationStatus);
+        if (result) {
+            System.out.println("Application " + application_id + " has been set to " + applicationStatus);
+        } else {
+            System.out.println("Failed to update application status");
+        }
+        return result;
+    } catch (IllegalArgumentException e) {
+        System.out.println("Error: " + e.getMessage());
+        return false;
+    }
+}
 
     public void viewAllApplications() {
         List<BTOProject> managedProjects = projectManager.getManagedProject();
