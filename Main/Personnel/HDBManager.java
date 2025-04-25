@@ -245,17 +245,36 @@ public class HDBManager extends User implements I_officer_EnquiryM{
         appManager.approveBTOWithdrawal(cur_Application, flatList, newStatus);
     }
 
-    public void generateReport(FilterCriteria criteria,String Project){
-        List<BTOApplication> app_list=project.getApplications();
-        ProjectDatabase DB= ProjectDatabase.getInstance();
-        for (BTOProject project: DB.getAllProjects()){
-            if (project.getProjectName().equals(Project)){
-                BTOProject proj=project;
-                appManager.generateApplicantReport(criteria, app_list,proj);
+    public void generateReport(FilterCriteria criteria,String projectName){
+        ProjectDatabase projectDB = ProjectDatabase.getInstance();
+        
+        // Find the project by name first
+        BTOProject targetProject = null;
+        for (BTOProject proj : projectDB.getAllProjects()) {
+            if (proj.getProjectName().equals(projectName)) {
+                targetProject = proj;
                 break;
             }
         }
         
+        // Check if project was found
+        if (targetProject == null) {
+            System.out.println("Project not found: " + projectName);
+            return;
+        }
+        
+        // Get applications list from the found project
+        List<BTOApplication> applicationList = targetProject.getApplications();
+        
+        // Check if there are any applications
+        if (applicationList == null || applicationList.isEmpty()) {
+            System.out.println("No applications found for project: " + projectName);
+            return;
+        }
+        
+        // Generate the report using the application manager
+        System.out.println("Generating report for project: " + projectName);
+        appManager.generateApplicantReport(criteria, applicationList, targetProject);
     }
     
     //ProjectManager part
