@@ -91,7 +91,7 @@ public class I_manager implements I_UserInterface {
                                 }
                                 System.out.println("Enter project neighbourhood:");
                                 String projectNeighbourhood = scanner.nextLine();
-                                System.out.println("Enter flat types (comma-separated):");
+                                System.out.println("Enter flat types (eg.Two_Room,Three_Room)):");
                                 String flatTypesStr = scanner.nextLine();
                                 System.out.println("Enter project visibility (true/false):");
                                 boolean isVisible = false;
@@ -103,7 +103,7 @@ public class I_manager implements I_UserInterface {
                                     continue; // go back to the project menu
                                 }
                                 scanner.nextLine(); // consume the newline character
-                                System.out.println("Enter flat list (comma-separated):");
+                                System.out.println("Enter flat list (eg.Two_Room:50,50000,Three_Room:30,60000):");
                                 String flatListStr = scanner.nextLine();
                                 // Process flat types
                                 String[] flatTypesArray = flatTypesStr.split(",");
